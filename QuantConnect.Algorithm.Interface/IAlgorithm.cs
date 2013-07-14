@@ -202,6 +202,12 @@ namespace QuantConnect  {
 
 
         /// <summary>
+        /// Clear the list of messages in the debug queue.
+        /// </summary>
+        void ClearDebugMessages();
+
+
+        /// <summary>
         /// Set a required MarketType-symbol and resolution for the simulator to prepare
         /// </summary>
         /// <param name="securityType">MarketType Enum: Equity, Commodity, FOREX or Future</param>

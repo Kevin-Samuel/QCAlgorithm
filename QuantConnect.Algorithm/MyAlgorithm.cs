@@ -45,7 +45,7 @@ namespace QuantConnect {
         /// <summary>
         /// Handle your tradeBar's here.
         /// </summary>
-        /// <param name="symbols">Dictionary of data objects</param>
+        /// <param name="data">Dictionary of data objects</param>
         public override void OnTradeBar(Dictionary<string, TradeBar> data) {
             //Use the data to generate orders.
             if (!Portfolio.HoldStock)

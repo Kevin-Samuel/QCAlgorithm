@@ -35,6 +35,8 @@ C:\Server\www\QCo\QuantConnect.Algorithm\bin\Debug\QuantConnect.Logging.pdb
 C:\Server\www\QCo\QuantConnect.Algorithm\bin\Debug\QuantConnect.Logging.xml
 C:\Server\www\QCo\QuantConnect.Algorithm\bin\Debug\QuantConnect.Server.Algorithm.Interface.pdb
 C:\Server\www\QCo\QuantConnect.Algorithm\bin\Debug\QuantConnect.Server.Algorithm.Interface.xml
+C:\Server\www\QCo\QuantConnect.Algorithm\bin\Debug\Newtonsoft.Json.pdb
+C:\Server\www\QCo\QuantConnect.Algorithm\bin\Debug\Newtonsoft.Json.xml
 C:\Server\www\QCo\QuantConnect.Algorithm\obj\Debug\ResolveAssemblyReference.cache
 C:\Server\www\QCo\QuantConnect.Algorithm\obj\Debug\QuantConnect.Server.Algorithm.dll
 C:\Server\www\QCo\QuantConnect.Algorithm\obj\Debug\QuantConnect.Server.Algorithm.pdb

@@ -79,7 +79,11 @@ namespace QuantConnect.Logging {
         /// <param name="error">String Error</param>
         public static void Error(string error) {
             try {
-                Console.WriteLine(DateTime.Now.ToString(dateFormat) + " Error:: " + error);
+                if (error != lastErrorText)
+                {
+                    Console.WriteLine(DateTime.Now.ToString(dateFormat) + " Error:: " + error);
+                    lastErrorText = error; //Stop message flooding filling diskspace.
+                }
             } catch (Exception err) {
                 Console.WriteLine("Log.Error(): Error writing error: " + err.Message);
             }
@@ -92,7 +96,11 @@ namespace QuantConnect.Logging {
         /// <param name="traceText">String Trace</param>
         public static void Trace(string traceText) {
             try {
-                Console.WriteLine(DateTime.Now.ToString(dateFormat) + " Trace:: " + traceText);
+                if (traceText != lastTraceText)
+                {
+                    Console.WriteLine(DateTime.Now.ToString(dateFormat) + " Trace:: " + traceText);
+                    lastTraceText = traceText;
+                }
             } catch (Exception err) {
                 Console.WriteLine("Log.Trace(): Error writing trace: "  +err.Message);
             }

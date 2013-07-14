@@ -82,6 +82,11 @@
             </summary>
             <returns>List of string debug messages.</returns>
         </member>
+        <member name="M:QuantConnect.IAlgorithm.ClearDebugMessages">
+            <summary>
+            Clear the list of messages in the debug queue.
+            </summary>
+        </member>
         <member name="M:QuantConnect.IAlgorithm.AddSecurity(QuantConnect.SecurityType,System.String,QuantConnect.Resolution,System.Boolean,System.Decimal,System.Boolean)">
             <summary>
             Set a required MarketType-symbol and resolution for the simulator to prepare

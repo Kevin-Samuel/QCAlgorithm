@@ -106,7 +106,7 @@ namespace QuantConnect.Models {
             string[] csv = line.Split(',');
 
             TickType = TickType.Quote;
-            Time = DateTime.ParseExact(csv[0], "yyyyMMdd HH:mm:ss.ffff", CultureInfo.InvariantCulture);
+            Time = DateTime.ParseExact(csv[0], "yyyyMMdd H:mm:ss.ffff", CultureInfo.InvariantCulture); //// REVERT THIS BACK TO HH
             Symbol = symbol;
             BidPrice = Convert.ToDecimal(csv[1]);
             AskPrice = Convert.ToDecimal(csv[2]);
