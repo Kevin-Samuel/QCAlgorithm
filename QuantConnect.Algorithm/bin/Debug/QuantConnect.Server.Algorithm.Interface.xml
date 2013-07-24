@@ -87,6 +87,16 @@
             Clear the list of messages in the debug queue.
             </summary>
         </member>
+        <member name="M:QuantConnect.IAlgorithm.GetLogMessages">
+            <summary>
+            Get a list of the log messages generated over the lifetime of this algorithm. Limited to space in ram (500MB).
+            </summary>
+        </member>
+        <member name="M:QuantConnect.IAlgorithm.ClearLogMessages">
+            <summary>
+            Clear the list of log messages in cache:
+            </summary>
+        </member>
         <member name="M:QuantConnect.IAlgorithm.AddSecurity(QuantConnect.SecurityType,System.String,QuantConnect.Resolution,System.Boolean,System.Decimal,System.Boolean)">
             <summary>
             Set a required MarketType-symbol and resolution for the simulator to prepare
