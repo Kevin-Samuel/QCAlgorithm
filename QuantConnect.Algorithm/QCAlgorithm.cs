@@ -27,8 +27,8 @@ namespace QuantConnect {
         * CLASS PRIVATE VARIABLES
         *********************************************************/
         private DateTime _time = new DateTime();
-        private DateTime _startDate = new DateTime(2012, 06, 01);   //Defaults.
-        private DateTime _endDate = new DateTime(2012, 06, 30);
+        private DateTime _startDate = new DateTime(2012, 01, 01);   //Default start and end dates.
+        private DateTime _endDate = DateTime.Today.AddDays(-1);     //Default end to yesterday
         private RunMode _runMode = RunMode.Automatic;
         private bool _locked = false;
         private String _resolution = "";
