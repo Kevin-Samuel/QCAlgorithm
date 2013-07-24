@@ -211,7 +211,7 @@ namespace QuantConnect.Securities {
                     //Update the order: set to 0 for successful exit.
                     orderStatus.Add(order, 0);
 
-                    Console.WriteLine("NEW ORDER: Price: " + order.Price.ToString("C") + " Date: " + order.Time.Date.ToLongDateString() + " Time:" + order.Time.ToLongTimeString() + " Symbol: " + order.Symbol);
+                    Log.Debug("NEW ORDER: Price: " + order.Price.ToString("C") + " Date: " + order.Time.Date.ToLongDateString() + " Time:" + order.Time.ToLongTimeString() + " Symbol: " + order.Symbol);
                 }
 
                 //Remove all requested id's:

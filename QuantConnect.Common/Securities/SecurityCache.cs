@@ -53,7 +53,7 @@ namespace QuantConnect.Securities {
         /// <summary>
         /// Incoming Data Cached.
         /// </summary>
-        public List<MarketData> DataCache;             //Cache for entire loaded model
+        public Queue<MarketData> DataCache;             //Cache for entire loaded model
 
         //DATA NAITIVE VECTORS
         public int cacheRows = 24000;                  //Per Seconds MarketData samples
@@ -83,7 +83,7 @@ namespace QuantConnect.Securities {
             OrderCache = new List<Order>();
 
             //DATA CACHES
-            DataCache = new List<MarketData>();
+            DataCache = new Queue<MarketData>();
 
             //MATH CACHE: STORE AS LOW LEVEL OBJECT FOR SPEED
             primaryCache = Allocate(cacheCols, cacheRows);
@@ -132,7 +132,11 @@ namespace QuantConnect.Securities {
                 //Record as Last Added Packet:
                 _lastData = data;
                 //Add it to the depth cache:
-                DataCache.Add(data);
+                DataCache.Enqueue(data);
+
+                if (DataCache.Count > 1000) {
+                    DataCache.Dequeue();
+                }
             }
         }
 
@@ -164,7 +168,7 @@ namespace QuantConnect.Securities {
         /// </summary>
         public virtual void Reset() {
             //Data Cache
-            DataCache = new List<MarketData>();
+            DataCache = new Queue<MarketData>();
             _lastData = new MarketData();
                 
             //Order Cache:

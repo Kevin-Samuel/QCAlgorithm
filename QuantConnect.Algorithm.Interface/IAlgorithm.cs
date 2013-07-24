@@ -208,6 +208,18 @@ namespace QuantConnect  {
 
 
         /// <summary>
+        /// Get a list of the log messages generated over the lifetime of this algorithm. Limited to space in ram (500MB).
+        /// </summary>
+        List<string> GetLogMessages();
+
+
+        /// <summary>
+        /// Clear the list of log messages in cache:
+        /// </summary>
+        void ClearLogMessages();
+
+
+        /// <summary>
         /// Set a required MarketType-symbol and resolution for the simulator to prepare
         /// </summary>
         /// <param name="securityType">MarketType Enum: Equity, Commodity, FOREX or Future</param>

@@ -361,13 +361,24 @@
             Create a MD5 Hash of a string.
             </summary>
         </member>
-        <member name="M:QuantConnect.Isolator.ExecuteWithTimeLimit(System.TimeSpan,System.Action)">
+        <member name="M:QuantConnect.Isolator.ResetCancelToken">
+            <summary>
+            Reset the cancellation token variables for a new task:
+            </summary>
+        </member>
+        <member name="M:QuantConnect.Isolator.ExecuteWithTimeLimit(System.TimeSpan,System.Action,System.Int64)">
             <summary>
             Execute a code block with a maximum timeout.
             </summary>
             <param name="timeSpan">Timeout.</param>
             <param name="codeBlock">Code to execute</param>
+            <param name="memoryCap">Maximum memory allocation, default 1GB</param>
             <returns>True if successful, False if Cancelled.</returns>
+        </member>
+        <member name="P:QuantConnect.Isolator.IsCancellationRequested">
+            <summary>
+            Check if this task isolator is cancelled, and exit the analysis
+            </summary>
         </member>
         <member name="T:QuantConnect.DateFormat">
             <summary>

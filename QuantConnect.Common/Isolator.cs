@@ -9,6 +9,7 @@
 using System;
 using System.Text;
 using System.Security.Cryptography;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace QuantConnect {
@@ -25,10 +26,24 @@ namespace QuantConnect {
         /******************************************************** 
         * CLASS VARIABLES
         *********************************************************/
+        //Task Cancellation:
+        public static CancellationTokenSource cancellation = new CancellationTokenSource();
+        public static CancellationToken cancelToken = new CancellationToken();
+
 
         /******************************************************** 
         * CLASS PROPERTIES
         *********************************************************/
+        /// <summary>
+        /// Check if this task isolator is cancelled, and exit the analysis
+        /// </summary>
+        public static bool IsCancellationRequested
+        {
+            get {
+                return cancelToken.IsCancellationRequested;
+            }
+        }
+
 
         /******************************************************** 
         * CLASS METHODS
@@ -60,34 +75,62 @@ namespace QuantConnect {
         }
 
 
+        /// <summary>
+        /// Reset the cancellation token variables for a new task:
+        /// </summary>
+        public static void ResetCancelToken() {
+            cancellation = new CancellationTokenSource();
+            cancelToken = cancellation.Token;
+        }
+
+
 
         /// <summary>
         /// Execute a code block with a maximum timeout.
         /// </summary>
         /// <param name="timeSpan">Timeout.</param>
         /// <param name="codeBlock">Code to execute</param>
+        /// <param name="memoryCap">Maximum memory allocation, default 1GB</param>
         /// <returns>True if successful, False if Cancelled.</returns>
-        public static bool ExecuteWithTimeLimit(TimeSpan timeSpan, Action codeBlock) {
-            try {
-                long memoryCap = 500 * 1024 * 1024;
-                DateTime dtEnd = DateTime.Now + timeSpan;
-                Task task = Task.Factory.StartNew(() => codeBlock());
+        public static bool ExecuteWithTimeLimit(TimeSpan timeSpan, Action codeBlock, long memoryCap = 1024)
+        {
+            string message = "";
+            DateTime dtEnd = DateTime.Now + timeSpan;
 
-                while (!task.IsCompleted && DateTime.Now < dtEnd) {
-                    if (GC.GetTotalMemory(false) > memoryCap) {
-                        Log.Error("Security.ExecuteWithTimeLimit(): Memory maxed out: " + GC.GetTotalMemory(false).ToString());
+            //Convert to bytes
+            memoryCap *= 1024 * 1024;
+
+            ResetCancelToken();
+
+            //Thread:
+            Task task = Task.Factory.StartNew(() => codeBlock(), cancelToken);
+            
+
+            while (!task.IsCompleted && DateTime.Now < dtEnd)
+            {
+                if (GC.GetTotalMemory(false) > memoryCap)
+                {
+                    if (GC.GetTotalMemory(true) > memoryCap)
+                    {
+                        message = "Execution Security Error: Memory Maxed Out - " + Math.Round(Convert.ToDouble(memoryCap / (1024 * 1024))) + "MB max. Check for recursive loops.";
                         break;
                     }
                 }
-
-                if (task.IsCompleted == false) {
-                    Log.Error("Security.ExecuteWithTimeLimit(): Operation timed out");
-                }
-
-                return task.IsCompleted;
-            } catch (AggregateException ae) {
-                throw ae.InnerExceptions[0];
             }
+
+            if (task.IsCompleted == false && message == "")
+            {
+                message = "Execution Security Error: Operation timed out - " + timeSpan.Minutes + " minutes max. Check for recursive loops.";
+            }
+
+            if (message != "")
+            {
+                cancellation.Cancel();
+                Log.Error("Security.ExecuteWithTimeLimit(): " + message);
+                throw new Exception(message);
+            }
+
+            return task.IsCompleted;
         }
 
     }
