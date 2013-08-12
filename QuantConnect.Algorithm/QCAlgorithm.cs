@@ -589,7 +589,6 @@ namespace QuantConnect {
         {
             if (message == "") return;
             _debugMessages.Add(message);
-            Log(message);
         }
 
         /// <summary>

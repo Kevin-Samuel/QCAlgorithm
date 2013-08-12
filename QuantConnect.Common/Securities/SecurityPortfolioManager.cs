@@ -308,7 +308,7 @@ namespace QuantConnect.Securities {
             //Each asset has different leverage values, so affects our cash position in different ways.
             // Basically position affect on cash = holdings / leverage
 
-            decimal smallSpace = FreeCash*Securities[symbol].Leverage;
+            decimal smallSpace = FreeCash * Securities[symbol].Leverage;
             decimal largeSpace = smallSpace + Cash;
 
             if (direction == OrderDirection.Hold) return smallSpace;

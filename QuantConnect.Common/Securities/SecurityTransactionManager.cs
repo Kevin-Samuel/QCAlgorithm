@@ -183,7 +183,7 @@ namespace QuantConnect.Securities {
                         orderStatus.Add(order, orderError);
                         if (orderError != 0)
                         {
-                            Log.Trace("Order Rejected: Symbol:" + order.Symbol + " Price: " + order.Price + "  Time: " + order.Time.ToLongTimeString());
+                            Log.Debug("Order Rejected: Symbol:" + order.Symbol + " Price: " + order.Price + "  Time: " + order.Time.ToLongTimeString());
                             continue;
                         }
                         orderStatus.Remove(order);
@@ -325,6 +325,7 @@ namespace QuantConnect.Securities {
         {
             //First simple check, when don't hold stock, this will always increase portfolio regardless of direction
             if (Math.Abs(GetOrderRequiredBuyingPower(order)) > portfolio.GetBuyingPower(order.Symbol, order.Direction)) {
+                Log.Debug("GetOrderRequiredBuyingPower(): " + Math.Abs(GetOrderRequiredBuyingPower(order)) + " PortfolioGetBuyingPower(): " + portfolio.GetBuyingPower(order.Symbol, order.Direction)); 
                 return false;
             } else {
                 return true;

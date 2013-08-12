@@ -77,6 +77,7 @@ namespace QuantConnect.Models {
             SaleCondition = "";
             Suspicious = false;
             DataType = DataType.MarketData;
+            Symbol = "";
         }
 
 

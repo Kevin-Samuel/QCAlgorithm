@@ -3,6 +3,10 @@
  * GLobal Enums
 */
 
+/// <summary>
+/// Application beta flag: are we on the staging servers
+/// </summary>
+/// 
 /**********************************************************
 * USING NAMESPACES
 **********************************************************/
@@ -45,6 +49,18 @@ namespace QuantConnect {
         Automatic,
         Series,
         Parallel
+    }
+
+
+    /// <summary>
+    /// Added multilanguage support.
+    /// </summary>
+    public enum Language { 
+        CSharp,
+        CPlusPlus,
+        Java,
+        SAS,
+        Python
     }
 
     /******************************************************** 

@@ -390,6 +390,11 @@
             Types of Run Mode: Series, Parallel or Auto.
             </summary>
         </member>
+        <member name="T:QuantConnect.Language">
+            <summary>
+            Added multilanguage support.
+            </summary>
+        </member>
         <member name="T:QuantConnect.SecurityType">
             <summary>
             Type of Tradable Security / Underlying Asset
