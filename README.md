@@ -24,6 +24,6 @@ See http://www.quantconnect.com/docs for more information.
 
 Provided with the Apache 2.0 license.
 
-## Help
+## About QuantConnect
 
-Feel free to reach out to the QC Team -- contact@quantconnect.com
+QuantConnect is seeking to democratize algorithmic trading through providing powerful tools and free financial data. With our online IDE engineers can design strategies in C#, and backtest them across 15 years of free high resolution financial data. Feel free to reach out to the QC Team -- contact@quantconnect.com
