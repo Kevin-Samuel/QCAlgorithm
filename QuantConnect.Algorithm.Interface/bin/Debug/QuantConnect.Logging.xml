@@ -4,7 +4,7 @@
         <name>QuantConnect.Logging</name>
     </assembly>
     <members>
-        <member name="M:QuantConnect.Logging.Log.Error(System.String)">
+        <member name="M:QuantConnect.Logging.Log.Error(System.String,System.Boolean)">
             <summary>
             Log an Error
             </summary>

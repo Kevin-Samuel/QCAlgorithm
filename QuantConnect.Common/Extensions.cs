@@ -7,6 +7,7 @@
 * USING NAMESPACES
 **********************************************************/
 using System;
+using System.IO;
 using System.Collections.Generic;
 
 //QuantConnect Project Libraries:
@@ -68,6 +69,21 @@ namespace QuantConnect {
             char[] chars = new char[bytes.Length / sizeof(char)];
             System.Buffer.BlockCopy(bytes, 0, chars, 0, bytes.Length);
             return new string(chars);
+        }
+
+
+        /// <summary>
+        /// Convert Strings to Stream
+        /// </summary>
+        /// <param name="str">String to convert to stream</param>
+        /// <returns>StreamReader</returns>
+        public static Stream ToStream(this string str) {
+            MemoryStream stream = new MemoryStream();
+            StreamWriter writer = new StreamWriter(stream);
+            writer.Write(str);
+            writer.Flush();
+            stream.Position = 0;
+            return stream;
         }
 
 

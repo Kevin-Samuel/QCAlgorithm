@@ -103,8 +103,7 @@ namespace QuantConnect {
             ResetCancelToken();
 
             //Thread:
-            Task task = Task.Factory.StartNew(() => codeBlock(), cancelToken);
-            
+            Task task = Task.Factory.StartNew(() => codeBlock(), cancelToken);            
 
             while (!task.IsCompleted && DateTime.Now < dtEnd)
             {
@@ -113,6 +112,7 @@ namespace QuantConnect {
                     if (GC.GetTotalMemory(true) > memoryCap)
                     {
                         message = "Execution Security Error: Memory Maxed Out - " + Math.Round(Convert.ToDouble(memoryCap / (1024 * 1024))) + "MB max. Check for recursive loops.";
+                        Console.WriteLine("Isolator.ExecuteWithTimeLimit(): " + message);
                         break;
                     }
                 }
@@ -121,12 +121,14 @@ namespace QuantConnect {
             if (task.IsCompleted == false && message == "")
             {
                 message = "Execution Security Error: Operation timed out - " + timeSpan.Minutes + " minutes max. Check for recursive loops.";
+                Console.WriteLine("Isolator.ExecuteWithTimeLimit(): " + message);
             }
 
             if (message != "")
             {
                 cancellation.Cancel();
                 Log.Error("Security.ExecuteWithTimeLimit(): " + message);
+                Log.Trace("Security.ExecuteWithTimeLimit(): " + message);
                 throw new Exception(message);
             }
 

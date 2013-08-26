@@ -55,12 +55,6 @@ namespace QuantConnect.Securities {
         /// </summary>
         public Queue<MarketData> DataCache;             //Cache for entire loaded model
 
-        //DATA NAITIVE VECTORS
-        public int cacheRows = 24000;                  //Per Seconds MarketData samples
-        public int cacheCols = 8;                     //Cols for storing in naitive format
-        public decimal[][] primaryCache;                //Storage for the Naitive decimals Depth Cache
-        public int primaryCacheIdx;
-
         /// <summary>
         /// Colour Mark Caches for Algo Design:
         /// </summary>
@@ -75,18 +69,12 @@ namespace QuantConnect.Securities {
         /// </summary>
         public SecurityCache(Security vehicle) {
             this.Vehicle = vehicle;
-                
-            //Reset Pointers:
-            primaryCacheIdx = 0;
 
             //ORDER CACHES:
             OrderCache = new List<Order>();
 
             //DATA CACHES
             DataCache = new Queue<MarketData>();
-
-            //MATH CACHE: STORE AS LOW LEVEL OBJECT FOR SPEED
-            primaryCache = Allocate(cacheCols, cacheRows);
 
             // CHARTING CACHES:
             colorMarkCache = new Dictionary<Color, ChartList>();               
@@ -96,20 +84,6 @@ namespace QuantConnect.Securities {
         /******************************************************** 
         * CLASS METHODS
         *********************************************************/
-        /// <summary>
-        /// Allocate the data needed for the primary caches:
-        /// </summary>
-        /// <param name="n">Number of spots to free for n and m decimal arrays</param>
-        /// <returns>Initalised decimal[][] ready to be set</returns>
-        private static decimal[][] Allocate(int n, int m) {
-            decimal[][] dResult = new decimal[n][];
-            for (int i = 0; i < n; i++) {
-                dResult[i] = new decimal[m];
-            }
-            return dResult;
-        }
-
-
 
         /// <summary>
         /// Add the mark to the colour cache for dynamic graphing.
@@ -173,10 +147,6 @@ namespace QuantConnect.Securities {
                 
             //Order Cache:
             OrderCache = new List<Order>();
-
-            //Naitive Cache:
-            primaryCacheIdx = 0;
-            primaryCache = Allocate(cacheCols, cacheRows);
         }
 
 

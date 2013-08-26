@@ -258,11 +258,6 @@
             <param name="low">Decimal Low Price of this bar</param>
             <param name="close">Decimal Close price of this bar</param>
         </member>
-        <member name="P:QuantConnect.Models.TradeBar.Price">
-            <summary>
-            Most recent, representative price
-            </summary>
-        </member>
         <member name="T:QuantConnect.Models.StockPulse">
             <summary>
             Twitter Sentiment Class:
@@ -518,6 +513,13 @@
             </summary>
             <param name="bytes">byte array to convert.</param>
             <returns>String from Bytes.</returns>
+        </member>
+        <member name="M:QuantConnect.Extensions.ToStream(System.String)">
+            <summary>
+            Convert Strings to Stream
+            </summary>
+            <param name="str">String to convert to stream</param>
+            <returns>StreamReader</returns>
         </member>
         <member name="M:QuantConnect.Extensions.Round(System.TimeSpan,System.TimeSpan,System.MidpointRounding)">
             <summary>
@@ -1012,13 +1014,6 @@
             <summary>
             Start a new Cache for the set Index Code
             </summary>
-        </member>
-        <member name="M:QuantConnect.Securities.SecurityCache.Allocate(System.Int32,System.Int32)">
-            <summary>
-            Allocate the data needed for the primary caches:
-            </summary>
-            <param name="n">Number of spots to free for n and m decimal arrays</param>
-            <returns>Initalised decimal[][] ready to be set</returns>
         </member>
         <member name="M:QuantConnect.Securities.SecurityCache.AddMark(System.Drawing.Color,System.String)">
             <summary>

@@ -139,9 +139,9 @@ namespace QuantConnect.Models {
         /// <summary>
         /// Most recent, representative price
         /// </summary>
-        public new decimal Price {
-            get { return Close; }
-        }
+        //public new decimal Price {
+        //    get { return Close; }
+        //}
 
         /******************************************************** 
         * CLASS METHODS
