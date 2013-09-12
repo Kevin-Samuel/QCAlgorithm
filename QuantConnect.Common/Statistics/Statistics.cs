@@ -41,7 +41,7 @@ namespace QuantConnect {
         /// <param name="startingCash">Amount of starting cash in USD </param>
         /// <param name="fractionOfYears">Number of years as a double number 1 = 1 year. </param>
         /// <returns>Statistics Array, Broken into Annual Periods</returns>
-        public static Dictionary<string, Dictionary<Statistic, decimal>> Generate(SortedDictionary<DateTime, decimal> equity, SortedDictionary<DateTime, decimal> profitLoss, decimal startingCash, double fractionOfYears = 1) { 
+        public static Dictionary<string, Dictionary<string, string>> Generate(SortedDictionary<DateTime, decimal> equity, SortedDictionary<DateTime, decimal> profitLoss, SortedDictionary<DateTime, decimal> performance, decimal startingCash, double fractionOfYears = 1) { 
             
             //Initialise the response:
             decimal profitLossValue = 0, runningCash = startingCash;
@@ -52,7 +52,7 @@ namespace QuantConnect {
             SortedDictionary<int, decimal> annualLossTotal = new SortedDictionary<int, decimal>();
             SortedDictionary<int, decimal> annualWinTotal = new SortedDictionary<int, decimal>();
             SortedDictionary<int, decimal> annualNetProfit = new SortedDictionary<int, decimal>();
-            Dictionary<string, Dictionary<Statistic, decimal>> statistics = new Dictionary<string, Dictionary<Statistic, decimal>>();
+            Dictionary<string, Dictionary<string, string>> statistics = new Dictionary<string, Dictionary<string, string>>();
 
             //Set defaults in case of failure:
             decimal totalTrades = 0;
@@ -65,7 +65,7 @@ namespace QuantConnect {
             decimal lossRate = 0;
             decimal totalNetProfit = 0;
             decimal averageAnnualReturn = 0;
-            int frequency = 0;
+            TradeFrequency frequency = TradeFrequency.Daily;
 
             try {
                 //Run over each equity day:
@@ -151,38 +151,42 @@ namespace QuantConnect {
                         }
 
                         //Get the frequency:
-                        frequency = (int)Statistics.Frequency(totalTrades, equity.Keys.FirstOrDefault(), equity.Keys.LastOrDefault());
+                        frequency = Statistics.Frequency(totalTrades, equity.Keys.FirstOrDefault(), equity.Keys.LastOrDefault());
                     }
 
                 } catch (Exception err) {
                     Log.Error("Statistics.RunOrders(): Second Half: " + err.Message);
                 }
 
+                decimal profitLossRatio = Statistics.ProfitLossRatio(averageWin, averageLoss);
+                string profitLossRatioHuman = profitLossRatio.ToString();
+                if (profitLossRatio == -1) profitLossRatioHuman = "0";
+
                 //Add the over all results first, break down by year later:
-                statistics.Add("Overall", new Dictionary<Statistic, decimal>() { 
-                    { Statistic.TotalTrades, Math.Round(totalTrades, 0) },
+                statistics.Add("Overall", new Dictionary<string, string>() { 
+                    { "Total Trades", Math.Round(totalTrades, 0).ToString() },
 
-                    { Statistic.AverageWin, Math.Round(averageWin * 100, 2)  },
+                    { "Average Win", Math.Round(averageWin * 100, 2) + "%"  },
 
-                    { Statistic.AverageLoss, Math.Round(averageLoss * 100, 2) },
+                    { "Average Loss", Math.Round(averageLoss * 100, 2) + "%" },
 
-                    { Statistic.AverageAnnualReturn, Math.Round(averageAnnualReturn * 100, 3) },
+                    { "Annual Return", Math.Round(averageAnnualReturn * 100, 3) + "%" },
 
-                    { Statistic.Drawdown, (Statistics.Drawdown(equity, 3) * 100) },
+                    { "Drawdown", (Statistics.Drawdown(equity, 3) * 100) + "%" },
 
-                    { Statistic.Expectancy, Math.Round((winRate * averageWinRatio) - (lossRate), 3) },
+                    { "Expectancy", Math.Round((winRate * averageWinRatio) - (lossRate), 3).ToString() },
 
-                    { Statistic.NetProfit, Math.Round(totalNetProfit * 100, 3) },
+                    { "Net Profit", Math.Round(totalNetProfit * 100, 3) + "%"},
 
-                    { Statistic.SharpeRatio, Statistics.SharpeRatio(equity, startingCash, averageAnnualReturn) },
+                    { "Sharpe Ratio", Statistics.SharpeRatio(equity, performance, startingCash, averageAnnualReturn).ToString() },
 
-                    { Statistic.LossRate, Math.Round(lossRate * 100)  },
+                    { "Loss Rate", Math.Round(lossRate * 100) + "%" },
 
-                    { Statistic.WinRate, Math.Round(winRate * 100) }, 
+                    { "Win Rate", Math.Round(winRate * 100) + "%" }, 
 
-                    { Statistic.ProfitLossRatio, Statistics.ProfitLossRatio(averageWin, averageLoss) },
+                    { "Profit-Loss Ratio", profitLossRatioHuman },
 
-                    { Statistic.TradeFrequency, frequency }
+                    { "Trade Frequency", frequency.ToString() + " trades" }
                 });
                 
             } catch (Exception err) {
@@ -202,7 +206,7 @@ namespace QuantConnect {
         /// <returns></returns>
         public static decimal ProfitLossRatio(decimal averageWin, decimal averageLoss) {
             if (averageLoss == 0) {
-                return 9;
+                return -1;
             } else {
                 return Math.Round(averageWin / Math.Abs(averageLoss), 2);
             }
@@ -286,40 +290,42 @@ namespace QuantConnect {
         /// <param name="rounding">decimal rounding</param>
         /// <param name="startingCash">Starting cash for the conversion to percentages</param>
         /// <returns>decimal sharpe.</returns>
-        public static decimal SharpeRatio(SortedDictionary<DateTime, decimal> equity, decimal startingCash, decimal averageAnnualGrowth, int rounding = 1) { 
+        public static decimal SharpeRatio(SortedDictionary<DateTime, decimal> equity, SortedDictionary<DateTime, decimal> performance, decimal startingCash, decimal averageAnnualGrowth, int rounding = 1)
+        { 
             //Initialise                
-            double sharpe = 0;
+            decimal sharpe = 0;
 
             try {
                 decimal[] equityCash = equity.Values.ToArray();
+                decimal[] dailyPerformance = performance.Values.ToArray();
                 List<decimal> equityPercent = new List<decimal>();
 
-                foreach (decimal equityValue in equityCash) {
-                    equityPercent.Add(equityValue / startingCash);
+                //Sharpe = Mean Daily Performance * Sqrt (252) / StdDeviation of Returns
+                decimal averageDailyPerformance = dailyPerformance.Average();
+                decimal standardDeviationOfReturns = QCMath.StandardDeviation(dailyPerformance);
+
+                Log.Trace("Avg Daily Performance: " + averageDailyPerformance + " Std Dev: " + standardDeviationOfReturns.ToString());
+
+                if (standardDeviationOfReturns > 0)
+                {
+                    sharpe = (averageDailyPerformance * Convert.ToDecimal(Math.Sqrt(252))) / standardDeviationOfReturns;
                 }
 
-                //Get the Standard Deviation
-                double standardDeviation = Convert.ToDouble(QCMath.StandardDeviation(equityPercent.ToArray()));
+                Log.Trace("SHARPE RATIO: " + sharpe.ToString());
 
-                if (standardDeviation > 0) {
-                    sharpe = (Convert.ToDouble(averageAnnualGrowth) - 0.01) / standardDeviation;
-                }
             } catch (Exception err) {
                 Log.Error("Statistics.SharpeRatio(): " + err.Message);
             }
 
-            //Round to two significant figures:
-            decimal decimalSharpe = Convert.ToDecimal(sharpe);
-
-            if (decimalSharpe > 10) {
-                decimalSharpe = Math.Round(decimalSharpe, 0);
-            } else if (decimalSharpe > 0 & decimalSharpe < 10) {
-                decimalSharpe = Math.Round(decimalSharpe, 1);
-            } else if (decimalSharpe < 0) {
-                decimalSharpe = Math.Round(decimalSharpe, 0);
+            if (sharpe > 10) {
+                sharpe = Math.Round(sharpe, 0);
+            } else if (sharpe > 0 & sharpe < 10) {
+                sharpe = Math.Round(sharpe, 1);
+            } else if (sharpe < 0) {
+                sharpe = Math.Round(sharpe, 1);
             }
 
-            return decimalSharpe;
+            return sharpe;
         }
 
 

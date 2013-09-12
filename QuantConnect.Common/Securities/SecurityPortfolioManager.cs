@@ -236,6 +236,16 @@ namespace QuantConnect.Securities {
             }
         }
 
+
+        /// <summary>
+        /// Added a wrapper for American spelling.
+        /// </summary>
+        public decimal TotalUnrealizedProfit {
+            get {
+                return TotalUnrealisedProfit;
+            }
+        }
+
         /// <summary>
         /// Total portfolio value if we sold all holdings:
         /// </summary>

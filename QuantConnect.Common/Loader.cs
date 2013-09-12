@@ -37,10 +37,11 @@ namespace QuantConnect {
         /// Creates a new instance of the class library in a new AppDomain, safely.
         /// </summary>
         /// <returns>bool success</returns>        
-        public bool CreateInstance<T>(string assemblyPath, string baseTypeName, out T algorithmInstance) {
+        public bool CreateInstance<T>(string assemblyPath, string baseTypeName, out T algorithmInstance, out string errorMessage) {
 
             //Default initialisation of Assembly.
             algorithmInstance = default(T);
+            errorMessage = "";
 
             //First most basic check:
             if (!File.Exists(assemblyPath)) {
@@ -69,8 +70,10 @@ namespace QuantConnect {
                 }
             } catch (ReflectionTypeLoadException err) {
                 Log.Error("QC.Loader.CreateInstance(): " + err.Message);
+                errorMessage = err.InnerException.Message;
             } catch (Exception err) {
                 Log.Error("QC.Loader.CreateInstance(): " + err.Message);
+                errorMessage = err.InnerException.Message;
             }
 
             //Successful load.

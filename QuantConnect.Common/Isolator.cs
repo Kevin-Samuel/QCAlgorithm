@@ -120,7 +120,7 @@ namespace QuantConnect {
 
             if (task.IsCompleted == false && message == "")
             {
-                message = "Execution Security Error: Operation timed out - " + timeSpan.Minutes + " minutes max. Check for recursive loops.";
+                message = "Execution Security Error: Operation timed out - " + timeSpan.TotalMinutes + " minutes max. Check for recursive loops.";
                 Console.WriteLine("Isolator.ExecuteWithTimeLimit(): " + message);
             }
 

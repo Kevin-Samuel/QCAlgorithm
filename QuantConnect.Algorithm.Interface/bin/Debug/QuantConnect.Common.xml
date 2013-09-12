@@ -554,7 +554,7 @@
             <param name="d">TimeSpan Unit</param>
             <returns>Rounded DateTime</returns>
         </member>
-        <member name="M:QuantConnect.Loader.CreateInstance``1(System.String,System.String,``0@)">
+        <member name="M:QuantConnect.Loader.CreateInstance``1(System.String,System.String,``0@,System.String@)">
             <summary>
             Creates a new instance of the class library in a new AppDomain, safely.
             </summary>
@@ -1883,7 +1883,7 @@
             Configurable Minimum Order Quantity: Default 0
             </summary>
         </member>
-        <member name="M:QuantConnect.Statistics.Generate(System.Collections.Generic.SortedDictionary{System.DateTime,System.Decimal},System.Collections.Generic.SortedDictionary{System.DateTime,System.Decimal},System.Decimal,System.Double)">
+        <member name="M:QuantConnect.Statistics.Generate(System.Collections.Generic.SortedDictionary{System.DateTime,System.Decimal},System.Collections.Generic.SortedDictionary{System.DateTime,System.Decimal},System.Collections.Generic.SortedDictionary{System.DateTime,System.Decimal},System.Decimal,System.Double)">
             <summary>
             Run a full set of orders and return a 
             </summary>
@@ -1918,7 +1918,7 @@
             <param name="rounding">Round the drawdown statistics </param>
             <returns>Draw down percentage over period.</returns>
         </member>
-        <member name="M:QuantConnect.Statistics.SharpeRatio(System.Collections.Generic.SortedDictionary{System.DateTime,System.Decimal},System.Decimal,System.Decimal,System.Int32)">
+        <member name="M:QuantConnect.Statistics.SharpeRatio(System.Collections.Generic.SortedDictionary{System.DateTime,System.Decimal},System.Collections.Generic.SortedDictionary{System.DateTime,System.Decimal},System.Decimal,System.Decimal,System.Int32)">
             <summary>
             Get the Sharpe Ratio of this period:
             </summary>
