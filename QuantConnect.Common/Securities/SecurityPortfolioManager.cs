@@ -377,14 +377,14 @@ namespace QuantConnect.Securities {
                 vehicle.Holdings.AddNewFee(feeThisOrder);
 
                 //Update the Vehicle approximate total sales volume.
-                vehicle.Holdings.AddNewSale(order.Price * Math.Abs(Convert.ToDecimal(order.Quantity)));
+                vehicle.Holdings.AddNewSale(order.Price * Convert.ToDecimal(order.AbsoluteQuantity));
 
                 //Update the Last Trade Profit
                 if (isLong && order.Direction == OrderDirection.Sell) {
                     //Closing up a long position
-                    if (quantity >= order.Quantity) {
+                    if (quantity >= order.AbsoluteQuantity) {
                         //CLosing up towards Zero.
-                        _lastTradeProfit = (order.Price - averagePrice) * Math.Abs(Convert.ToDecimal(order.Quantity));
+                        _lastTradeProfit = (order.Price - averagePrice) * Convert.ToDecimal(order.AbsoluteQuantity);
                     } else {
                         //Closing up to Neg/Short Position (selling more than we have)
                         // Only calc profit on the stock we have to sell.

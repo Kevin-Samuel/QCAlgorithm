@@ -1771,6 +1771,11 @@
             Get the total unrealised profit in our portfolio
             </summary>
         </member>
+        <member name="P:QuantConnect.Securities.SecurityPortfolioManager.TotalUnrealizedProfit">
+            <summary>
+            Added a wrapper for American spelling.
+            </summary>
+        </member>
         <member name="P:QuantConnect.Securities.SecurityPortfolioManager.TotalPortfolioValue">
             <summary>
             Total portfolio value if we sold all holdings:
