@@ -23,37 +23,32 @@ namespace QuantConnect {
     /// <summary>
     /// Example user algorithm class - use this as a base point for your strategy.
     /// </summary>
-    public class MyAlgorithm : QCAlgorithm {
+    public class BasicTemplateAlgorithm : QCAlgorithm, IAlgorithm
+    {
+        string symbol = "IBM";
+        DateTime startDate = new DateTime(2013, 8, 1);
 
-        /******************************************************** 
-        * CLASS METHODS
-        *********************************************************/
-        
-        /// <summary>
-        /// Initialise your algorithm here.
-        /// </summary>
-        public override void Initialize() {
-            //Configure Start and End Date:
-            SetStartDate(2012, 01, 01);
-            SetEndDate(2012, 12, 31);
-            //Request IBM Data
-            AddSecurity(SecurityType.Equity, "IBM", Resolution.Minute, true, false);
-            //Set your starting capital:
-            SetCash(50000);
+        //Initialize the data and resolution you require for your strategy:
+        public override void Initialize()
+        {
+            //Initialize the start, end dates for simulation; cash and data required.
+            SetStartDate(startDate);
+            SetEndDate(DateTime.Now.Date.AddDays(-1));
+            SetCash(78000); //Starting Cash in USD.
+            AddSecurity(SecurityType.Equity, symbol, Resolution.Minute); //Minute,Second - Tick
+            SetRunMode(RunMode.Series); //Series or Parallel for intraday strategies.
         }
 
-        /// <summary>
-        /// Handle your tradeBar's here.
-        /// </summary>
-        /// <param name="data">Dictionary of data objects</param>
-        public override void OnTradeBar(Dictionary<string, TradeBar> data) {
-            //Use the data to generate orders.
+        //Handle TradeBar Events: a TradeBar occurs on every time-interval
+        public override void OnTradeBar(Dictionary<string, TradeBar> data)
+        {
             if (!Portfolio.HoldStock)
             {
-                Order("IBM", 10, OrderType.Market);
+                Order(symbol, 50);
+                Debug("Debug Purchased IBM 15 : " + (new Random()).NextDouble());
+                Log("Log Purchased IBM 15 " + (new Random()).NextDouble());
             }
         }
-
-    } // End Algorithm Template
+    }
 
 } // End QC Namespace

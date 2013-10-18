@@ -31,7 +31,8 @@ namespace QuantConnect {
         private DateTime _endDate = DateTime.Today.AddDays(-1);     //Default end to yesterday
         private RunMode _runMode = RunMode.Automatic;
         private bool _locked = false;
-        private String _resolution = "";
+        private string _resolution = "";
+        private string _simulationId = "";
         private bool _quit = false;
         private List<string> _debugMessages = new List<string>();
         private List<string> _logMessages = new List<string>();
@@ -135,6 +136,16 @@ namespace QuantConnect {
         public DateTime EndDate {
             get {
                 return _endDate;
+            }
+        }
+
+
+        /// <summary>
+        /// Simulation Id for this Backtest
+        /// </summary>
+        public string SimulationId {
+            get {
+                return _simulationId;
             }
         }
 
@@ -252,8 +263,16 @@ namespace QuantConnect {
         /// Call this method at the end of the algorithm day
         /// </summary>
         public virtual void OnEndOfDay() {
-
+            
         }
+
+        /// <summary>
+        /// Call this at the end of the algorithm running.
+        /// </summary>
+        public virtual void OnEndOfAlgorithm() { 
+            
+        }
+
 
         /// <summary>
         /// Set the current datetime frontier: the most forward looking tick so far. This is used by backend to advance time. Do not modify
@@ -319,6 +338,19 @@ namespace QuantConnect {
                 throw new Exception("Date Invalid: " + err.Message);
             }
         }
+
+        /// <summary>
+        /// Wrapper for SetEndDate(datetime). Set the end simulation date. 
+        /// </summary>
+        /// <param name="year">int year</param>
+        /// <param name="month">int month</param>
+        /// <param name="day">int day</param>
+        public void SetSimulationId(string simulationId)
+        {
+            _simulationId = simulationId;
+        }
+
+
 
         /// <summary>
         /// Set the start date for the simulation 

@@ -92,6 +92,13 @@ namespace QuantConnect  {
         }
 
         /// <summary>
+        /// Simulation Id for the backtest
+        /// </summary>
+        string SimulationId {
+            get;
+        }
+
+        /// <summary>
         /// Accessor for Filled Orders:
         /// </summary>
         Dictionary<int, Order> Orders {
@@ -150,9 +157,14 @@ namespace QuantConnect  {
 
 
         /// <summary>
-        /// Call this method at the end of the algorithm.
+        /// Call this method at the end of each day of data.
         /// </summary>
         void OnEndOfDay();
+
+        /// <summary>
+        /// Call this event at the end of the algorithm running.
+        /// </summary>
+        void OnEndOfAlgorithm();
 
         /// <summary>
         /// Set the DateTime Frontier: This is the master time and is 
@@ -186,6 +198,13 @@ namespace QuantConnect  {
         /// <param name="day">integer day to end simulation period</param>
         void SetEndDate(int year, int month, int day);
         void SetEndDate(DateTime end);
+
+
+        /// <summary>
+        /// Set the simulation Id for this backtest or live run. This can be used to identify the order and equity records.
+        /// </summary>
+        /// <param name="simulationId">unique 32 character identifier for simulation</param>
+        void SetSimulationId(string simulationId);
 
 
         /// <summary>

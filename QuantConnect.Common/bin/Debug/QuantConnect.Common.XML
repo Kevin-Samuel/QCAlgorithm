@@ -4,6 +4,16 @@
         <name>QuantConnect.Common</name>
     </assembly>
     <members>
+        <member name="T:QuantConnect.Mime">
+            <summary>
+            Dictionary list of Mime Types from Apache:
+            </summary>
+        </member>
+        <member name="F:QuantConnect.Mime.Types">
+            <summary>
+            Dictionary List of Mime Types:
+            </summary>
+        </member>
         <member name="T:QuantConnect.Models.DataManager">
             <summary>
             Enumerable Data Management Class
