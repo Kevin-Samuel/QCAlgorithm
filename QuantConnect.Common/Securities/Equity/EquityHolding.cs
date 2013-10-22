@@ -45,9 +45,9 @@ namespace QuantConnect.Securities {
         /// <summary>
         /// Equity Holding Class
         /// </summary>
-        public EquityHolding(Equity vehicle) :
-            base(vehicle) {
-                this.Vehicle = vehicle;
+        public EquityHolding(string symbol, ISecurityTransactionModel transactionModel) :
+            base(symbol, transactionModel)
+        {
         }
 
         /******************************************************** 

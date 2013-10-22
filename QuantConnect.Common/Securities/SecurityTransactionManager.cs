@@ -40,8 +40,20 @@ namespace QuantConnect.Securities {
 
         //Order Monitor Cache:
         //Order Cache: Record of Orders
+
+        /// <summary>
+        /// Orders which have been processed / filled and are saved for future reference:
+        /// </summary>
         public Dictionary<int, Order> ProcessedOrders = new Dictionary<int, Order>();
+
+        /// <summary>
+        /// Orders waiting to be filled:
+        /// </summary>
         public Dictionary<int, Order> OutstandingOrders = new Dictionary<int,Order>();
+
+        /// <summary>
+        /// Trade record of profits and losses for each trade statistics calculations
+        /// </summary>
         public Dictionary<DateTime, decimal> TransactionRecord = new Dictionary<DateTime, decimal>();
 
         /******************************************************** 
@@ -291,7 +303,10 @@ namespace QuantConnect.Securities {
             }
 
             //-3: Attempting market order outside of market hours
-            if (!portfolio[order.Symbol].Vehicle.Exchange.ExchangeOpen && order.Type == OrderType.Market) {
+
+
+            if (!Securities[order.Symbol].Exchange.ExchangeOpen && order.Type == OrderType.Market)
+            {
                 return -3;
             }
 

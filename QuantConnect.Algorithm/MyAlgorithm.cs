@@ -26,7 +26,7 @@ namespace QuantConnect {
     public class BasicTemplateAlgorithm : QCAlgorithm, IAlgorithm
     {
         string symbol = "IBM";
-        DateTime startDate = new DateTime(2013, 8, 1);
+        DateTime startDate = new DateTime(2013, 1, 1);
 
         //Initialize the data and resolution you require for your strategy:
         public override void Initialize()

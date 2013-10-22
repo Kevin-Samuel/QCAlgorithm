@@ -82,9 +82,6 @@ namespace QuantConnect {
             //Initialise Data Manager 
             DataManager = new DataManager();
 
-            //Initialise Error and Order Holders:
-            Errors = new List<string>();
-
             //Initialise Algorithm RunMode to Automatic:
             _runMode = RunMode.Automatic;
 
@@ -474,6 +471,7 @@ namespace QuantConnect {
             try
             {
                 if (!_locked) {
+
                     symbol = symbol.ToUpper();
 
                     if (securityType != SecurityType.Equity && securityType != SecurityType.Forex) {
@@ -490,7 +488,7 @@ namespace QuantConnect {
                         switch (securityType)
                         {
                             case SecurityType.Equity:
-                                leverage = 1;
+                                leverage = 1;   //RegT = 2 or 4.
                                 break;
                             case SecurityType.Forex:
                                 leverage = 50;

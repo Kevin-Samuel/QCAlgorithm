@@ -123,8 +123,8 @@ namespace QuantConnect.Securities {
             this._isExtendedMarketHours = extendedMarketHours;
 
             //Holdings for new Vehicle:
-            Cache = new SecurityCache(this);
-            Holdings = new SecurityHolding(this);
+            Cache = new SecurityCache();
+            Holdings = new SecurityHolding(symbol, Model);
             Exchange = new SecurityExchange();
 
             //Cannot initalise a default model.
@@ -282,6 +282,9 @@ namespace QuantConnect.Securities {
             //Update the Exchange/Timer:
             Exchange.SetDateTimeFrontier(frontier);
 
+            //Update the Holdings Copy of Price Variable:
+            Holdings.UpdatePrice(Close);
+
             //Add new point to cache:
             if (data != null)
             {
@@ -289,6 +292,7 @@ namespace QuantConnect.Securities {
             }
 
             //Update Online Calculations:
+
         }
 
 

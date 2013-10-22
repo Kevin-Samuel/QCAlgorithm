@@ -36,7 +36,7 @@ namespace QuantConnect.Securities {
         /******************************************************** 
         * CLASS VARIABLES
         *********************************************************/
-        public new Forex Vehicle { get; set; }
+
 
         /******************************************************** 
         * CONSTRUCTOR/DELEGATE DEFINITIONS
@@ -44,9 +44,9 @@ namespace QuantConnect.Securities {
         /// <summary>
         /// Start a new Cache for the set Index Code
         /// </summary>
-        public ForexCache(Forex vehicle) :
-            base(vehicle) {
-                this.Vehicle = vehicle;
+        public ForexCache( ) :
+            base() {
+            //Nothing to do:
         }
 
 

@@ -113,6 +113,9 @@ namespace QuantConnect {
             }
         }
 
+        /// <summary>
+        /// Order constructor:
+        /// </summary>
         public Order(string symbol, int quantity, OrderType order, DateTime time, decimal price = 0) {
             this.Time = time;
             this.Price = price;
@@ -178,6 +181,10 @@ namespace QuantConnect {
             }
         }
 
+        /// <summary>
+        /// Hungarian translation of the order class for the js side of IDE.
+        /// </summary>
+        /// <param name="cOrder"></param>
         public HungarianOrder(Order cOrder) {
             this.id = cOrder.Id;
             this.dtTime = cOrder.Time.Round(TimeSpan.FromSeconds(1));

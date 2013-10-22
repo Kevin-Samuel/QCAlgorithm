@@ -27,8 +27,6 @@ namespace QuantConnect.Securities {
     /******************************************************** 
     * CLASS DEFINITIONS
     *********************************************************/
-
-
     /// <summary>
     /// FOREX Holdings Override: Any Properties specifically for FOREX Holdings Cases:
     /// </summary>
@@ -36,7 +34,7 @@ namespace QuantConnect.Securities {
         /******************************************************** 
         * CLASS VARIABLES
         *********************************************************/
-        public new Forex Vehicle { get; set; }
+
 
         /******************************************************** 
         * CONSTRUCTOR/DELEGATE DEFINITIONS
@@ -44,9 +42,10 @@ namespace QuantConnect.Securities {
         /// <summary>
         /// Forex Holding Class
         /// </summary>
-        public ForexHolding(Forex pair) :
-            base(pair) {
-                this.Vehicle = pair;
+        public ForexHolding(string symbol, ISecurityTransactionModel transactionModel) :
+            base(symbol, transactionModel)
+        {
+            //Nothing to do.
         }
 
         /******************************************************** 

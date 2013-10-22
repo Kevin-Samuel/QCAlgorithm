@@ -37,8 +37,8 @@ namespace QuantConnect.Securities {
             base(symbol, SecurityType.Forex, resolution, fillDataForward, leverage, extendedMarketHours) {
             
             //Holdings for new Vehicle:
-            Cache = new ForexCache(this);
-            Holdings = new ForexHolding(this);
+            Cache = new ForexCache();
+            Holdings = new ForexHolding(symbol, this.Model);
             Exchange = new ForexExchange();
             Model = new ForexTransactionModel();
         }

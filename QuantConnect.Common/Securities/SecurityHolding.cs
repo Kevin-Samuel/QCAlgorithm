@@ -40,9 +40,9 @@ namespace QuantConnect.Securities {
         /// <summary>
         /// Public Property for the Underlying Market Asset:
         /// </summary>
-        public Security Vehicle {
+        public ISecurityTransactionModel Model {
             get {
-                return _Vehicle;
+                return _model;
             }
         }
         
@@ -80,12 +80,13 @@ namespace QuantConnect.Securities {
         //Working Variables
         private decimal _averagePrice = 0;
         private int     _quantity = 0;
+        private decimal _price = 0;
         private string  _symbol = "";
         private decimal _totalSaleVolume = 0;
         private decimal _profit = 0;
         private decimal _lastTradeProfit = 0;
         private decimal _totalFees = 0;
-        private Security _Vehicle;
+        private ISecurityTransactionModel _model;
 
         /******************************************************** 
         * CONSTRUCTOR/DELEGATE DEFINITIONS
@@ -93,9 +94,10 @@ namespace QuantConnect.Securities {
         /// <summary>
         /// Launch a new holding class with Trader Dealer:
         /// </summary>
-        public SecurityHolding(Security vehicle) {
-            this._Vehicle = vehicle;
-            this._symbol = vehicle.Symbol;
+        public SecurityHolding(string symbol, ISecurityTransactionModel transactionModel)
+        {
+            this._model = transactionModel;
+            this._symbol = symbol;
 
             //Total Sales Volume for the day
             this._totalSaleVolume = 0;
@@ -270,20 +272,30 @@ namespace QuantConnect.Securities {
         }
 
 
+        /// <summary>
+        /// Update local copy of closing price variable
+        /// </summary>
+        /// <param name="closingPrice">price of the underlying asset</param>
+        public virtual void UpdatePrice(decimal closingPrice)
+        {
+            _price = closingPrice;
+        }
+
+
 
         /// <summary>
         /// Profit if we closed the holdings right now. If relative per dollar is true, will return the efficiency
         /// </summary>
         public virtual decimal TotalCloseProfit() {
             decimal gross = 0, net = 0;
-            decimal orderFee = Vehicle.Model.GetOrderFee(AbsoluteQuantity, Vehicle.Price);
+            decimal orderFee = _model.GetOrderFee(AbsoluteQuantity, _price);
 
             if (IsLong) {
                 //if we're long on a position, profit from selling off $10,000 stock:
-                gross = (Vehicle.Price - AveragePrice) * AbsoluteQuantity;
+                gross = (_price - AveragePrice) * AbsoluteQuantity;
             } else if (IsShort) {
                 //if we're short on a position, profit from buying $10,000 stock:
-                gross = (AveragePrice - Vehicle.Price) * AbsoluteQuantity;
+                gross = (AveragePrice - _price) * AbsoluteQuantity;
             } else {
                 //no holdings, 0 profit.
                 return 0;

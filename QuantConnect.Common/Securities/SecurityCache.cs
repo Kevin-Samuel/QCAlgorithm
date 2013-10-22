@@ -36,19 +36,9 @@ namespace QuantConnect.Securities {
         * CLASS VARIABLES
         *********************************************************/
         /// <summary>
-        /// Asset we're operating on.
-        /// </summary>
-        public virtual Security Vehicle { get; set; }
-
-        /// <summary>
         /// Cache for the orders processed
         /// </summary>
         public List<Order> OrderCache;                //Orders Cache
-
-        /// <summary>
-        /// Last data for this security.
-        /// </summary>
-        private MarketData _lastData;
         
         /// <summary>
         /// Incoming Data Cached.
@@ -61,15 +51,18 @@ namespace QuantConnect.Securities {
         public Dictionary<Color, ChartList> colorMarkCache;
 
 
+        /// <summary>
+        /// Last data for this security.
+        /// </summary>
+        private MarketData _lastData;
+
         /******************************************************** 
         * CONSTRUCTOR/DELEGATE DEFINITIONS
         *********************************************************/
         /// <summary>
         /// Start a new Cache for the set Index Code
         /// </summary>
-        public SecurityCache(Security vehicle) {
-            this.Vehicle = vehicle;
-
+        public SecurityCache() {
             //ORDER CACHES:
             OrderCache = new List<Order>();
 
@@ -88,11 +81,11 @@ namespace QuantConnect.Securities {
         /// <summary>
         /// Add the mark to the colour cache for dynamic graphing.
         /// </summary>
-        public virtual void AddMark(Color color, string text) {
+        public virtual void AddMark(DateTime time, decimal price, Color color, string text) {
             if (!colorMarkCache.ContainsKey(color)) {
                 colorMarkCache.Add(color, new ChartList());
             }
-            colorMarkCache[color].Add(Vehicle.Time, Vehicle.Price, text);
+            colorMarkCache[color].Add(time, price, text);
         }
 
 
@@ -108,6 +101,7 @@ namespace QuantConnect.Securities {
                 //Add it to the depth cache:
                 DataCache.Enqueue(data);
 
+                //Dumping old data because lots of tick data results in memory overflows.
                 if (DataCache.Count > 1000) {
                     DataCache.Dequeue();
                 }

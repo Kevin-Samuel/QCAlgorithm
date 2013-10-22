@@ -42,8 +42,8 @@ namespace QuantConnect.Securities {
             base(symbol, SecurityType.Equity, resolution, fillDataForward, leverage, extendedMarketHours) {
             
             //Holdings for new Vehicle:
-            Cache = new EquityCache(this);
-            Holdings = new EquityHolding(this);
+            Cache = new EquityCache();
+            Holdings = new EquityHolding(symbol, this.Model);
             Exchange = new EquityExchange();
 
             //Set the Transaction Model

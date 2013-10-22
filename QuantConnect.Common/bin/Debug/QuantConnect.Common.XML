@@ -812,6 +812,11 @@
             Trade Struct for Recording Results:
             </summary>
         </member>
+        <member name="M:QuantConnect.Order.#ctor(System.String,System.Int32,QuantConnect.OrderType,System.DateTime,System.Decimal)">
+            <summary>
+            Order constructor:
+            </summary>
+        </member>
         <member name="P:QuantConnect.Order.Direction">
             <summary>
             Order Direction Property based off Quantity.
@@ -831,6 +836,12 @@
             <summary>
             Orders Struct for communication with JS IDE (JS/PHP code uses hungarian notation)
             </summary>
+        </member>
+        <member name="M:QuantConnect.HungarianOrder.#ctor(QuantConnect.Order)">
+            <summary>
+            Hungarian translation of the order class for the js side of IDE.
+            </summary>
+            <param name="cOrder"></param>
         </member>
         <member name="P:QuantConnect.HungarianOrder.eDirection">
             <summary>
@@ -1020,12 +1031,12 @@
             Colour Mark Caches for Algo Design:
             </summary>
         </member>
-        <member name="M:QuantConnect.Securities.SecurityCache.#ctor(QuantConnect.Securities.Security)">
+        <member name="M:QuantConnect.Securities.SecurityCache.#ctor">
             <summary>
             Start a new Cache for the set Index Code
             </summary>
         </member>
-        <member name="M:QuantConnect.Securities.SecurityCache.AddMark(System.Drawing.Color,System.String)">
+        <member name="M:QuantConnect.Securities.SecurityCache.AddMark(System.DateTime,System.Decimal,System.Drawing.Color,System.String)">
             <summary>
             Add the mark to the colour cache for dynamic graphing.
             </summary>
@@ -1051,12 +1062,7 @@
             Reset as many of the Cache's as possible.
             </summary>
         </member>
-        <member name="P:QuantConnect.Securities.SecurityCache.Vehicle">
-            <summary>
-            Asset we're operating on.
-            </summary>
-        </member>
-        <member name="M:QuantConnect.Securities.EquityCache.#ctor(QuantConnect.Securities.Equity)">
+        <member name="M:QuantConnect.Securities.EquityCache.#ctor">
             <summary>
             Start a new Cache for the set Index Code
             </summary>
@@ -1151,7 +1157,7 @@
             a market item.
             </summary>
         </member>
-        <member name="M:QuantConnect.Securities.SecurityHolding.#ctor(QuantConnect.Securities.Security)">
+        <member name="M:QuantConnect.Securities.SecurityHolding.#ctor(System.String,QuantConnect.Securities.ISecurityTransactionModel)">
             <summary>
             Launch a new holding class with Trader Dealer:
             </summary>
@@ -1185,12 +1191,18 @@
             Set the quantity - useful if running a model in running total mode and have overnight holdings.
             </summary>
         </member>
+        <member name="M:QuantConnect.Securities.SecurityHolding.UpdatePrice(System.Decimal)">
+            <summary>
+            Update local copy of closing price variable
+            </summary>
+            <param name="closingPrice">price of the underlying asset</param>
+        </member>
         <member name="M:QuantConnect.Securities.SecurityHolding.TotalCloseProfit">
             <summary>
             Profit if we closed the holdings right now. If relative per dollar is true, will return the efficiency
             </summary>
         </member>
-        <member name="P:QuantConnect.Securities.SecurityHolding.Vehicle">
+        <member name="P:QuantConnect.Securities.SecurityHolding.Model">
             <summary>
             Public Property for the Underlying Market Asset:
             </summary>
@@ -1270,7 +1282,7 @@
             The profit/loss figure from the holdings we currently have.
             </summary>
         </member>
-        <member name="M:QuantConnect.Securities.EquityHolding.#ctor(QuantConnect.Securities.Equity)">
+        <member name="M:QuantConnect.Securities.EquityHolding.#ctor(System.String,QuantConnect.Securities.ISecurityTransactionModel)">
             <summary>
             Equity Holding Class
             </summary>
@@ -1406,7 +1418,7 @@
             FX Specific Caching ontop of the SecurityCache obj. Common Caching Spot For Market Data and Averaging. 
             </summary>
         </member>
-        <member name="M:QuantConnect.Securities.ForexCache.#ctor(QuantConnect.Securities.Forex)">
+        <member name="M:QuantConnect.Securities.ForexCache.#ctor">
             <summary>
             Start a new Cache for the set Index Code
             </summary>
@@ -1445,7 +1457,7 @@
             FOREX Holdings Override: Any Properties specifically for FOREX Holdings Cases:
             </summary>
         </member>
-        <member name="M:QuantConnect.Securities.ForexHolding.#ctor(QuantConnect.Securities.Forex)">
+        <member name="M:QuantConnect.Securities.ForexHolding.#ctor(System.String,QuantConnect.Securities.ISecurityTransactionModel)">
             <summary>
             Forex Holding Class
             </summary>
@@ -1816,6 +1828,21 @@
         <member name="T:QuantConnect.Securities.SecurityTransactionManager">
             <summary>
             Algorithm Transactions Manager - Recording Transactions
+            </summary>
+        </member>
+        <member name="F:QuantConnect.Securities.SecurityTransactionManager.ProcessedOrders">
+            <summary>
+            Orders which have been processed / filled and are saved for future reference:
+            </summary>
+        </member>
+        <member name="F:QuantConnect.Securities.SecurityTransactionManager.OutstandingOrders">
+            <summary>
+            Orders waiting to be filled:
+            </summary>
+        </member>
+        <member name="F:QuantConnect.Securities.SecurityTransactionManager.TransactionRecord">
+            <summary>
+            Trade record of profits and losses for each trade statistics calculations
             </summary>
         </member>
         <member name="M:QuantConnect.Securities.SecurityTransactionManager.#ctor(QuantConnect.Securities.SecurityManager)">
