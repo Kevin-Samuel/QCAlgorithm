@@ -165,18 +165,7 @@ namespace QuantConnect {
             try {
                 foreach (Security security in securities.Values)
                 {
-                    switch (security.Type)
-                    {
-                        case SecurityType.Equity:
-                            //Add 12 hours to make it 12 midday each day
-                            if (((Equity)security).Exchange.DateIsOpen(day)) tradeable = true;
-                            break;
-
-                        case SecurityType.Forex:
-                            //Add 17 hours to make it 5pm each day, FX is open every day except saturday at 5pm
-                            if (((Forex)security).Exchange.DateIsOpen(day)) tradeable = true;
-                            break;
-                    }
+                    if (security.Exchange.DateIsOpen(day)) tradeable = true;
                 }
             } catch (Exception err) {
                 Log.Error("Time.TradeableDate(): " + err.Message);

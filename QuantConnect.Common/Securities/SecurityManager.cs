@@ -89,8 +89,10 @@ namespace QuantConnect.Securities {
         /// <param name="resolution">Resolution of Data Required</param>
         /// <param name="fillDataForward">If true, returns previous tradeBar when none are available in current second.</param>
         /// <param name="leverage">Leverage for this security, default = 1</param>
-        public void Add(string symbol, SecurityType type = SecurityType.Equity, Resolution resolution = Resolution.Minute, bool fillDataForward = true, decimal leverage = 1, bool extendedMarketHours = false) {
-
+        /// <param name="extendedMarketHours">Request ALL the data available, from 4am - 8pm.</param>
+        /// <param name="useQuantConnectData">Use quantconnect's data for equity and forex requests</param>
+        public void Add(string symbol, SecurityType type = SecurityType.Equity, Resolution resolution = Resolution.Minute, bool fillDataForward = true, decimal leverage = 1, bool extendedMarketHours = false, bool useQuantConnectData = false) 
+        {
             //Upper case sybol:
             symbol = symbol.ToUpper();
 
@@ -98,10 +100,10 @@ namespace QuantConnect.Securities {
             if (GetResolutionCount(Resolution.Tick) == 10 && resolution == Resolution.Tick) {
                 throw new Exception("We currently only support 10 tick assets at a time.");
             }
-            if (GetResolutionCount(Resolution.Second) == 60 && resolution == Resolution.Second) {
+            if (GetResolutionCount(Resolution.Second) == 80 && resolution == Resolution.Second) {
                 throw new Exception("We currently only support 60 second resolution securities at a time.");
             }
-            if (GetResolutionCount(Resolution.Minute) == 500 && resolution == Resolution.Minute) {
+            if (GetResolutionCount(Resolution.Minute) == 800 && resolution == Resolution.Minute) {
                 throw new Exception("We currently only support 500 minute assets at a time.");
             }
 
@@ -109,21 +111,29 @@ namespace QuantConnect.Securities {
             if (!_securityManager.ContainsKey(symbol)) {
                 switch (type) {
                     case SecurityType.Equity:
-                        this.Add(symbol, new Equity(symbol, resolution, fillDataForward, leverage, extendedMarketHours));
+                        Equity stock = new Equity(symbol, resolution, fillDataForward, leverage, extendedMarketHours, useQuantConnectData);
+                        this.Add(symbol, stock);
                         break;
                     case SecurityType.Forex:
-                        this.Add(symbol, new Forex(symbol, resolution, fillDataForward, leverage, extendedMarketHours));
+                        Forex forex = new Forex(symbol, resolution, fillDataForward, leverage, extendedMarketHours, useQuantConnectData);
+                        this.Add(symbol, forex);
+                        break;
+                    case SecurityType.Base:
+                        this.Add(symbol, new Security(symbol, SecurityType.Base, resolution, fillDataForward, leverage, extendedMarketHours));
                         break;
                 }
             } else {
                 //Otherwise, we already have it, just change its resolution:
-                Log.Trace("Algorithm.Markets.Add(): Changing resolution will overwrite portfolio");
+                Log.Trace("Algorithm.Securities.Add(): Changing security information will overwrite portfolio");
                 switch (type) {
                     case SecurityType.Equity:
                         _securityManager[symbol] = new Equity(symbol, resolution, fillDataForward, leverage, extendedMarketHours);
                         break;
                     case SecurityType.Forex:
                         _securityManager[symbol] = new Forex(symbol, resolution, fillDataForward, leverage, extendedMarketHours);
+                        break;
+                    case SecurityType.Base:
+                        _securityManager[symbol] = new Security(symbol, SecurityType.Base, resolution, fillDataForward, leverage, extendedMarketHours);
                         break;
                 }
             }
@@ -299,7 +309,7 @@ namespace QuantConnect.Securities {
         /// </summary>
         /// <param name="resolution">Resolution to look for.</param>
         /// <returns>int iCount.</returns>
-        public int GetResolutionCount(Resolution resolution) {
+        public int  GetResolutionCount(Resolution resolution) {
             int count = 0;
             try {
                 count = (from security in _securityManager.Values
@@ -315,28 +325,22 @@ namespace QuantConnect.Securities {
         /// <summary>
         /// Update the security properties, online functions with these data packets.
         /// </summary>
-        /// <param name="frontier"></param>
-        /// <param name="data"></param>
-        public void Update(DateTime frontier, Dictionary<string, List<MarketData>> data) {
+        /// <param name="time">Time Frontier</param>
+        /// <param name="data">Data packets to update</param>
+        public void Update(DateTime time, BaseData data) {
             try {
-
-                foreach (string symbol in _securityManager.Keys)
+                //If its market data, look for the matching security symbol and update it:
+                foreach (Security security in _securityManager.Values)
                 {
-                    if (data.ContainsKey(symbol) && data[symbol].Count > 0)
+                    if (data.Symbol == security.Symbol)
                     {
-                        //Loop over the data we have and update the cache:
-                        foreach (MarketData dataPoint in data[symbol])
-                        {
-                            this[symbol].Update(frontier, dataPoint);
-                        }
+                        security.Update(time, data);
                     }
                     else
                     {
-                        //Send in a null data and just update the time.
-                        this[symbol].Update(frontier, null);
+                        security.Update(time, null); //No data, update time
                     }
                 }
-
             } catch (Exception err) {
                 Log.Error("Algorithm.Market.Update(): " + err.Message);
             }

@@ -56,10 +56,34 @@ namespace QuantConnect.Securities {
         /******************************************************** 
         * DICTIONARY IMPLEMENTATION
         *********************************************************/
+        /// <summary>
+        /// Portfolio Manager Dictionary Implementation Placeholder - Not Implemented.
+        /// </summary>
+        /// <param name="symbol">Symbol of dictionary</param>
+        /// <param name="holding">SecurityHoldings object</param>
         public void Add(string symbol, SecurityHolding holding) { throw new Exception("Portfolio object is an adaptor for Security Manager. To add a new asset add the required data during initialization."); }
+
+        /// <summary>
+        /// Portfolio Manager Dictionary Implementation Placeholder - Not Implemented.
+        /// </summary>
+        /// <param name="pair">Key value pair of dictionary</param>
         public void Add(KeyValuePair<string, SecurityHolding> pair) { throw new Exception("Portfolio object is an adaptor for Security Manager. To add a new asset add the required data during initialization."); }
+
+        /// <summary>
+        /// Portfolio Manager Dictionary Implementation Placeholder - Not Implemented.
+        /// </summary>
         public void Clear() { throw new Exception("Portfolio object is an adaptor for Security Manager and cannot be cleared."); }
+
+        /// <summary>
+        /// Portfolio Manager Dictionary Implementation Placeholder - Not Implemented.
+        /// </summary>
+        /// <param name="pair">Key value pair of dictionary</param>
         public bool Remove(KeyValuePair<string, SecurityHolding> pair) { throw new Exception("Portfolio object is an adaptor for Security Manager and objects cannot be removed."); }
+
+        /// <summary>
+        /// Portfolio Manager Dictionary Implementation Placeholder - Not Implemented.
+        /// </summary>
+        /// <param name="symbol">Symbol of dictionary</param>
         public bool Remove(string symbol) { throw new Exception("Portfolio object is an adaptor for Security Manager and objects cannot be removed."); }
 
         /// <summary>
@@ -226,13 +250,23 @@ namespace QuantConnect.Securities {
             }
         }
 
+
+        /// <summary>
+        /// Alias for HoldStock. Check if we have and holdings.
+        /// </summary>
+        public bool Invested {
+            get {
+                return HoldStock;
+            }
+        }
+
         /// <summary>
         /// Get the total unrealised profit in our portfolio
         /// </summary>
         public decimal TotalUnrealisedProfit {
             get {
                 return (from position in Securities.Values
-                        select position.Holdings.UnrealizedProfit).Sum();
+                               select position.Holdings.UnrealizedProfit).Sum();
             }
         }
 
@@ -317,34 +351,33 @@ namespace QuantConnect.Securities {
         public decimal GetBuyingPower(string symbol, OrderDirection direction = OrderDirection.Hold) {
             //Each asset has different leverage values, so affects our cash position in different ways.
             // Basically position affect on cash = holdings / leverage
+            decimal holdings = (Securities[symbol].Holdings.AbsoluteQuantity * Securities[symbol].Close);
+            decimal remainingBuyingPower = FreeCash * Securities[symbol].Leverage;
 
-            decimal smallSpace = FreeCash * Securities[symbol].Leverage;
-            decimal largeSpace = smallSpace + Cash;
-
-            if (direction == OrderDirection.Hold) return smallSpace;
+            if (direction == OrderDirection.Hold) return remainingBuyingPower;
+            //Log.Debug("SecurityPortfolioManager.GetBuyingPower(): Direction: " + direction.ToString());
 
             if (Securities[symbol].Holdings.IsLong)
             {
                 switch (direction)
                 {
                     case OrderDirection.Buy:
-                        return smallSpace;
+                        return remainingBuyingPower;
                     case OrderDirection.Sell:
-                        return largeSpace;
+                        return holdings * 2  + remainingBuyingPower;
                 }
-            } 
-            else if (Securities[symbol].Holdings.IsShort)
-            {
+            } else if (Securities[symbol].Holdings.IsShort) {
                 switch (direction)
                 {
                     case OrderDirection.Buy:
-                        return largeSpace;
+                        return holdings*2 + remainingBuyingPower;
                     case OrderDirection.Sell:
-                        return smallSpace;
+                        return remainingBuyingPower;
                 }
             }
 
-            return smallSpace;
+            //No holdings buying power is cash x leverage
+            return remainingBuyingPower;
         }
 
 

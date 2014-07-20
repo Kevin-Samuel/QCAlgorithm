@@ -8,7 +8,12 @@
 **********************************************************/
 using System;
 using System.IO;
+using System.Text;
 using System.Collections.Generic;
+using System.Security.Cryptography;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Collections.Concurrent;
 
 //QuantConnect Project Libraries:
 using QuantConnect.Logging;
@@ -18,6 +23,9 @@ namespace QuantConnect {
     /******************************************************** 
     * CLASS DEFINITIONS
     *********************************************************/
+    /// <summary>
+    /// Extensions Function Collections - Group all static extensions functions here.
+    /// </summary>
     public static class Extensions {
         /******************************************************** 
         * CLASS VARIABLES
@@ -59,6 +67,20 @@ namespace QuantConnect {
         }
 
 
+        /// <summary>
+        /// Clear all items from a thread safe queue: has risk of forever clearing if another 
+        /// thread adding to queue at same time.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="queue"></param>
+        public static void Clear<T>(this ConcurrentQueue<T> queue) {
+            T item;
+            while (queue.TryDequeue(out item)) {
+                // NOP
+            }
+        }
+
+
 
         /// <summary>
         /// Convert a byte array into a string.
@@ -69,6 +91,90 @@ namespace QuantConnect {
             char[] chars = new char[bytes.Length / sizeof(char)];
             System.Buffer.BlockCopy(bytes, 0, chars, 0, bytes.Length);
             return new string(chars);
+        }
+
+
+        /// <summary>
+        /// Convert a string to its MD5 equivalent:
+        /// </summary>
+        /// <param name="str">String we want to MD5 encode.</param>
+        /// <returns>MD5 Hash of a string:</returns>
+        public static string ToMD5(this string str) {
+            StringBuilder builder = new StringBuilder();
+            using (MD5 md5Hash = MD5.Create())
+            {
+                byte[] data = md5Hash.ComputeHash(Encoding.UTF8.GetBytes(str));
+                for (int i = 0; i < data.Length; i++)
+                    builder.Append(data[i].ToString("x2"));
+            }
+            return builder.ToString();
+        }
+
+
+        /// <summary>
+        /// Extension method to automatically set the update value to same as "add" value for TryAddUpdate
+        /// </summary>
+        /// <typeparam name="K"></typeparam>
+        /// <typeparam name="V"></typeparam>
+        /// <param name="dictionary"></param>
+        /// <param name="key"></param>
+        /// <param name="value"></param>
+        public static void AddOrUpdate<K, V>(this ConcurrentDictionary<K, V> dictionary, K key, V value)
+        {
+            dictionary.AddOrUpdate(key, value, (oldkey, oldvalue) => value);
+        }
+
+
+        /// <summary>
+        /// FAST String to Decimal Conversion. Some assuptions:
+        /// 1. Always position, no "signs" +,- etc.
+        /// </summary>
+        /// <param name="str">String to be converted</param>
+        /// <returns>decimal value of the string</returns>
+        public static decimal ToDecimal(this string str) {
+
+            long value = 0;
+            int exp = 0;
+            int decimalPlaces = int.MinValue;
+            long maxValueDivideTen = (long.MaxValue/10);
+
+
+            for (int i = 0; i < str.Length; i++)
+            {
+                char ch = str[i];
+                if (ch >= '0' && ch <= '9') {
+                    while (value >= maxValueDivideTen) 
+                    {
+                        value >>= 1;
+                        exp++;
+                    }
+                    value = value * 10 + (ch - '0');
+                    decimalPlaces++;
+                } else if (ch == '.') {
+                    decimalPlaces = 0;
+                } else {
+                    break;
+                }
+            }
+
+            if (decimalPlaces > 0) {
+                int divider = 10;
+                for (int i = 1; i < decimalPlaces; i++) divider *= 10;
+
+                return (decimal)value / divider;
+            }
+
+            return (decimal)value;
+        }
+
+
+        /// <summary>
+        /// Get the extension of this string file
+        /// </summary>
+        /// <param name="str">String we're looking for the extension for.</param>
+        /// <returns>Last 4 character string of string.</returns>
+        public static string GetExtension(this string str) {
+            return str.Substring(Math.Max(0, str.Length - 4));
         }
 
 
@@ -106,20 +212,23 @@ namespace QuantConnect {
         /// <summary>
         /// Default Timespan Rounding 
         /// </summary>
-        /// <param name="time"></param>
-        /// <param name="roundingInterval"></param>
-        /// <returns></returns>
         public static TimeSpan Round(this TimeSpan time, TimeSpan roundingInterval) {
             return Round(time, roundingInterval, MidpointRounding.ToEven);
         }
 
 
         /// <summary>
+        /// Round a datetime method down:
+        /// </summary>
+        public static DateTime RoundDown(this DateTime dateTime, TimeSpan interval)
+        {
+            return dateTime.AddTicks(-(dateTime.Ticks % interval.Ticks));
+        }
+
+
+        /// <summary>
         /// Round a DateTime to the nearest unit.
         /// </summary>
-        /// <param name="datetime"></param>
-        /// <param name="roundingInterval"></param>
-        /// <returns></returns>
         public static DateTime Round(this DateTime datetime, TimeSpan roundingInterval) {
             return new DateTime((datetime - DateTime.MinValue).Round(roundingInterval).Ticks);
         }

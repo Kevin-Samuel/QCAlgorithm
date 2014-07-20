@@ -3,10 +3,6 @@
  * GLobal Enums
 */
 
-/// <summary>
-/// Application beta flag: are we on the staging servers
-/// </summary>
-/// 
 /**********************************************************
 * USING NAMESPACES
 **********************************************************/
@@ -19,23 +15,220 @@ using System.ComponentModel;
 using Newtonsoft.Json;
 
 //QuantConnect Project Libraries:
+using QuantConnect.Models;
 using QuantConnect.Logging;
 
-namespace QuantConnect {
-
+namespace QuantConnect 
+{
     /******************************************************** 
     * GLOBAL CONST
     *********************************************************/
     /// <summary>
     /// ShortCut Date Format Strings:
     /// </summary>
-    public static class DateFormat {
+    public static class DateFormat 
+    {
+        /// Year-Month-Date 6 Character Date Representation
         public static string SixCharacter = "yyMMdd";
+        /// YYYY-MM-DD Eight Character Date Representation
         public static string EightCharacter = "yyyyMMdd";
+        /// JSON Format Date Representation
         public static string JsonFormat = "yyyy-MM-ddThh:mm:ss";
+        /// MySQL Format Date Representation
         public const string DB = "yyyy-MM-dd HH:mm:ss";
+        /// QuantConnect UX Date Representation
         public const string UI = "yyyyMMdd HH:mm:ss";
+        /// EXT Web Date Representation
         public const string EXT = "yyyy-MM-dd HH:mm:ss";
+    }
+
+
+    /******************************************************** 
+    * GLOBAL STRUCT DEFINITIONS
+    *********************************************************/
+    /// <summary>
+    /// Single Parent Chart Object for Custom Charting
+    /// </summary>
+    [JsonObjectAttribute]
+    public class Chart {
+
+        /// Name of the Chart:
+        public string Name = "";
+
+        /// Type of the Chart, Overlayed or Stacked.
+        public ChartType ChartType = ChartType.Overlay;
+
+        /// List of Series Objects for this Chart:
+        public Dictionary<string, ChartSeries> Series = new Dictionary<string,ChartSeries>();
+
+        /// <summary>
+        /// Default constructor for chart:
+        /// </summary>
+        public Chart() { }
+
+        /// <summary>
+        /// Chart Constructor:
+        /// </summary>
+        /// <param name="name">Name of the Chart</param>
+        public Chart(string name) 
+        {
+            this.Name = name;
+            this.Series = new Dictionary<string, ChartSeries>();
+            this.ChartType = ChartType.Overlay;
+        }
+
+        /// <summary>
+        /// Add a reference to this chart series:
+        /// </summary>
+        /// <param name="series">Chart series class object</param>
+        public void AddSeries(ChartSeries series) 
+        {
+            //If we dont already have this series, add to the chrt:
+            if (!Series.ContainsKey(series.Name))
+            {
+                this.Series.Add(series.Name, series);
+            }
+            else 
+            {
+                throw new Exception("Chart.AddSeries(): Chart series name already exists");
+            }
+        }
+
+        /// <summary>
+        /// Fetch the updates of the chart, and save the index position.
+        /// </summary>
+        /// <returns></returns>
+        public Chart GetUpdates() 
+        {
+            Chart _copy = new Chart(Name);
+            foreach (ChartSeries _series in Series.Values) 
+            {
+                _copy.AddSeries(_series.GetUpdates());
+            }
+            return _copy;
+        }
+    }
+
+
+    /// <summary>
+    /// Chart Series Object - Series data and properties for a chart:
+    /// </summary>
+    [JsonObjectAttribute]
+    public class ChartSeries
+    {
+        /// Name of the Series:
+        public string Name = "";
+
+        /// Values for the series plot:
+        public List<ChartPoint> Values = new List<ChartPoint>();
+
+        /// Chart type for the series:
+        public SeriesType SeriesType = SeriesType.Line;
+
+        /// Get the index of the last fetch update request to only retrieve the "delta" of the previous request.
+        private int updatePosition = 0;
+
+        /// <summary>
+        /// Default constructor for chart series
+        /// </summary>
+        public ChartSeries() { }
+
+        /// <summary>
+        /// Constructor method for Chart Series
+        /// </summary>
+        /// <param name="name">Name of the chart series</param>
+        /// <param name="type">Type of the chart series</param>
+        public ChartSeries(string name, SeriesType type = SeriesType.Line) 
+        {
+            this.Name = name;
+            this.Values = new List<ChartPoint>();
+            this.SeriesType = type;
+        }
+
+        /// <summary>
+        /// Add a new point to this series:
+        /// </summary>
+        /// <param name="time">Time of the chart point</param>
+        /// <param name="value">Value of the chart point</param>
+        public void AddPoint(DateTime time, decimal value) 
+        {
+            Values.Add(new ChartPoint(time, value));
+        }
+
+        /// <summary>
+        /// Get the updates since the last call to this function.
+        /// </summary>
+        /// <returns>List of the updates from the series</returns>
+        public ChartSeries GetUpdates() 
+        {
+            ChartSeries _series = new ChartSeries(Name, SeriesType);
+            //Add the updates since the last 
+            for (int i = updatePosition; i < this.Values.Count; i++) 
+            {
+                _series.Values.Add(this.Values[i]);
+            }
+            //Shuffle the update point to now:
+            updatePosition = _series.Values.Count;
+            return _series;
+        }
+    }
+
+
+    /// <summary>
+    /// Single Chart Point Value Type for QCAlgorithm.Plot();
+    /// </summary>
+    [JsonObjectAttribute]
+    public struct ChartPoint
+    {
+        /// Time of this chart point:
+        public DateTime x;
+
+        /// Value of this chart point:
+        public decimal y;
+
+        /// Time as Unixtime:
+        public double GetUnixTime() {
+            return QuantConnect.Time.DateTimeToUnixTimeStamp(x);        
+        }
+
+        ///Constructor for datetime-value arguements:
+        public ChartPoint(DateTime time, decimal value) 
+        {
+            this.x = time;
+            this.y = value;
+        }
+
+        ///Cloner Constructor:
+        public ChartPoint(ChartPoint point) 
+        {
+            this.x = point.x;
+            this.y = point.y;
+        }
+    }
+
+
+    /// <summary>
+    /// Available types of charts
+    /// </summary>
+    public enum SeriesType 
+    { 
+        /// Line Plot for Value Types
+        Line,
+        /// Scatter Plot for Chart Distinct Types
+        Scatter,
+        /// Charts
+        Candle
+    }
+
+    /// <summary>
+    /// Type of chart - should we draw the series as overlayed or stacked
+    /// </summary>
+    public enum ChartType 
+    { 
+        /// Overlayed stacked
+        Overlay,
+        /// Stacked series on top of each other.
+        Stacked
     }
 
     /******************************************************** 
@@ -45,9 +238,13 @@ namespace QuantConnect {
     /// <summary>
     /// Types of Run Mode: Series, Parallel or Auto.
     /// </summary>
-    public enum RunMode { 
+    public enum RunMode 
+    { 
+        /// Automatically detect the runmode of the algorithm: series for minute data, parallel for second-tick
         Automatic,
+        /// Series runmode for the algorithm
         Series,
+        /// Parallel runmode for the algorithm
         Parallel
     }
 
@@ -55,227 +252,216 @@ namespace QuantConnect {
     /// <summary>
     /// Added multilanguage support.
     /// </summary>
-    public enum Language { 
+    public enum Language 
+    { 
+        /// C# Language Project
         CSharp,
-        CPlusPlus,
+        /// Java Language Project
         Java,
-        SAS,
+        /// Python Language Project
         Python
     }
 
-    /******************************************************** 
-    * GLOBAL ENUMS DEFINITIONS
-    *********************************************************/
+
+    /// <summary>
+    /// Some features / performance depend on users plan
+    /// </summary>
+    public enum UserPlan 
+    {
+        /// Free User 
+        Free,
+        /// Hobbyist User 
+        Hobbyist,
+        /// Professional User 
+        Professional,
+        /// Team Based Plan
+        Team,
+        /// Institutional User 
+        Institutional
+    }
+
+
     /// <summary>
     /// Type of Tradable Security / Underlying Asset
     /// </summary>
-    public enum SecurityType {
+    public enum SecurityType 
+    {
+        /// Base class for all security types: 
         Base,
+        /// US Equity Security
         Equity,
+        /// Option Security Type
         Option,
+        /// Commodity Security Type
         Commodity,
+        /// FOREX Security 
         Forex,
+        /// Future Security Type
         Future
-    }
-    
-    /// <summary>
-    /// Types of Data:
-    /// </summary>
-    public enum DataType { 
-        MarketData,         // Tradable -- Build a portfolio
-        SentimentData       // Sentiment -- Indicator Data about a Security.
     }
 
     /// <summary>
     /// Market Data Type Definition:
     /// </summary>
-    public enum MarketDataType {
+    public enum MarketDataType 
+    {
+        /// Base market data type
         Base,
+        /// TradeBar market data type
         TradeBar,
+        /// Tick Market Data Type
         Tick
+    }
+
+    /// <summary>
+    /// Which data feed are we using.
+    /// </summary>
+    public enum DataFeedEndpoint 
+    { 
+        /// Backtesting Datafeed Endpoint
+        Backtesting,
+        /// Loading files off the local system
+        FileSystem,
+        /// Getting datafeed from a QC-Live-Cloud
+        LiveCloud,
+        /// Tradier Supplied Free Data Feed 
+        Tradier
+    }
+
+    /// <summary>
+    /// Destination of Algorithm Node Result, Progress Messages
+    /// </summary>
+    public enum ResultHandlerEndPoint
+    {
+        /// Send Results to the Backtesting Web Application
+        Backtesting,
+        /// Send the Results to the Local Console
+        Console,
+        /// Send Results to the Live Web Application
+        LiveCloud
+    }
+
+    /// <summary>
+    /// Destination of Transaction Models
+    /// </summary>
+    public enum TransactionHandlerEndpoint 
+    { 
+        /// Use Backtesting Models to Process Transactions
+        Backtesting,
+        /// Use Paper Trading Model to Process Transactions
+        PaperTrading,
+        /// Use Interactive Brokers to Process Transactions
+        InteractiveBrokers,
+        /// Use FXCM to Process Transactions
+        FXCM,
+        /// Use Tradier to Process Transactions
+        Tradier
     }
 
     /// <summary>
     /// Data types available from spryware decoding
     /// </summary>
-    public enum TickType {
+    public enum TickType 
+    {
+        /// Trade Type Tick -  QC Supports Full Trade-Quote Ticks but we only have Trade Data.
         Trade,
+        /// Quote Type Tick - QC Supports Full Trade-Quote Ticks but we only have Trade Data.
         Quote
     }
 
     /// <summary>
-    /// MetaData Options: Twitter, Estimize, News etc.
-    /// </summary>
-    public enum SentimentDataType { 
-        Base,
-        Estimize,
-        StockPulse
-    } 
-
-    /// <summary>
     /// Resolution of data requested:
     /// </summary>
-    public enum Resolution {
+    public enum Resolution 
+    {
+        /// Tick Resolution
         Tick,
+        /// Second Resolution
         Second,
-        Minute
-    }   
+        /// Minute Resolution
+        Minute,
+        /// Hour Resolution
+        Hour,
+        /// Daily Resolution
+        Daily
+    }
 
     /// <summary>
     /// State of the Instance:
     /// </summary>
-    public enum State {
+    public enum State 
+    {
+        /// Server Controls - Is the Instance Busy?
         Busy,
+        /// Server Controls - Is the Instance Idle?
         Idle
     }
 
     /// <summary>
-    /// Get the file status
+    /// Database Model File status
     /// </summary>
-    public enum FileStatus { 
+    public enum FileStatus 
+    {
+        /// File currently active
         Active,
+        /// File Deleted.
         Deleted
     }
 
     /// <summary>
     /// Use standard HTTP Status Codes for communication between servers:
     /// </summary>
-    public enum ResponseCode {
+    public enum ResponseCode 
+    {
+        /// 200 Server OK
         OK = 200,
+        /// 401 Unauthorized Request
         Unauthorized = 401,
+        /// 404 Not Found
         NotFound = 404,
+        /// 501 Request Not Implemented
         NotImplemented = 501,
+        /// 502 Malformed Request
         MalformedRequest = 502,
+        /// 503 Server Compiler Error
         CompilerError = 503
-    }
-
-
-    /// <summary>
-    /// Types of Statistics the Algorithm Manager Records.
-    /// </summary>
-    public enum Statistic {
-        SharpeRatio,
-        Drawdown,
-        NetProfit,
-        Expectancy,
-        AverageWin,
-        AverageLoss,
-        AverageAnnualReturn,
-        TotalTrades,
-        WinRate,
-        LossRate,
-        ProfitLossRatio,
-        TradeFrequency
-    }
-
-    /// <summary>
-    /// Trade Frequency Options
-    /// </summary>
-    public enum TradeFrequency { 
-        Secondly,
-        Minutely,
-        Hourly,
-        Daily,
-        Weekly
     }
 
 
     /// <summary>
     /// enum Period - Enum of all the analysis periods, AS integers. Reference "Period" Array to access the values
     /// </summary>
-    public enum Period {
+    public enum Period 
+    {
+        /// Period Short Codes - 10 
         TenSeconds = 10,
+        /// Period Short Codes - 30 Second 
         ThirtySeconds = 30,
+        /// Period Short Codes - 60 Second 
         OneMinute = 60,
+        /// Period Short Codes - 120 Second 
         TwoMinutes = 120,
+        /// Period Short Codes - 180 Second 
         ThreeMinutes = 180,
+        /// Period Short Codes - 300 Second 
         FiveMinutes = 300,
+        /// Period Short Codes - 600 Second 
         TenMinutes = 600,
+        /// Period Short Codes - 900 Second 
         FifteenMinutes = 900,
+        /// Period Short Codes - 1200 Second 
         TwentyMinutes = 1200,
+        /// Period Short Codes - 1800 Second 
         ThirtyMinutes = 1800,
+        /// Period Short Codes - 3600 Second 
         OneHour = 3600,
+        /// Period Short Codes - 7200 Second 
         TwoHours = 7200,
+        /// Period Short Codes - 14400 Second 
         FourHours = 14400,
+        /// Period Short Codes - 21600 Second 
         SixHours = 21600
     }
-    
-
-    /******************************************************** 
-    * GLOBAL CUSTOM ITERATORS
-    *********************************************************/
-    /// <summary>
-    /// Data available at every chart point
-    /// </summary>
-    public class ChartPoint {
-        DateTime time;
-        decimal price;
-        string tag;
-
-        public ChartPoint(DateTime time, decimal price, string tag = "") {
-            this.time = time;
-            this.price = price;
-            this.tag = tag;
-        }
-    }
-
-    /// <summary>
-    /// Charting Caching Storage - Custom charting lines
-    /// </summary>
-    public class ChartList : List<ChartPoint> {
-
-        public void Add(DateTime time, decimal price, string tag = "") {
-            this.Add(new ChartPoint(time, price, tag));
-        }
-    }
-
-    /// <summary>
-    /// Base class for Dictionary-Double Properties using in the equity property class.
-    ///  - When creating online exp averages, etc, only calculate the time periods requested not all of them.
-    /// </summary>
-    public class PeriodIndexedDictionary<TVal> {
-        public Dictionary<Period, TVal> RawData;
-        /// <summary>
-        /// Dictionary constructor
-        /// </summary>
-        public PeriodIndexedDictionary() {
-            RawData = new Dictionary<Period, TVal>();
-        }
-
-        /// <summary>
-        /// PeriodIndexedDictionary - Control access and setting of the value results to minimise work
-        /// </summary>
-        public TVal this[Period period] {
-            get {
-                lock (RawData) {
-                    if (!RawData.ContainsKey(period)) {
-                        RawData.Add(period, default(TVal));
-                        //Now we know we need this information, update it with the real stuff instead of default.
-                        Update(period);
-                    }
-                    return RawData[period];
-                }
-            }
-            set {
-                lock (RawData) {
-                    if (!RawData.ContainsKey(period)) {
-                        RawData.Add(period, value);
-                    } else {
-                        RawData[period] = value;
-                    }
-                }
-            }
-        }
-
-        /// <summary>
-        /// Virtual for override in the later 
-        /// </summary>
-        public virtual void Update(Period period) {
-            RawData[period] = default(TVal);
-        }
-    }
-
-
 
 
     /******************************************************** 
@@ -284,10 +470,11 @@ namespace QuantConnect {
     /// <summary>
     /// Global Market Short Codes and their full versions: (used in tick objects)
     /// </summary>
-    public static class MarketCodes {
-
-        // US Market Codes
-        public static Dictionary<string, string> US = new Dictionary<string, string>() {
+    public static class MarketCodes 
+    {
+        /// US Market Codes
+        public static Dictionary<string, string> US = new Dictionary<string, string>() 
+        {
             {"A", "American Stock Exchange"},
             {"B", "Boston Stock Exchange"},
             {"C", "National Stock Exchange"},
@@ -308,8 +495,9 @@ namespace QuantConnect {
             {"Z", "BATS Exchange, Inc"}
         };
 
-        //Canada Market Short Codes:
-        public static Dictionary<string, string> Canada = new Dictionary<string, string>() {
+        /// Canada Market Short Codes:
+        public static Dictionary<string, string> Canada = new Dictionary<string, string>() 
+        {
             {"T", "Toronto"},
             {"V", "Venture"}
         };
@@ -319,9 +507,13 @@ namespace QuantConnect {
     /// <summary>
     /// US Public Holidays - Not Tradeable:
     /// </summary>
-    public static class USHoliday {
-
-        public static List<DateTime> Dates = new List<DateTime>() { 
+    public static class USHoliday 
+    {
+        /// <summary>
+        /// Public Holidays
+        /// </summary>
+        public static List<DateTime> Dates = new List<DateTime>() 
+        { 
             /* New Years Day*/
             new DateTime(1998, 01, 01),
             new DateTime(1999, 01, 01),

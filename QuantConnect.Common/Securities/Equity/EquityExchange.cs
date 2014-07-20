@@ -65,14 +65,37 @@ namespace QuantConnect.Securities {
         /// <returns>True if open</returns>
         public override bool DateTimeIsOpen(DateTime dateToCheck)
         {
-            if (!DateIsOpen(dateToCheck.Date))
-                return false;
-
             //Market not open yet:
             if (dateToCheck.TimeOfDay.TotalHours < 9.5 || dateToCheck.TimeOfDay.TotalHours >= 16)
+            {
                 return false;
+            }
 
             return true;
+        }
+
+
+        /// <summary>
+        /// Set the incoming datetime object date to the market open time:
+        /// </summary>
+        /// <param name="time">Date we want to set:</param>
+        /// <returns></returns>
+        public override DateTime TimeOfDayOpen(DateTime time)
+        {
+            //Set open time to 9:30am for US equities:
+            return time.Date.AddHours(9.5);
+        }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="time"></param>
+        /// <returns></returns>
+        public override DateTime TimeOfDayClosed(DateTime time)
+        {
+            //Set close time to 4pm for US equities:
+            return time.Date.AddHours(16);
         }
 
 
@@ -84,19 +107,38 @@ namespace QuantConnect.Securities {
         public override bool DateIsOpen(DateTime dateToCheck)
         {
             if (dateToCheck.DayOfWeek == DayOfWeek.Saturday || dateToCheck.DayOfWeek == DayOfWeek.Sunday)
+            {
                 return false;
+            }
 
             //Check the date first.
-            foreach (DateTime holiday in USHoliday.Dates) {
-                if (dateToCheck.Date == holiday.Date) {
-                    return false;
-                }
+            if (USHoliday.Dates.Contains(dateToCheck.Date)) {
+                return false;
             }
 
             return true;
         }
 
 
+        /// <summary>
+        /// Check if this datetime is open, including extended market hours:
+        /// </summary>
+        /// <param name="time">Time to check</param>
+        /// <returns>Bool true if in normal+extended market hours.</returns>
+        public override bool DateTimeIsExtendedOpen(DateTime time)
+        {
+            if (time.DayOfWeek == DayOfWeek.Saturday || time.DayOfWeek == DayOfWeek.Sunday)
+            {
+                return false;
+            }
+
+            if (time.TimeOfDay.TotalHours < 4 || time.TimeOfDay.TotalHours >= 20)
+            {
+                return false;
+            }
+
+            return true;
+        }
 
     } //End of EquityExchange
 

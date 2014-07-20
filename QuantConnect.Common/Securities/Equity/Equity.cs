@@ -38,9 +38,8 @@ namespace QuantConnect.Securities {
         /// <summary>
         /// Construct the Market Vehicle
         /// </summary>
-        public Equity(string symbol, Resolution resolution, bool fillDataForward, decimal leverage, bool extendedMarketHours) :
-            base(symbol, SecurityType.Equity, resolution, fillDataForward, leverage, extendedMarketHours) {
-            
+        public Equity(string symbol, Resolution resolution, bool fillDataForward, decimal leverage, bool extendedMarketHours, bool useQuantConnectData = false) :
+            base(symbol, SecurityType.Equity, resolution, fillDataForward, leverage, extendedMarketHours, useQuantConnectData) {
             //Holdings for new Vehicle:
             Cache = new EquityCache();
             Holdings = new EquityHolding(symbol, this.Model);

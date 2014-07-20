@@ -11,23 +11,28 @@ using System.Text;
 using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
+using QuantConnect.Logging;
 
 namespace QuantConnect {
 
     /******************************************************** 
-    * QUANTCONNECT PROJECT LIBRARY
-    *********************************************************/
-    using QuantConnect.Logging;
-
-    /******************************************************** 
     * CLASS DEFINITIONS
     *********************************************************/
+    /// <summary>
+    /// Isolator Class - Create a new instance of the algorithm and ensure it doesn't exceed memory or time execution limits.
+    /// </summary>
     public class Isolator {
         /******************************************************** 
         * CLASS VARIABLES
         *********************************************************/
-        //Task Cancellation:
+        /// <summary>
+        /// Algo Cancellation Controls - Cancel Source.
+        /// </summary>
         public static CancellationTokenSource cancellation = new CancellationTokenSource();
+
+        /// <summary>
+        /// Algo Cancellation Controls - Cancellation Token
+        /// </summary>
         public static CancellationToken cancelToken = new CancellationToken();
 
 
@@ -52,6 +57,7 @@ namespace QuantConnect {
         /// <summary>
         /// Create a MD5 Hash of a string.
         /// </summary>
+        /// <param name="stringToHash">String we'd like to convert to MD5</param>
         public static string MD5(string stringToHash) {
 
             string hash = "";
@@ -90,7 +96,7 @@ namespace QuantConnect {
         /// </summary>
         /// <param name="timeSpan">Timeout.</param>
         /// <param name="codeBlock">Code to execute</param>
-        /// <param name="memoryCap">Maximum memory allocation, default 1GB</param>
+        /// <param name="memoryCap">Maximum memory allocation, default 1GB/1024Mb</param>
         /// <returns>True if successful, False if Cancelled.</returns>
         public static bool ExecuteWithTimeLimit(TimeSpan timeSpan, Action codeBlock, long memoryCap = 1024)
         {
@@ -107,15 +113,16 @@ namespace QuantConnect {
 
             while (!task.IsCompleted && DateTime.Now < dtEnd)
             {
-                if (GC.GetTotalMemory(false) > memoryCap)
-                {
-                    if (GC.GetTotalMemory(true) > memoryCap)
-                    {
-                        message = "Execution Security Error: Memory Maxed Out - " + Math.Round(Convert.ToDouble(memoryCap / (1024 * 1024))) + "MB max. Check for recursive loops.";
-                        Console.WriteLine("Isolator.ExecuteWithTimeLimit(): " + message);
-                        break;
-                    }
-                }
+                //if (GC.GetTotalMemory(false) > memoryCap)
+                //{
+                //    if (GC.GetTotalMemory(true) > memoryCap)
+                //    {
+                //        message = "Execution Security Error: Memory Maxed Out - " + Math.Round(Convert.ToDouble(memoryCap / (1024 * 1024))) + "MB max. Check for recursive loops.";
+                //        Console.WriteLine("Isolator.ExecuteWithTimeLimit(): " + message);
+                //        break;
+                //    }
+                //}
+                Thread.Sleep(100);
             }
 
             if (task.IsCompleted == false && message == "")
@@ -131,7 +138,6 @@ namespace QuantConnect {
                 Log.Trace("Security.ExecuteWithTimeLimit(): " + message);
                 throw new Exception(message);
             }
-
             return task.IsCompleted;
         }
 

@@ -7,6 +7,7 @@
 * USING NAMESPACES
 **********************************************************/
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -25,7 +26,8 @@ namespace QuantConnect  {
     /// <summary>
     /// Interface for Algorithm Class Libraries
     /// </summary>
-    public interface IAlgorithm {
+    public interface IAlgorithm
+    {
 
         /******************************************************** 
         * INTERFACE PROPERTIES:
@@ -33,7 +35,8 @@ namespace QuantConnect  {
         /// <summary>
         /// Get/Set the Data Manager
         /// </summary>
-        DataManager DataManager {
+        SubscriptionManager SubscriptionManager 
+        {
             get;
             set;
         }
@@ -41,7 +44,8 @@ namespace QuantConnect  {
         /// <summary>
         /// Security Object Collection Class
         /// </summary>
-        SecurityManager Securities { 
+        SecurityManager Securities 
+        { 
             get; 
             set; 
         }
@@ -49,7 +53,8 @@ namespace QuantConnect  {
         /// <summary>
         /// Security Portfolio Management Class:
         /// </summary>
-        SecurityPortfolioManager Portfolio { 
+        SecurityPortfolioManager Portfolio 
+        { 
             get; 
             set; 
         }
@@ -57,7 +62,8 @@ namespace QuantConnect  {
         /// <summary>
         /// Security Transaction Processing Class.
         /// </summary>
-        SecurityTransactionManager Transacions { 
+        SecurityTransactionManager Transactions
+        { 
             get; 
             set;
         }
@@ -65,7 +71,8 @@ namespace QuantConnect  {
         /// <summary>
         /// Set a public name for the algorithm.
         /// </summary>
-        string Name {
+        string Name 
+        {
             get;
             set;
         }
@@ -73,50 +80,84 @@ namespace QuantConnect  {
         /// <summary>
         /// Get the current date/time.
         /// </summary>
-        DateTime Time {
+        DateTime Time 
+        {
             get;
         }
 
         /// <summary>
         /// Get Requested Simulation Start Date
         /// </summary>
-        DateTime StartDate {
+        DateTime StartDate 
+        {
             get;
         }
 
         /// <summary>
         /// Get Requested Simulation End Date
         /// </summary>
-        DateTime EndDate {
+        DateTime EndDate 
+        {
             get;
         }
 
         /// <summary>
         /// Simulation Id for the backtest
         /// </summary>
-        string SimulationId {
+        string SimulationId 
+        {
             get;
         }
 
         /// <summary>
         /// Accessor for Filled Orders:
         /// </summary>
-        Dictionary<int, Order> Orders {
+        ConcurrentDictionary<int, Order> Orders 
+        {
             get;
         }
 
         /// <summary>
         /// Run Simulation Mode for the algorithm: Automatic, Parallel or Series.
         /// </summary>
-        RunMode RunMode {
+        RunMode RunMode 
+        {
             get;
         }
 
         /// <summary>
         /// Indicator if the algorithm has been initialised already. When this is true cash and securities cannot be modified.
         /// </summary>
-        bool Locked {
+        bool Locked 
+        {
             get;
+        }
+
+        /// <summary>
+        /// Debug messages from the strategy:
+        /// </summary>
+        List<string> DebugMessages
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// Error messages from the strategy:
+        /// </summary>
+        List<string> ErrorMessages
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// Log messages from the strategy:
+        /// </summary>
+        List<string> LogMessages
+        {
+            get;
+            set;
         }
 
         /******************************************************** 
@@ -127,34 +168,23 @@ namespace QuantConnect  {
         /// </summary>
         void Initialize();
 
+        // <summary>
+        // v1.0 Handler for Tick Events [DEPRECATED June-2014]
+        // </summary>
+        // <param name="ticks">Tick Data Packet</param>
+        //void OnTick(Dictionary<string, List<Tick>> ticks);
 
-        /// <summary>
-        /// Update the algorithm calculations:
-        /// </summary>
-        /// <param name="symbols">Dictionary of TradeBar Data-Objects for this timeslice</param>
-        void OnTradeBar(Dictionary<string, TradeBar> symbols);
+        // <summary>
+        // v1.0 Handler for TradeBar Events [DEPRECATED June-2014]
+        // </summary>
+        // <param name="tradebars">TradeBar Data Packet</param>
+        //void OnTradeBar(Dictionary<string, TradeBar> tradebars);
 
-
-        /// <summary>
-        /// Handler for Tick Events
-        /// </summary>
-        /// <param name="ticks">Tick Data Packet</param>
-        void OnTick(Dictionary<string, List<Tick>> ticks);
-
-
-        /// <summary>
-        /// A crowd sourced earnings estimate.
-        /// </summary>
-        /// <param name="estimates">Earning estimate signal from a user</param>
-        void OnEstimize(Dictionary<string, List<Estimize>> estimates);
-
-
-        /// <summary>
-        /// Twitter Sentiment Estimate
-        /// </summary>
-        /// <param name="reports">Individual stock pulse for this timeslice</param>
-        void OnStockPulse(Dictionary<string, StockPulse> reports);
-
+        // <summary>
+        // v2.0 Handler for Generic Data Events
+        // </summary>
+        //void OnData(Ticks ticks);
+        //void OnData(TradeBars tradebars);
 
         /// <summary>
         /// Call this method at the end of each day of data.
@@ -172,13 +202,11 @@ namespace QuantConnect  {
         /// <param name="time"></param>
         void SetDateTime(DateTime time);
 
-
         /// <summary>
         /// Set the run mode of the algorithm: series, parallel or automatic.
         /// </summary>
         /// <param name="mode">Run mode to select, default Automatic</param>
         void SetRunMode(RunMode mode = RunMode.Automatic);
-
 
         /// <summary>
         /// Set the start date of the simulation period. This must be within available data.
@@ -187,8 +215,12 @@ namespace QuantConnect  {
         /// <param name="month">Month to start simulation</param>
         /// <param name="day">Date to start simulation</param>
         void SetStartDate(int year, int month, int day);
-        void SetStartDate(DateTime start);
 
+        /// <summary>
+        /// Alias for SetStartDate() which accepts DateTime Class
+        /// </summary>
+        /// <param name="start">DateTime Object to Start the Algorithm</param>
+        void SetStartDate(DateTime start);
 
         /// <summary>
         /// Set the end simulation date for the algorithm. This must be within available data.
@@ -197,8 +229,12 @@ namespace QuantConnect  {
         /// <param name="month">integer month to end simulation period</param>
         /// <param name="day">integer day to end simulation period</param>
         void SetEndDate(int year, int month, int day);
-        void SetEndDate(DateTime end);
 
+        /// <summary>
+        /// Alias for SetStartDate() which accepts DateTime Object
+        /// </summary>
+        /// <param name="end">DateTime End Date for Analysis</param>
+        void SetEndDate(DateTime end);
 
         /// <summary>
         /// Set the simulation Id for this backtest or live run. This can be used to identify the order and equity records.
@@ -206,37 +242,16 @@ namespace QuantConnect  {
         /// <param name="simulationId">unique 32 character identifier for simulation</param>
         void SetSimulationId(string simulationId);
 
-
         /// <summary>
         /// Set the algorithm as initialized and locked. No more cash or security changes.
         /// </summary>
         void SetLocked();
 
-
         /// <summary>
-        /// Get a list of the debug messages sent so far.
+        /// Get the chart updates since the last request:
         /// </summary>
-        /// <returns>List of string debug messages.</returns>
-        List<string> GetDebugMessages();
-
-
-        /// <summary>
-        /// Clear the list of messages in the debug queue.
-        /// </summary>
-        void ClearDebugMessages();
-
-
-        /// <summary>
-        /// Get a list of the log messages generated over the lifetime of this algorithm. Limited to space in ram (500MB).
-        /// </summary>
-        List<string> GetLogMessages();
-
-
-        /// <summary>
-        /// Clear the list of log messages in cache:
-        /// </summary>
-        void ClearLogMessages();
-
+        /// <returns>List of Chart Updates</returns>
+        List<Chart> GetChartUpdates();
 
         /// <summary>
         /// Set a required MarketType-symbol and resolution for the simulator to prepare
@@ -246,23 +261,14 @@ namespace QuantConnect  {
         /// <param name="resolution">Resolution of the MarketType required: MarketData, Second or Minute</param>
         /// <param name="fillDataForward">If true, returns the last available data even if none in that timeslice.</param>
         /// <param name="leverage">leverage for this security</param>
+        /// <param name="extendedMarketHours">ExtendedMarketHours send in data from 4am - 8pm, not used for FOREX</param>
         void AddSecurity(SecurityType securityType, string symbol, Resolution resolution, bool fillDataForward, decimal leverage, bool extendedMarketHours);
-
-
-        /// <summary>
-        /// Add sentiment data to your algorithm.
-        /// </summary>
-        /// <param name="sentimentType">Type of sentiment: estimize or stockpulse</param>
-        /// <param name="symbol">String symbol of asset you're requesting</param>
-        void AddSentimentData(SentimentDataType sentimentType, string symbol);
-
 
         /// <summary>
         /// Set the starting capital for the strategy
         /// </summary>
         /// <param name="startingCash">decimal starting capital, default $100,000</param>
         void SetCash(decimal startingCash);
-
 
         /// <summary>
         /// Send an order to the transaction manager.
@@ -273,14 +279,12 @@ namespace QuantConnect  {
         /// <returns>Integer Order ID.</returns>
         int Order(string symbol, int quantity, OrderType type = OrderType.Market);
 
-
         /// <summary>
         /// Liquidate your portfolio holdings:
         /// </summary>
         /// <param name="symbolToLiquidate">Specific asset to liquidate, defaults to all.</param>
         /// <returns>list of order ids</returns>
         List<int> Liquidate(string symbolToLiquidate = "");
-
 
         /// <summary>
         /// Terminate the algorithm on exiting the current event processor. 
@@ -289,7 +293,6 @@ namespace QuantConnect  {
         /// </summary>
         /// <param name="message">Exit message</param>
         void Quit(string message = "");
-
 
         /// <summary>
         /// Set the quit flag true / false.

@@ -4,197 +4,159 @@
         <name>QuantConnect.Common</name>
     </assembly>
     <members>
-        <member name="T:QuantConnect.Mime">
-            <summary>
-            Dictionary list of Mime Types from Apache:
-            </summary>
-        </member>
-        <member name="F:QuantConnect.Mime.Types">
-            <summary>
-            Dictionary List of Mime Types:
-            </summary>
-        </member>
-        <member name="T:QuantConnect.Models.DataManager">
-            <summary>
-            Enumerable Data Management Class
-            </summary>
-        </member>
-        <member name="F:QuantConnect.Models.DataManager.MarketData">
-            <summary>
-            The market data the user's requested
-            </summary>
-        </member>
-        <member name="F:QuantConnect.Models.DataManager.SentimentData">
-            <summary>
-            Sentiment data user's requested
-            </summary>
-        </member>
-        <member name="M:QuantConnect.Models.DataManager.#ctor">
-            <summary>
-            Initialise the Generic Data Manager Class
-            </summary>
-        </member>
-        <member name="M:QuantConnect.Models.DataManager.Add(QuantConnect.SentimentDataType,System.String)">
-            <summary>
-            If we don't have this sentiment data, add it to our list t
-            </summary>
-            <param name="type">Type of Sentiment Data required</param>
-            <param name="symbol">Symbol of the requested sentiment data.</param>
-        </member>
-        <member name="M:QuantConnect.Models.DataManager.Add(QuantConnect.SecurityType,System.String,QuantConnect.Resolution,System.Boolean,System.Boolean)">
-            <summary>
-            Add Market Data Required
-            </summary>
-            <param name="security">Market Data Asset</param>
-            <param name="symbol">Symbol of the asset we're like</param>
-            <param name="resolution">Resolution of Asset Required</param>
-            <param name="fillDataForward">when there is no data pass the last tradebar forward</param>
-            <param name="extendedMarketHours">Request premarket data as well when true </param>
-        </member>
-        <member name="M:QuantConnect.Models.DataManager.IsFillForward(System.String)">
-            <summary>
-            Check if this symbol was a fill forward request,
-            </summary>
-            <param name="symbol"></param>
-            <returns></returns>
-        </member>
-        <member name="M:QuantConnect.Models.DataManager.IsExtendedMarketHours(System.String)">
-            <summary>
-            Check if this symbol was an extended market hours request
-            </summary>
-            <param name="symbol">Security symbol</param>
-            <returns>true if user wants premarket data</returns>
-        </member>
-        <member name="P:QuantConnect.Models.DataManager.TotalCount">
-            <summary>
-            Get the total count of assets:
-            </summary>
-        </member>
-        <member name="P:QuantConnect.Models.DataManager.SentimentCount">
-            <summary>
-            Get the total sentiment count:
-            </summary>
-        </member>
-        <member name="P:QuantConnect.Models.DataManager.MarketDataCount">
-            <summary>
-            Total number of market data entries:
-            </summary>
-        </member>
-        <member name="P:QuantConnect.Models.DataManager.IsOnlyEquities">
-            <summary>
-            If the market data consists of only equities streams:
-            </summary>
-        </member>
-        <member name="P:QuantConnect.Models.DataManager.IsOnlyForex">
-            <summary>
-            If the market data consists of only forex streams:
-            </summary>
-        </member>
-        <member name="P:QuantConnect.Models.DataManager.HasExtendedMarketHours">
-            <summary>
-            If any of the requests needed extended hours return true.
-            </summary>
-        </member>
-        <member name="P:QuantConnect.Models.DataManager.SecurityTypes">
-            <summary>
-            List of the securities types we've requested:
-            </summary>
-        </member>
-        <member name="T:QuantConnect.Models.DataBase">
+        <member name="T:QuantConnect.Models.BaseData">
             <summary>
             Base Data Class: Type, Timestamp, Key -- Base Features.
             </summary>
         </member>
-        <member name="F:QuantConnect.Models.DataBase.Time">
+        <member name="F:QuantConnect.Models.BaseData.DataType">
+            <summary>
+            Market Data Type of this data - does it come in individual price packets or is it grouped into OHLC.
+            </summary>
+        </member>
+        <member name="F:QuantConnect.Models.BaseData.Time">
             <summary>
             Time keeper of data -- all data is timeseries based.
             </summary>
         </member>
-        <member name="F:QuantConnect.Models.DataBase.Symbol">
+        <member name="F:QuantConnect.Models.BaseData.Symbol">
             <summary>
             Symbol for underlying Security
             </summary>
         </member>
-        <member name="F:QuantConnect.Models.DataBase.DataType">
+        <member name="F:QuantConnect.Models.BaseData.Value">
             <summary>
-            Type of this data: 
-                - Market Data - Able to be bought or sold.
-                - Sentiment Data - Crowd Sentiment Information.
+            All timeseries data is a time-value pair:
             </summary>
         </member>
-        <member name="M:QuantConnect.Models.DataBase.#ctor">
+        <member name="M:QuantConnect.Models.BaseData.#ctor">
             <summary>
             Initialise the Base Data Class
             </summary>
+        </member>
+        <member name="M:QuantConnect.Models.BaseData.Reader(QuantConnect.Models.SubscriptionDataConfig,System.String,System.DateTime,QuantConnect.DataFeedEndpoint)">
+            <summary>
+            Reader Method :: using set of arguements we specify read out type. Enumerate
+            until the end of the data stream or file. E.g. Read CSV file line by line and convert
+            into data types.
+            </summary>
+            <returns>BaseData type set by Subscription Method.</returns>
+        </member>
+        <member name="M:QuantConnect.Models.BaseData.GetSource(QuantConnect.Models.SubscriptionDataConfig,System.DateTime,QuantConnect.DataFeedEndpoint)">
+            <summary>
+            Return the URL string source of the file. This will be converted to a stream 
+            </summary>
+            <param name="datafeed">Type of datafeed we're reqesting - backtest or live</param>
+            <param name="config">Configuration object</param>
+            <param name="date">Date of this source file</param>
+            <returns>String URL of source file.</returns>
+        </member>
+        <member name="M:QuantConnect.Models.BaseData.Clone">
+            <summary>
+            Return a new instance clone of this object
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:QuantConnect.Models.SubscriptionDataConfig">
+            <summary>
+            Subscription data required including the type of data.
+            </summary>
+        </member>
+        <member name="F:QuantConnect.Models.SubscriptionDataConfig.Type">
+            Type of data
+        </member>
+        <member name="F:QuantConnect.Models.SubscriptionDataConfig.Security">
+            Security type of this data subscription
+        </member>
+        <member name="F:QuantConnect.Models.SubscriptionDataConfig.Symbol">
+            Symbol of the asset we're requesting.
+        </member>
+        <member name="F:QuantConnect.Models.SubscriptionDataConfig.Resolution">
+            Resolution of the asset we're requesting, second minute or tick
+        </member>
+        <member name="F:QuantConnect.Models.SubscriptionDataConfig.FillDataForward">
+            True if wish to send old data when time gaps in data feed.
+        </member>
+        <member name="F:QuantConnect.Models.SubscriptionDataConfig.ExtendedMarketHours">
+            Boolean Send Data from between 4am - 8am (Equities Setting Only)
+        </member>
+        <member name="F:QuantConnect.Models.SubscriptionDataConfig.PriceScaleFactor">
+            Price Scaling Factor:
+        </member>
+        <member name="F:QuantConnect.Models.SubscriptionDataConfig.MappedSymbol">
+            Symbol Mapping: When symbols change over time (e.g. CHASE-> JPM) need to update the symbol requested.
+        </member>
+        <member name="M:QuantConnect.Models.SubscriptionDataConfig.#ctor(System.Type,QuantConnect.SecurityType,System.String,QuantConnect.Resolution,System.Boolean,System.Boolean)">
+            <summary>
+            Constructor for Data Subscriptions
+            </summary>
+            <param name="objectType">Type of the data objects.</param>
+            <param name="securityType">SecurityType Enum Set Equity/FOREX/Futures etc.</param>
+            <param name="symbol">Symbol of the asset we're requesting</param>
+            <param name="resolution">Resolution of the asset we're requesting</param>
+            <param name="fillForward">Fill in gaps with historical data</param>
+            <param name="extendedHours">Equities only - send in data from 4am - 8pm</param>
+        </member>
+        <member name="M:QuantConnect.Models.SubscriptionDataConfig.#ctor(System.Type,System.String,System.String)">
+            <summary>
+            User defined source of data configuration
+            </summary>
+            <param name="objectType">Type the user defines</param>
+            <param name="symbol">Symbol of the asset we'll trade</param>
+            <param name="source">String source of the data.</param>
+        </member>
+        <member name="M:QuantConnect.Models.SubscriptionDataConfig.SetPriceScaleFactor(System.Decimal)">
+            <summary>
+            Update the price scaling factor for this subscription:
+            -> Used for backwards scaling _equity_ prices to adjust for splits and dividends. Unused
+            </summary>
+        </member>
+        <member name="M:QuantConnect.Models.SubscriptionDataConfig.SetMappedSymbol(System.String)">
+            <summary>
+            Update the mapped symbol stored here: 
+            </summary>
+            <param name="newSymbol"></param>
         </member>
         <member name="T:QuantConnect.Models.Tick">
             <summary>
             MarketData MarketData Class for MarketData resolution data:
             </summary>
         </member>
-        <member name="T:QuantConnect.Models.MarketData">
-            <summary>
-            Base class for financial data objects:
-            </summary>
-        </member>
-        <member name="F:QuantConnect.Models.MarketData.Id">
-            <summary>
-            Id of this data tick
-            </summary>
-        </member>
-        <member name="F:QuantConnect.Models.MarketData.Price">
-            <summary>
-            MarketData entities have a price:
-            </summary>
-        </member>
-        <member name="F:QuantConnect.Models.MarketData.Type">
-            <summary>
-            Type of the Market Data: Tick or TradeBar:
-            </summary>
-        </member>
         <member name="F:QuantConnect.Models.Tick.TickType">
-            <summary>
             Type of the Tick: Trade or Quote.
-            </summary>
         </member>
         <member name="F:QuantConnect.Models.Tick.Quantity">
-            <summary>
             Quantity of the tick sale or quote.
-            </summary>
         </member>
         <member name="F:QuantConnect.Models.Tick.Exchange">
-            <summary>
             Exchange we are executing on.
-            </summary>
         </member>
         <member name="F:QuantConnect.Models.Tick.SaleCondition">
-            <summary>
             Sale condition for the tick.
-            </summary>
         </member>
         <member name="F:QuantConnect.Models.Tick.Suspicious">
-            <summary>
-            Bool whether this is a suspicious tick.
-            </summary>
+            Bool whether this is a suspicious tick
         </member>
         <member name="F:QuantConnect.Models.Tick.BidPrice">
-            <summary>
             Bid Price for Tick - NOTE: We don't currently have quote data
-            </summary>
         </member>
         <member name="F:QuantConnect.Models.Tick.AskPrice">
-            <summary>
             Asking Price for the Tick - NOTE: We don't currently have quote data
-            </summary>
         </member>
         <member name="M:QuantConnect.Models.Tick.#ctor">
             <summary>
             Initialize Tick Class
             </summary>
         </member>
+        <member name="M:QuantConnect.Models.Tick.#ctor(QuantConnect.Models.Tick)">
+            <summary>
+            Cloner Constructor - Clone the original tick into this new tick:
+            </summary>
+            <param name="original">Original tick we're cloning</param>
+        </member>
         <member name="M:QuantConnect.Models.Tick.#ctor(System.DateTime,System.String,System.Decimal,System.Decimal)">
             <summary>
-            Simple FX Tick
+            Simple FX Tick 
             </summary>
             <param name="time">Full date and time</param>
             <param name="symbol">Underlying Asset.</param>
@@ -206,13 +168,40 @@
             FXCM Loader
             </summary>
         </member>
-        <member name="M:QuantConnect.Models.Tick.#ctor(System.String,System.String,System.DateTime)">
+        <member name="M:QuantConnect.Models.Tick.#ctor(QuantConnect.Models.SubscriptionDataConfig,System.String,System.DateTime,QuantConnect.DataFeedEndpoint)">
             <summary>
             Parse a tick data line from Zip files.
             </summary>
             <param name="line">CSV Line</param>
-            <param name="baseDate">Base date for the tick</param>
-            <param name="symbol">Symbol for this tick</param>
+            <param name="date">Base date for the tick</param>
+            <param name="config">Subscription configuration object</param>
+            <param name="datafeed">Datafeed for </param>
+        </member>
+        <member name="M:QuantConnect.Models.Tick.Reader(QuantConnect.Models.SubscriptionDataConfig,System.String,System.DateTime,QuantConnect.DataFeedEndpoint)">
+            <summary>
+            Tick Implementation of Reader Method: read a line and convert it to a tick.
+            </summary>
+            <param name="datafeed">Source of the datafeed</param>
+            <param name="config">Configuration object for algorith</param>
+            <param name="line">Line of the datafeed</param>
+            <param name="date">Date of this reader request</param>
+            <returns>New Initialized tick</returns>
+        </member>
+        <member name="M:QuantConnect.Models.Tick.GetSource(QuantConnect.Models.SubscriptionDataConfig,System.DateTime,QuantConnect.DataFeedEndpoint)">
+            <summary>
+            Get Source for Custom Data File
+            >> What source file location would you prefer for each type of usage:
+            </summary>
+            <param name="config">Configuration object</param>
+            <param name="date">Date of this source request if source spread across multiple files</param>
+            <param name="datafeed">Source of the datafeed</param>
+            <returns>String source location of the file</returns>
+        </member>
+        <member name="M:QuantConnect.Models.Tick.Clone">
+            <summary>
+            Clone Implementation for Tick Class:
+            </summary>
+            <returns></returns>
         </member>
         <member name="T:QuantConnect.Models.TradeBar">
             <summary>
@@ -220,42 +209,39 @@
             </summary>
         </member>
         <member name="F:QuantConnect.Models.TradeBar.Volume">
-            <summary>
             Public variable volume:
-            </summary>
         </member>
         <member name="F:QuantConnect.Models.TradeBar.Open">
-            <summary>
             Public variable opening price.
-            </summary>
         </member>
         <member name="F:QuantConnect.Models.TradeBar.High">
-            <summary>
             Public variable High Price:
-            </summary>
         </member>
         <member name="F:QuantConnect.Models.TradeBar.Low">
-            <summary>
             Public Variable Low Price
-            </summary>
         </member>
         <member name="F:QuantConnect.Models.TradeBar.Close">
-            <summary>
             Closing price of the tradebar
-            </summary>
         </member>
         <member name="M:QuantConnect.Models.TradeBar.#ctor">
             <summary>
             Default Initializer:
             </summary>
         </member>
-        <member name="M:QuantConnect.Models.TradeBar.#ctor(QuantConnect.SecurityType,System.String,System.String,System.DateTime)">
+        <member name="M:QuantConnect.Models.TradeBar.#ctor(QuantConnect.Models.TradeBar)">
+            <summary>
+            Cloner Constructor - Return a new instance with the same values as this original
+            </summary>
+            <param name="original"></param>
+        </member>
+        <member name="M:QuantConnect.Models.TradeBar.#ctor(QuantConnect.Models.SubscriptionDataConfig,System.String,System.DateTime,QuantConnect.DataFeedEndpoint)">
             <summary>
             Parse a line from the CSV's into our trade bars.
             </summary>
-            <param name="symbol">Symbol for this tick</param>
+            <param name="config">QC SecurityType of the tradebar</param>
             <param name="baseDate">Base date of this tick</param>
             <param name="line">CSV from data files.</param>
+            <param name="datafeed">Datafeed this csv line is sourced from</param>
         </member>
         <member name="M:QuantConnect.Models.TradeBar.#ctor(System.DateTime,System.String,System.Decimal,System.Decimal,System.Decimal,System.Decimal,System.Int64)">
             <summary>
@@ -267,104 +253,385 @@
             <param name="high">Decimal High Price of this bar</param>
             <param name="low">Decimal Low Price of this bar</param>
             <param name="close">Decimal Close price of this bar</param>
+            <param name="volume">Volume sum over day</param>
         </member>
-        <member name="T:QuantConnect.Models.StockPulse">
+        <member name="M:QuantConnect.Models.TradeBar.Reader(QuantConnect.Models.SubscriptionDataConfig,System.String,System.DateTime,QuantConnect.DataFeedEndpoint)">
             <summary>
-            Twitter Sentiment Class:
+            TradeBar Reader: Fetch the data from the QC storage and feed it line by line into the engine.
+            </summary>
+            <param name="datafeed">Destination for the this datafeed - live or backtesting</param>
+            <param name="config">Symbols, Resolution, DataType, </param>
+            <param name="line">Line from the data file requested</param>
+            <param name="date">Date of this reader request</param>
+            <returns>Enumerable iterator for returning each line of the required data.</returns>
+        </member>
+        <member name="M:QuantConnect.Models.TradeBar.Clone">
+            <summary>
+            Implement the Clone Method for the TradeBar:
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:QuantConnect.Models.TradeBar.GetSource(QuantConnect.Models.SubscriptionDataConfig,System.DateTime,QuantConnect.DataFeedEndpoint)">
+            <summary>
+            Get Source for Custom Data File
+            >> What source file location would you prefer for each type of usage:
+            </summary>
+            <param name="config">Configuration object</param>
+            <param name="date">Date of this source request if source spread across multiple files</param>
+            <param name="datafeed">Source of the datafeed</param>
+            <returns>String source location of the file</returns>
+        </member>
+        <member name="T:QuantConnect.Mime">
+            <summary>
+            Dictionary list of Mime Types from Apache:
             </summary>
         </member>
-        <member name="T:QuantConnect.Models.SentimentData">
+        <member name="F:QuantConnect.Mime.Types">
             <summary>
-            Base Class for Meta Data Types:
+            Dictionary List of Mime Types:
             </summary>
         </member>
-        <member name="F:QuantConnect.Models.SentimentData.Type">
+        <member name="T:QuantConnect.Models.SubscriptionManager">
             <summary>
-            Sentiment data type:
+            Enumerable Subscription Management Class
             </summary>
         </member>
-        <member name="F:QuantConnect.Models.StockPulse.Buzz">
+        <member name="F:QuantConnect.Models.SubscriptionManager.Subscriptions">
+            Generic Market Data Requested and Object[] Arguements to Get it:
+        </member>
+        <member name="M:QuantConnect.Models.SubscriptionManager.#ctor">
             <summary>
-            StockPulse Buzz and Sentiment Variables:
+            Initialise the Generic Data Manager Class
             </summary>
         </member>
-        <member name="F:QuantConnect.Models.StockPulse.Sentiment">
+        <member name="M:QuantConnect.Models.SubscriptionManager.Add(QuantConnect.SecurityType,System.String,QuantConnect.Resolution,System.Boolean,System.Boolean)">
             <summary>
-            Sentiment + or - indicator.
+            Add Market Data Required (Overloaded method for backwards compatibility).
+            </summary>
+            <param name="security">Market Data Asset</param>
+            <param name="symbol">Symbol of the asset we're like</param>
+            <param name="resolution">Resolution of Asset Required</param>
+            <param name="fillDataForward">when there is no data pass the last tradebar forward</param>
+            <param name="extendedMarketHours">Request premarket data as well when true </param>
+        </member>
+        <member name="M:QuantConnect.Models.SubscriptionManager.Add(System.Type,QuantConnect.SecurityType,System.String,QuantConnect.Resolution,System.Boolean,System.Boolean)">
+            <summary>
+            Add Market Data Required - generic data typing support as long as Type implements IBaseData.
+            </summary>
+            <param name="dataType">Set the type of the data we're subscribing to.</param>
+            <param name="security">Market Data Asset</param>
+            <param name="symbol">Symbol of the asset we're like</param>
+            <param name="resolution">Resolution of Asset Required</param>
+            <param name="fillDataForward">when there is no data pass the last tradebar forward</param>
+            <param name="extendedMarketHours">Request premarket data as well when true </param>
+        </member>
+        <member name="M:QuantConnect.Models.SubscriptionManager.GetSetting(System.String)">
+            <summary>
+            Get the settings object for this ticker:
+            </summary>
+            <param name="symbol">Symbol we're searching for in the subscriptions list</param>
+            <returns>SubscriptionDataConfig Configuration Object</returns>
+        </member>
+        <member name="P:QuantConnect.Models.SubscriptionManager.Count">
+            <summary>
+            Get the count of assets:
             </summary>
         </member>
-        <member name="M:QuantConnect.Models.StockPulse.#ctor(System.String)">
+        <member name="T:QuantConnect.Models.Ticks">
             <summary>
-            Initialise the StockPulse Object:
-            </summary>
-            <param name="csvRaw">Raw CSV Line</param>
-        </member>
-        <member name="T:QuantConnect.Models.Estimize">
-            <summary>
-            Crowd Earnings Estimize Class:
+            BaseData Collection of Ticks
             </summary>
         </member>
-        <member name="M:QuantConnect.Models.Estimize.#ctor(System.String,System.String)">
+        <member name="M:QuantConnect.Models.Ticks.#ctor(System.DateTime)">
             <summary>
-            Initialise the Estimize Object:
+            Default constructor for the ticks collection
             </summary>
-            <param name="csvRow">Raw CSV row.</param>
-            <param name="symbol">Symbol of this estimize object</param>
+            <param name="frontier"></param>
         </member>
-        <member name="F:QuantConnect.Models.Estimize.UserId">
+        <member name="M:QuantConnect.Models.Ticks.Reader(QuantConnect.Models.SubscriptionDataConfig,System.String,System.DateTime,QuantConnect.DataFeedEndpoint)">
             <summary>
-            User ID who made this estimate
+            Ticks Array Reader: Fetch the data from the QC storage and feed it line by line into the 
+            system.
+            </summary>
+            <param name="datafeed">Who is requesting this data, backtest or live streamer</param>
+            <param name="config">Symbols, Resolution, DataType</param>
+            <param name="line">Line from the data file requested</param>
+            <param name="date">Date of the reader day:</param>
+            <returns>Enumerable iterator for returning each line of the required data.</returns>
+        </member>
+        <member name="M:QuantConnect.Models.Ticks.Clone">
+            <summary>
+            Clonable Interface; create a new instance of the object 
+            - Don't need to implement for Ticks array, each symbol-subscription is treated separately.
+            </summary>
+            <returns>BaseData clone of the Ticks Array</returns>
+        </member>
+        <member name="M:QuantConnect.Models.Ticks.GetSource(QuantConnect.Models.SubscriptionDataConfig,System.DateTime,QuantConnect.DataFeedEndpoint)">
+            <summary>
+            Get the source file for this tick subscription
+            </summary>
+            <param name="datafeed">Source of the datafeed / type of strings we'll be receiving</param>
+            <param name="config">Configuration for the subscription</param>
+            <param name="date">Date of the source file requested.</param>
+            <returns>String URL Source File</returns>
+        </member>
+        <member name="M:QuantConnect.Models.Ticks.Add(System.String,System.Collections.Generic.List{QuantConnect.Models.Tick})">
+            <summary>
+            IDictionary:: Add Implementation
+            </summary>
+            <param name="key">String ticker</param>
+            <param name="value">TradeBar value</param>
+        </member>
+        <member name="M:QuantConnect.Models.Ticks.System#Collections#Generic#IEnumerable{System#Collections#Generic#KeyValuePair{System#String@System#Collections#Generic#List{QuantConnect#Models#Tick}}}#GetEnumerator">
+            <summary>
+            IDictionary :: GetEnumerator Implementation
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:QuantConnect.Models.Ticks.Remove(System.String)">
+            <summary>
+            IDictionary :: Remove Implemenation
+            </summary>
+            <param name="key">Key ticker</param>
+        </member>
+        <member name="M:QuantConnect.Models.Ticks.Remove(System.Collections.Generic.KeyValuePair{System.String,System.Collections.Generic.List{QuantConnect.Models.Tick}})">
+            <summary>
+            IDictionary :: Remove Implemenation
+            </summary>
+            <param name="kvp">KVP Remove</param>
+            <returns>True</returns>
+        </member>
+        <member name="M:QuantConnect.Models.Ticks.Contains(System.Collections.Generic.KeyValuePair{System.String,System.Collections.Generic.List{QuantConnect.Models.Tick}})">
+            <summary>
+            IDictionary :: Contains Implementation
+            </summary>
+            <param name="kvp"></param>
+            <returns>True</returns>
+        </member>
+        <member name="M:QuantConnect.Models.Ticks.ContainsKey(System.String)">
+            <summary>
+            IDictionary :: ContainsKey Implementation
+            </summary>
+            <param name="key"></param>
+            <returns></returns>
+        </member>
+        <member name="M:QuantConnect.Models.Ticks.Clear">
+            <summary>
+            IDictionary :: Clear Implementation
             </summary>
         </member>
-        <member name="F:QuantConnect.Models.Estimize.Eps">
+        <member name="M:QuantConnect.Models.Ticks.Add(System.Collections.Generic.KeyValuePair{System.String,System.Collections.Generic.List{QuantConnect.Models.Tick}})">
             <summary>
-            Earning Per Symbol Prediction from the USer:
+            IDictionary :: Add Implementation
+            </summary>
+            <param name="kvp"></param>
+        </member>
+        <member name="M:QuantConnect.Models.Ticks.TryGetValue(System.String,System.Collections.Generic.List{QuantConnect.Models.Tick}@)">
+            <summary>
+            IDictionary :: TryGetValue Implementation
+            </summary>
+            <param name="key">Key of </param>
+            <param name="bar"></param>
+            <returns></returns>
+        </member>
+        <member name="M:QuantConnect.Models.Ticks.CopyTo(System.Collections.Generic.KeyValuePair{System.String,System.Collections.Generic.List{QuantConnect.Models.Tick}}[],System.Int32)">
+            <summary>
+            IDictionary :: CopyTo Implementation
+            </summary>
+            <param name="array">Destination Array</param>
+            <param name="arrayIndex">Starting index</param>
+        </member>
+        <member name="M:QuantConnect.Models.Ticks.Copy``1(System.Collections.Generic.ICollection{``0},``0[],System.Int32)">
+            <summary>
+            Copy Generic Implementation
+            </summary>
+            <typeparam name="T">Type of copy to.</typeparam>
+            <param name="source">Source of the copy.</param>
+            <param name="array">Array destinations</param>
+            <param name="arrayIndex">Index of current copy.</param>
+        </member>
+        <member name="P:QuantConnect.Models.Ticks.IsReadOnly">
+            <summary>
+            IDictionary :: IsReadOnly Implementation
             </summary>
         </member>
-        <member name="F:QuantConnect.Models.Estimize.Revenue">
+        <member name="P:QuantConnect.Models.Ticks.Count">
             <summary>
-            Revenue prediction from the user
+            IDictionary :: Count Implementation
             </summary>
         </member>
-        <member name="F:QuantConnect.Models.Estimize.WallStEps">
+        <member name="P:QuantConnect.Models.Ticks.Values">
             <summary>
-            Wall Street EPS prediction
+            IDictionary :: Values Implementation
             </summary>
         </member>
-        <member name="F:QuantConnect.Models.Estimize.WallStRevenue">
+        <member name="P:QuantConnect.Models.Ticks.Keys">
             <summary>
-            Wall Street Revenue Prediction
+            IDictionary :: Keys Collection
             </summary>
         </member>
-        <member name="F:QuantConnect.Models.Estimize.FiscalYear">
+        <member name="P:QuantConnect.Models.Ticks.Item(System.String)">
             <summary>
-            Fiscal year this applies to
+            IDictionary :: Indexer Implementation
+            </summary>
+            <param name="key">string key</param>
+            <returns></returns>
+        </member>
+        <member name="T:QuantConnect.Models.TradeBars">
+            <summary>
+            Collection of TradeBars to create a data type for generic data handler:
             </summary>
         </member>
-        <member name="F:QuantConnect.Models.Estimize.FiscalQuarter">
+        <member name="F:QuantConnect.Models.TradeBars.Id">
             <summary>
-            Fiscal Quarter this applies to
+            Id of this data tick
             </summary>
         </member>
-        <member name="F:QuantConnect.Models.Estimize.Industry">
+        <member name="M:QuantConnect.Models.TradeBars.#ctor(System.DateTime)">
             <summary>
-            Industry we're operating in
+            Default constructor for tradebars collection
+            </summary>
+            <param name="frontier"></param>
+        </member>
+        <member name="M:QuantConnect.Models.TradeBars.Reader(QuantConnect.Models.SubscriptionDataConfig,System.String,System.DateTime,QuantConnect.DataFeedEndpoint)">
+            <summary>
+            TradeBar Reader: Fetch the data from the QC storage and feed it line by line into the engine.
+            </summary>
+            <param name="datafeed">Where are we getting this datafeed from - backtesing or live.</param>
+            <param name="config">Symbols, Resolution, DataType, </param>
+            <param name="line">Line from the data file requested</param>
+            <param name="date">Date of the reader request, only used when the source file changes daily.</param>
+            <returns>Enumerable iterator for returning each line of the required data.</returns>
+        </member>
+        <member name="M:QuantConnect.Models.TradeBars.GetSource(QuantConnect.Models.SubscriptionDataConfig,System.DateTime,QuantConnect.DataFeedEndpoint)">
+            <summary>
+            Get Source File URL for this TradeBar subscription request
+            </summary>
+            <param name="datafeed">Source of the datafeed / type of strings we'll be receiving</param>
+            <param name="config">Configuration for the subscription</param>
+            <param name="date">Date of the source file requested.</param>
+            <returns>String URL Source File</returns>
+        </member>
+        <member name="M:QuantConnect.Models.TradeBars.Clone">
+            <summary>
+            Not Implemented Clone Function Command 
+            - Don't need to implement for TradeBars array, each symbol-subscription is treated separately.
+            </summary>
+            <returns>BaseData Clone of TradeBars Array</returns>
+        </member>
+        <member name="M:QuantConnect.Models.TradeBars.Add(System.String,QuantConnect.Models.TradeBar)">
+            <summary>
+            TradeBar IDictionary:: Add Implementation
+            </summary>
+            <param name="key">String ticker</param>
+            <param name="value">TradeBar value</param>
+        </member>
+        <member name="M:QuantConnect.Models.TradeBars.System#Collections#Generic#IEnumerable{System#Collections#Generic#KeyValuePair{System#String@QuantConnect#Models#TradeBar}}#GetEnumerator">
+            <summary>
+            TradeBar IDictionary :: GetEnumerator Implementation
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:QuantConnect.Models.TradeBars.Remove(System.String)">
+            <summary>
+            TradeBar IDictionary :: Remove Implemenation
+            </summary>
+            <param name="key">Key ticker</param>
+        </member>
+        <member name="M:QuantConnect.Models.TradeBars.Remove(System.Collections.Generic.KeyValuePair{System.String,QuantConnect.Models.TradeBar})">
+            <summary>
+            TradeBars IDictionary :: Remove Implemenation 
+            </summary>
+            <param name="kvp"></param>
+            <returns></returns>
+        </member>
+        <member name="M:QuantConnect.Models.TradeBars.Contains(System.Collections.Generic.KeyValuePair{System.String,QuantConnect.Models.TradeBar})">
+            <summary>
+            TradeBar IDictionary :: Contains Implementation
+            </summary>
+            <param name="kvp">Key Value Pair to Search For</param>
+            <returns>True if Found.</returns>
+        </member>
+        <member name="M:QuantConnect.Models.TradeBars.ContainsKey(System.String)">
+            <summary>
+            TradeBar IDictionary :: Contains Implementation
+            </summary>
+            <param name="key">Dictionary key</param>
+            <returns>True if found.</returns>
+        </member>
+        <member name="M:QuantConnect.Models.TradeBars.Clear">
+            <summary>
+            TradeBar IDictionary :: Clear Implementation
             </summary>
         </member>
-        <member name="F:QuantConnect.Models.Estimize.Sector">
+        <member name="M:QuantConnect.Models.TradeBars.Add(System.Collections.Generic.KeyValuePair{System.String,QuantConnect.Models.TradeBar})">
             <summary>
-            Sector this prediction applies to
+            TradeBar IDictionary :: Add Implementation
+            </summary>
+            <param name="kvp"></param>
+        </member>
+        <member name="M:QuantConnect.Models.TradeBars.TryGetValue(System.String,QuantConnect.Models.TradeBar@)">
+            <summary>
+            TradeBar IDictionary :: TryGetValue Implementation
+            </summary>
+            <param name="key">Key/Ticker of TradeBar</param>
+            <param name="bar">Tradebar</param>
+            <returns>True if finds this key</returns>
+        </member>
+        <member name="M:QuantConnect.Models.TradeBars.CopyTo(System.Collections.Generic.KeyValuePair{System.String,QuantConnect.Models.TradeBar}[],System.Int32)">
+            <summary>
+            TradeBar IDictionary :: CopyTo Implementation
+            </summary>
+            <param name="array">Destination Array</param>
+            <param name="arrayIndex">Starting index</param>
+        </member>
+        <member name="P:QuantConnect.Models.TradeBars.IsReadOnly">
+            <summary>
+            TradeBar IDictionary :: IsReadOnly Implementation
             </summary>
         </member>
-        <member name="F:QuantConnect.Models.Estimize.ReportsAt">
+        <member name="P:QuantConnect.Models.TradeBars.Count">
             <summary>
-            Reports at timestamp.
+            TradeBar IDictionary :: Count Implementation
+            </summary>
+        </member>
+        <member name="P:QuantConnect.Models.TradeBars.Values">
+            <summary>
+            TradeBar IDictionary :: Values Implementation
+            </summary>
+        </member>
+        <member name="P:QuantConnect.Models.TradeBars.Keys">
+            <summary>
+            TradeBar IDictionary :: Keys Collection
+            </summary>
+        </member>
+        <member name="P:QuantConnect.Models.TradeBars.Item(System.String)">
+            <summary>
+            TradeBar IDictionary :: Indexer Implementation
+            </summary>
+            <param name="key">string key</param>
+            <returns></returns>
+        </member>
+        <member name="T:QuantConnect.Isolator">
+            <summary>
+            Isolator Class - Create a new instance of the algorithm and ensure it doesn't exceed memory or time execution limits.
+            </summary>
+        </member>
+        <member name="F:QuantConnect.Isolator.cancellation">
+            <summary>
+            Algo Cancellation Controls - Cancel Source.
+            </summary>
+        </member>
+        <member name="F:QuantConnect.Isolator.cancelToken">
+            <summary>
+            Algo Cancellation Controls - Cancellation Token
             </summary>
         </member>
         <member name="M:QuantConnect.Isolator.MD5(System.String)">
             <summary>
             Create a MD5 Hash of a string.
             </summary>
+            <param name="stringToHash">String we'd like to convert to MD5</param>
         </member>
         <member name="M:QuantConnect.Isolator.ResetCancelToken">
             <summary>
@@ -377,7 +644,7 @@
             </summary>
             <param name="timeSpan">Timeout.</param>
             <param name="codeBlock">Code to execute</param>
-            <param name="memoryCap">Maximum memory allocation, default 1GB</param>
+            <param name="memoryCap">Maximum memory allocation, default 1GB/1024Mb</param>
             <returns>True if successful, False if Cancelled.</returns>
         </member>
         <member name="P:QuantConnect.Isolator.IsCancellationRequested">
@@ -390,115 +657,431 @@
             ShortCut Date Format Strings:
             </summary>
         </member>
+        <member name="F:QuantConnect.DateFormat.DB">
+            MySQL Format Date Representation
+        </member>
+        <member name="F:QuantConnect.DateFormat.UI">
+            QuantConnect UX Date Representation
+        </member>
+        <member name="F:QuantConnect.DateFormat.EXT">
+            EXT Web Date Representation
+        </member>
+        <member name="F:QuantConnect.DateFormat.SixCharacter">
+            Year-Month-Date 6 Character Date Representation
+        </member>
+        <member name="F:QuantConnect.DateFormat.EightCharacter">
+            YYYY-MM-DD Eight Character Date Representation
+        </member>
+        <member name="F:QuantConnect.DateFormat.JsonFormat">
+            JSON Format Date Representation
+        </member>
+        <member name="T:QuantConnect.Chart">
+            <summary>
+            Single Parent Chart Object for Custom Charting
+            </summary>
+        </member>
+        <member name="F:QuantConnect.Chart.Name">
+            Name of the Chart:
+        </member>
+        <member name="F:QuantConnect.Chart.ChartType">
+            Type of the Chart, Overlayed or Stacked.
+        </member>
+        <member name="F:QuantConnect.Chart.Series">
+            List of Series Objects for this Chart:
+        </member>
+        <member name="M:QuantConnect.Chart.#ctor">
+            <summary>
+            Default constructor for chart:
+            </summary>
+        </member>
+        <member name="M:QuantConnect.Chart.#ctor(System.String)">
+            <summary>
+            Chart Constructor:
+            </summary>
+            <param name="name">Name of the Chart</param>
+        </member>
+        <member name="M:QuantConnect.Chart.AddSeries(QuantConnect.ChartSeries)">
+            <summary>
+            Add a reference to this chart series:
+            </summary>
+            <param name="series">Chart series class object</param>
+        </member>
+        <member name="M:QuantConnect.Chart.GetUpdates">
+            <summary>
+            Fetch the updates of the chart, and save the index position.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:QuantConnect.ChartSeries">
+            <summary>
+            Chart Series Object - Series data and properties for a chart:
+            </summary>
+        </member>
+        <member name="F:QuantConnect.ChartSeries.Name">
+            Name of the Series:
+        </member>
+        <member name="F:QuantConnect.ChartSeries.Values">
+            Values for the series plot:
+        </member>
+        <member name="F:QuantConnect.ChartSeries.SeriesType">
+            Chart type for the series:
+        </member>
+        <member name="F:QuantConnect.ChartSeries.updatePosition">
+            Get the index of the last fetch update request to only retrieve the "delta" of the previous request.
+        </member>
+        <member name="M:QuantConnect.ChartSeries.#ctor">
+            <summary>
+            Default constructor for chart series
+            </summary>
+        </member>
+        <member name="M:QuantConnect.ChartSeries.#ctor(System.String,QuantConnect.SeriesType)">
+            <summary>
+            Constructor method for Chart Series
+            </summary>
+            <param name="name">Name of the chart series</param>
+            <param name="type">Type of the chart series</param>
+        </member>
+        <member name="M:QuantConnect.ChartSeries.AddPoint(System.DateTime,System.Decimal)">
+            <summary>
+            Add a new point to this series:
+            </summary>
+            <param name="time">Time of the chart point</param>
+            <param name="value">Value of the chart point</param>
+        </member>
+        <member name="M:QuantConnect.ChartSeries.GetUpdates">
+            <summary>
+            Get the updates since the last call to this function.
+            </summary>
+            <returns>List of the updates from the series</returns>
+        </member>
+        <member name="T:QuantConnect.ChartPoint">
+            <summary>
+            Single Chart Point Value Type for QCAlgorithm.Plot();
+            </summary>
+        </member>
+        <member name="F:QuantConnect.ChartPoint.x">
+            Time of this chart point:
+        </member>
+        <member name="F:QuantConnect.ChartPoint.y">
+            Value of this chart point:
+        </member>
+        <member name="M:QuantConnect.ChartPoint.GetUnixTime">
+            Time as Unixtime:
+        </member>
+        <member name="M:QuantConnect.ChartPoint.#ctor(System.DateTime,System.Decimal)">
+            Constructor for datetime-value arguements:
+        </member>
+        <member name="M:QuantConnect.ChartPoint.#ctor(QuantConnect.ChartPoint)">
+            Cloner Constructor:
+        </member>
+        <member name="T:QuantConnect.SeriesType">
+            <summary>
+            Available types of charts
+            </summary>
+        </member>
+        <member name="F:QuantConnect.SeriesType.Line">
+            Line Plot for Value Types
+        </member>
+        <member name="F:QuantConnect.SeriesType.Scatter">
+            Scatter Plot for Chart Distinct Types
+        </member>
+        <member name="F:QuantConnect.SeriesType.Candle">
+            Charts
+        </member>
+        <member name="T:QuantConnect.ChartType">
+            <summary>
+            Type of chart - should we draw the series as overlayed or stacked
+            </summary>
+        </member>
+        <member name="F:QuantConnect.ChartType.Overlay">
+            Overlayed stacked
+        </member>
+        <member name="F:QuantConnect.ChartType.Stacked">
+            Stacked series on top of each other.
+        </member>
         <member name="T:QuantConnect.RunMode">
             <summary>
             Types of Run Mode: Series, Parallel or Auto.
             </summary>
+        </member>
+        <member name="F:QuantConnect.RunMode.Automatic">
+            Automatically detect the runmode of the algorithm: series for minute data, parallel for second-tick
+        </member>
+        <member name="F:QuantConnect.RunMode.Series">
+            Series runmode for the algorithm
+        </member>
+        <member name="F:QuantConnect.RunMode.Parallel">
+            Parallel runmode for the algorithm
         </member>
         <member name="T:QuantConnect.Language">
             <summary>
             Added multilanguage support.
             </summary>
         </member>
+        <member name="F:QuantConnect.Language.CSharp">
+            C# Language Project
+        </member>
+        <member name="F:QuantConnect.Language.Java">
+            Java Language Project
+        </member>
+        <member name="F:QuantConnect.Language.Python">
+            Python Language Project
+        </member>
+        <member name="T:QuantConnect.UserPlan">
+            <summary>
+            Some features / performance depend on users plan
+            </summary>
+        </member>
+        <member name="F:QuantConnect.UserPlan.Free">
+            Free User 
+        </member>
+        <member name="F:QuantConnect.UserPlan.Hobbyist">
+            Hobbyist User 
+        </member>
+        <member name="F:QuantConnect.UserPlan.Professional">
+            Professional User 
+        </member>
+        <member name="F:QuantConnect.UserPlan.Team">
+            Team Based Plan
+        </member>
+        <member name="F:QuantConnect.UserPlan.Institutional">
+            Institutional User 
+        </member>
         <member name="T:QuantConnect.SecurityType">
             <summary>
             Type of Tradable Security / Underlying Asset
             </summary>
         </member>
-        <member name="T:QuantConnect.DataType">
-            <summary>
-            Types of Data:
-            </summary>
+        <member name="F:QuantConnect.SecurityType.Base">
+            Base class for all security types: 
+        </member>
+        <member name="F:QuantConnect.SecurityType.Equity">
+            US Equity Security
+        </member>
+        <member name="F:QuantConnect.SecurityType.Option">
+            Option Security Type
+        </member>
+        <member name="F:QuantConnect.SecurityType.Commodity">
+            Commodity Security Type
+        </member>
+        <member name="F:QuantConnect.SecurityType.Forex">
+            FOREX Security 
+        </member>
+        <member name="F:QuantConnect.SecurityType.Future">
+            Future Security Type
         </member>
         <member name="T:QuantConnect.MarketDataType">
             <summary>
             Market Data Type Definition:
             </summary>
         </member>
+        <member name="F:QuantConnect.MarketDataType.Base">
+            Base market data type
+        </member>
+        <member name="F:QuantConnect.MarketDataType.TradeBar">
+            TradeBar market data type
+        </member>
+        <member name="F:QuantConnect.MarketDataType.Tick">
+            Tick Market Data Type
+        </member>
+        <member name="T:QuantConnect.DataFeedEndpoint">
+            <summary>
+            Which data feed are we using.
+            </summary>
+        </member>
+        <member name="F:QuantConnect.DataFeedEndpoint.Backtesting">
+            Backtesting Datafeed Endpoint
+        </member>
+        <member name="F:QuantConnect.DataFeedEndpoint.FileSystem">
+            Loading files off the local system
+        </member>
+        <member name="F:QuantConnect.DataFeedEndpoint.LiveCloud">
+            Getting datafeed from a QC-Live-Cloud
+        </member>
+        <member name="F:QuantConnect.DataFeedEndpoint.Tradier">
+            Tradier Supplied Free Data Feed 
+        </member>
+        <member name="T:QuantConnect.ResultHandlerEndPoint">
+            <summary>
+            Destination of Algorithm Node Result, Progress Messages
+            </summary>
+        </member>
+        <member name="F:QuantConnect.ResultHandlerEndPoint.Backtesting">
+            Send Results to the Backtesting Web Application
+        </member>
+        <member name="F:QuantConnect.ResultHandlerEndPoint.Console">
+            Send the Results to the Local Console
+        </member>
+        <member name="F:QuantConnect.ResultHandlerEndPoint.LiveCloud">
+            Send Results to the Live Web Application
+        </member>
+        <member name="T:QuantConnect.TransactionHandlerEndpoint">
+            <summary>
+            Destination of Transaction Models
+            </summary>
+        </member>
+        <member name="F:QuantConnect.TransactionHandlerEndpoint.Backtesting">
+            Use Backtesting Models to Process Transactions
+        </member>
+        <member name="F:QuantConnect.TransactionHandlerEndpoint.PaperTrading">
+            Use Paper Trading Model to Process Transactions
+        </member>
+        <member name="F:QuantConnect.TransactionHandlerEndpoint.InteractiveBrokers">
+            Use Interactive Brokers to Process Transactions
+        </member>
+        <member name="F:QuantConnect.TransactionHandlerEndpoint.FXCM">
+            Use FXCM to Process Transactions
+        </member>
+        <member name="F:QuantConnect.TransactionHandlerEndpoint.Tradier">
+            Use Tradier to Process Transactions
+        </member>
         <member name="T:QuantConnect.TickType">
             <summary>
             Data types available from spryware decoding
             </summary>
         </member>
-        <member name="T:QuantConnect.SentimentDataType">
-            <summary>
-            MetaData Options: Twitter, Estimize, News etc.
-            </summary>
+        <member name="F:QuantConnect.TickType.Trade">
+            Trade Type Tick -  QC Supports Full Trade-Quote Ticks but we only have Trade Data.
+        </member>
+        <member name="F:QuantConnect.TickType.Quote">
+            Quote Type Tick - QC Supports Full Trade-Quote Ticks but we only have Trade Data.
         </member>
         <member name="T:QuantConnect.Resolution">
             <summary>
             Resolution of data requested:
             </summary>
         </member>
+        <member name="F:QuantConnect.Resolution.Tick">
+            Tick Resolution
+        </member>
+        <member name="F:QuantConnect.Resolution.Second">
+            Second Resolution
+        </member>
+        <member name="F:QuantConnect.Resolution.Minute">
+            Minute Resolution
+        </member>
+        <member name="F:QuantConnect.Resolution.Hour">
+            Hour Resolution
+        </member>
+        <member name="F:QuantConnect.Resolution.Daily">
+            Daily Resolution
+        </member>
         <member name="T:QuantConnect.State">
             <summary>
             State of the Instance:
             </summary>
         </member>
+        <member name="F:QuantConnect.State.Busy">
+            Server Controls - Is the Instance Busy?
+        </member>
+        <member name="F:QuantConnect.State.Idle">
+            Server Controls - Is the Instance Idle?
+        </member>
         <member name="T:QuantConnect.FileStatus">
             <summary>
-            Get the file status
+            Database Model File status
             </summary>
+        </member>
+        <member name="F:QuantConnect.FileStatus.Active">
+            File currently active
+        </member>
+        <member name="F:QuantConnect.FileStatus.Deleted">
+            File Deleted.
         </member>
         <member name="T:QuantConnect.ResponseCode">
             <summary>
             Use standard HTTP Status Codes for communication between servers:
             </summary>
         </member>
-        <member name="T:QuantConnect.Statistic">
-            <summary>
-            Types of Statistics the Algorithm Manager Records.
-            </summary>
+        <member name="F:QuantConnect.ResponseCode.OK">
+            200 Server OK
         </member>
-        <member name="T:QuantConnect.TradeFrequency">
-            <summary>
-            Trade Frequency Options
-            </summary>
+        <member name="F:QuantConnect.ResponseCode.Unauthorized">
+            401 Unauthorized Request
+        </member>
+        <member name="F:QuantConnect.ResponseCode.NotFound">
+            404 Not Found
+        </member>
+        <member name="F:QuantConnect.ResponseCode.NotImplemented">
+            501 Request Not Implemented
+        </member>
+        <member name="F:QuantConnect.ResponseCode.MalformedRequest">
+            502 Malformed Request
+        </member>
+        <member name="F:QuantConnect.ResponseCode.CompilerError">
+            503 Server Compiler Error
         </member>
         <member name="T:QuantConnect.Period">
             <summary>
             enum Period - Enum of all the analysis periods, AS integers. Reference "Period" Array to access the values
             </summary>
         </member>
-        <member name="T:QuantConnect.ChartPoint">
-            <summary>
-            Data available at every chart point
-            </summary>
+        <member name="F:QuantConnect.Period.TenSeconds">
+            Period Short Codes - 10 
         </member>
-        <member name="T:QuantConnect.ChartList">
-            <summary>
-            Charting Caching Storage - Custom charting lines
-            </summary>
+        <member name="F:QuantConnect.Period.ThirtySeconds">
+            Period Short Codes - 30 Second 
         </member>
-        <member name="T:QuantConnect.PeriodIndexedDictionary`1">
-            <summary>
-            Base class for Dictionary-Double Properties using in the equity property class.
-             - When creating online exp averages, etc, only calculate the time periods requested not all of them.
-            </summary>
+        <member name="F:QuantConnect.Period.OneMinute">
+            Period Short Codes - 60 Second 
         </member>
-        <member name="M:QuantConnect.PeriodIndexedDictionary`1.#ctor">
-            <summary>
-            Dictionary constructor
-            </summary>
+        <member name="F:QuantConnect.Period.TwoMinutes">
+            Period Short Codes - 120 Second 
         </member>
-        <member name="M:QuantConnect.PeriodIndexedDictionary`1.Update(QuantConnect.Period)">
-            <summary>
-            Virtual for override in the later 
-            </summary>
+        <member name="F:QuantConnect.Period.ThreeMinutes">
+            Period Short Codes - 180 Second 
         </member>
-        <member name="P:QuantConnect.PeriodIndexedDictionary`1.Item(QuantConnect.Period)">
-            <summary>
-            PeriodIndexedDictionary - Control access and setting of the value results to minimise work
-            </summary>
+        <member name="F:QuantConnect.Period.FiveMinutes">
+            Period Short Codes - 300 Second 
+        </member>
+        <member name="F:QuantConnect.Period.TenMinutes">
+            Period Short Codes - 600 Second 
+        </member>
+        <member name="F:QuantConnect.Period.FifteenMinutes">
+            Period Short Codes - 900 Second 
+        </member>
+        <member name="F:QuantConnect.Period.TwentyMinutes">
+            Period Short Codes - 1200 Second 
+        </member>
+        <member name="F:QuantConnect.Period.ThirtyMinutes">
+            Period Short Codes - 1800 Second 
+        </member>
+        <member name="F:QuantConnect.Period.OneHour">
+            Period Short Codes - 3600 Second 
+        </member>
+        <member name="F:QuantConnect.Period.TwoHours">
+            Period Short Codes - 7200 Second 
+        </member>
+        <member name="F:QuantConnect.Period.FourHours">
+            Period Short Codes - 14400 Second 
+        </member>
+        <member name="F:QuantConnect.Period.SixHours">
+            Period Short Codes - 21600 Second 
         </member>
         <member name="T:QuantConnect.MarketCodes">
             <summary>
             Global Market Short Codes and their full versions: (used in tick objects)
             </summary>
         </member>
+        <member name="F:QuantConnect.MarketCodes.US">
+            US Market Codes
+        </member>
+        <member name="F:QuantConnect.MarketCodes.Canada">
+            Canada Market Short Codes:
+        </member>
         <member name="T:QuantConnect.USHoliday">
             <summary>
             US Public Holidays - Not Tradeable:
+            </summary>
+        </member>
+        <member name="F:QuantConnect.USHoliday.Dates">
+            <summary>
+            Public Holidays
+            </summary>
+        </member>
+        <member name="T:QuantConnect.Extensions">
+            <summary>
+            Extensions Function Collections - Group all static extensions functions here.
             </summary>
         </member>
         <member name="M:QuantConnect.Extensions.Move``1(System.Collections.Generic.List{``0},System.Int32,System.Int32)">
@@ -517,12 +1100,52 @@
             <param name="str">String to Convert to Bytes.</param>
             <returns>Byte Array</returns>
         </member>
+        <member name="M:QuantConnect.Extensions.Clear``1(System.Collections.Concurrent.ConcurrentQueue{``0})">
+            <summary>
+            Clear all items from a thread safe queue: has risk of forever clearing if another 
+            thread adding to queue at same time.
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="queue"></param>
+        </member>
         <member name="M:QuantConnect.Extensions.GetString(System.Byte[])">
             <summary>
             Convert a byte array into a string.
             </summary>
             <param name="bytes">byte array to convert.</param>
             <returns>String from Bytes.</returns>
+        </member>
+        <member name="M:QuantConnect.Extensions.ToMD5(System.String)">
+            <summary>
+            Convert a string to its MD5 equivalent:
+            </summary>
+            <param name="str">String we want to MD5 encode.</param>
+            <returns>MD5 Hash of a string:</returns>
+        </member>
+        <member name="M:QuantConnect.Extensions.AddOrUpdate``2(System.Collections.Concurrent.ConcurrentDictionary{``0,``1},``0,``1)">
+            <summary>
+            Extension method to automatically set the update value to same as "add" value for TryAddUpdate
+            </summary>
+            <typeparam name="K"></typeparam>
+            <typeparam name="V"></typeparam>
+            <param name="dictionary"></param>
+            <param name="key"></param>
+            <param name="value"></param>
+        </member>
+        <member name="M:QuantConnect.Extensions.ToDecimal(System.String)">
+            <summary>
+            FAST String to Decimal Conversion. Some assuptions:
+            1. Always position, no "signs" +,- etc.
+            </summary>
+            <param name="str">String to be converted</param>
+            <returns>decimal value of the string</returns>
+        </member>
+        <member name="M:QuantConnect.Extensions.GetExtension(System.String)">
+            <summary>
+            Get the extension of this string file
+            </summary>
+            <param name="str">String we're looking for the extension for.</param>
+            <returns>Last 4 character string of string.</returns>
         </member>
         <member name="M:QuantConnect.Extensions.ToStream(System.String)">
             <summary>
@@ -544,17 +1167,16 @@
             <summary>
             Default Timespan Rounding 
             </summary>
-            <param name="time"></param>
-            <param name="roundingInterval"></param>
-            <returns></returns>
+        </member>
+        <member name="M:QuantConnect.Extensions.RoundDown(System.DateTime,System.TimeSpan)">
+            <summary>
+            Round a datetime method down:
+            </summary>
         </member>
         <member name="M:QuantConnect.Extensions.Round(System.DateTime,System.TimeSpan)">
             <summary>
             Round a DateTime to the nearest unit.
             </summary>
-            <param name="datetime"></param>
-            <param name="roundingInterval"></param>
-            <returns></returns>
         </member>
         <member name="M:QuantConnect.Extensions.RoundUp(System.DateTime,System.TimeSpan)">
             <summary>
@@ -564,17 +1186,46 @@
             <param name="d">TimeSpan Unit</param>
             <returns>Rounded DateTime</returns>
         </member>
+        <member name="T:QuantConnect.Loader">
+            <summary>
+            Loader creates and manages the memory and exception space of the algorithm, ensuring if it explodes the QC Node is instact.
+            </summary>
+        </member>
+        <member name="F:QuantConnect.Loader.appDomain">
+            <summary>
+            Memory space of the user algorithm
+            </summary>
+        </member>
         <member name="M:QuantConnect.Loader.CreateInstance``1(System.String,System.String,``0@,System.String@)">
             <summary>
             Creates a new instance of the class library in a new AppDomain, safely.
             </summary>
+            <param name="assemblyPath">Location of the DLL</param>
+            <param name="baseTypeName">QCAlgorithm base type</param>
+            <param name="algorithmInstance">Output algorithm instance</param>
+            <param name="errorMessage">Output error message on failure</param>
             <returns>bool success</returns>        
+        </member>
+        <member name="M:QuantConnect.Loader.GetActivator(System.Type)">
+            <summary>
+            Fast Object Creator from Generic Type: 
+            Modified from http://rogeralsing.com/2008/02/28/linq-expressions-creating-objects/
+            </summary>
+            <param name="dataType">Type of the objectwe wish to create</param>
+            <returns>Method to return an instance of object</returns>
         </member>
         <member name="M:QuantConnect.Loader.GetExtendedTypeNames(System.Reflection.Assembly,System.String)">
             <summary>
             Get a list of all the matching type names in this DLL assembly:
             </summary>
-            <typeparam name="T">type/interface we're searching for </typeparam>
+            <param name="assembly">Assembly dll we're loading.</param>
+            <param name="baseClassName">Class to instantiate in the library</param>
+            <returns>String list of types available.</returns>
+        </member>
+        <member name="M:QuantConnect.Loader.GetExtendedTypes(System.Reflection.Assembly,System.String)">
+            <summary>
+            Get an array of the actual type instances in the user's algorithm
+            </summary>
             <param name="assembly">Assembly dll we're loading.</param>
             <param name="baseClassName">Class to instantiate in the library</param>
             <returns>String list of types available.</returns>
@@ -589,6 +1240,26 @@
         <member name="M:QuantConnect.Loader.Unload">
             <summary>
             Unload this factory's appDomain.
+            </summary>
+        </member>
+        <member name="T:QuantConnect.QCMath">
+            <summary>
+            QC Math Helper Functions and Classes.
+            </summary>
+        </member>
+        <member name="F:QuantConnect.QCMath.Pi">
+            <summary>
+            Constant Declaration of PI.
+            </summary>
+        </member>
+        <member name="F:QuantConnect.QCMath.Phi">
+            <summary>
+            Constant Declaration of Phi
+            </summary>
+        </member>
+        <member name="F:QuantConnect.QCMath.InvPhi">
+            <summary>
+            Constant declaration of inverse Phi
             </summary>
         </member>
         <member name="M:QuantConnect.QCMath.Pow(System.Double,System.Double)">
@@ -606,6 +1277,13 @@
             <param name="dNumber">Number to Round.</param>
             <param name="iDecimalPlaces">Number of Decimal Places</param>
             <returns></returns>
+        </member>
+        <member name="M:QuantConnect.QCMath.SmartRound(System.Decimal)">
+            <summary>
+            Based on the significant figures in the number, round its decimals accordingly
+            </summary>
+            <param name="number"></param>
+            <returns>Rounded number close as possible to 4-5 significant figures</returns>
         </member>
         <member name="M:QuantConnect.QCMath.Random(System.Boolean,System.Int32)">
             <summary>
@@ -787,15 +1465,126 @@
             Type of the Order: Market, Limit or Stop
             </summary>
         </member>
+        <member name="F:QuantConnect.OrderType.Market">
+            <summary>
+            Market Order Type
+            </summary>
+        </member>
+        <member name="F:QuantConnect.OrderType.Limit">
+            <summary>
+            Limit Order Type
+            </summary>
+        </member>
+        <member name="F:QuantConnect.OrderType.Stop">
+            <summary>
+            Stop Order Type
+            </summary>
+        </member>
         <member name="T:QuantConnect.OrderDirection">
             <summary>
             Direction of the Order:
+            </summary>
+        </member>
+        <member name="F:QuantConnect.OrderDirection.Buy">
+            <summary>
+            Buy Order 
+            </summary>
+        </member>
+        <member name="F:QuantConnect.OrderDirection.Sell">
+            <summary>
+            Sell Order
+            </summary>
+        </member>
+        <member name="F:QuantConnect.OrderDirection.Hold">
+            <summary>
+            Default Value - No Order Direction
             </summary>
         </member>
         <member name="T:QuantConnect.OrderStatus">
             <summary>
             Status of the order class.
             </summary>
+        </member>
+        <member name="F:QuantConnect.OrderStatus.New">
+            <summary>
+            New order pre-submission to the order processor.
+            </summary>
+        </member>
+        <member name="F:QuantConnect.OrderStatus.Update">
+            <summary>
+            Order flagged for updating the inmarket order.
+            </summary>
+        </member>
+        <member name="F:QuantConnect.OrderStatus.Submitted">
+            <summary>
+            Order submitted to the market
+            </summary>
+        </member>
+        <member name="F:QuantConnect.OrderStatus.PartiallyFilled">
+            <summary>
+            Partially filled, In Market Order.
+            </summary>
+        </member>
+        <member name="F:QuantConnect.OrderStatus.Filled">
+            <summary>
+            Completed, Filled, In Market Order.
+            </summary>
+        </member>
+        <member name="F:QuantConnect.OrderStatus.Canceled">
+            <summary>
+            Order cancelled before it was filled
+            </summary>
+        </member>
+        <member name="F:QuantConnect.OrderStatus.None">
+            <summary>
+            No Order State Yet
+            </summary>
+        </member>
+        <member name="F:QuantConnect.OrderStatus.Invalid">
+            <summary>
+            Order invalidated before it hit the market (e.g. insufficient capital)..
+            </summary>
+        </member>
+        <member name="T:QuantConnect.OrderEvent">
+            <summary>
+            Order Event - Messaging class signifying a change in an order state. 
+            </summary>
+        </member>
+        <member name="F:QuantConnect.OrderEvent.Id">
+            <summary>
+            Id of the order this event comes from.
+            </summary>
+        </member>
+        <member name="F:QuantConnect.OrderEvent.Status">
+            <summary>
+            Status message of the order.
+            </summary>
+        </member>
+        <member name="F:QuantConnect.OrderEvent.FillPrice">
+            <summary>
+            Fill price information about the order
+            </summary>
+        </member>
+        <member name="F:QuantConnect.OrderEvent.Message">
+            <summary>
+            Any message from the exchange.
+            </summary>
+        </member>
+        <member name="M:QuantConnect.OrderEvent.#ctor(System.Int32,QuantConnect.OrderStatus,System.Decimal,System.String)">
+            <summary>
+            Order Constructor.
+            </summary>
+            <param name="id">Id of the parent order</param>
+            <param name="status">Status of the order</param>
+            <param name="fillPrice">Fill price information if applicable.</param>
+            <param name="message">Message from the exchange</param>
+        </member>
+        <member name="M:QuantConnect.OrderEvent.#ctor(QuantConnect.Order,System.String)">
+            <summary>
+            Helper Constructor using Order to Initialize.
+            </summary>
+            <param name="order">Order for this order status</param>
+            <param name="message">Message from exchange or QC.</param>
         </member>
         <member name="T:QuantConnect.OrderErrors">
             <summary>
@@ -810,6 +1599,41 @@
         <member name="T:QuantConnect.Order">
             <summary>
             Trade Struct for Recording Results:
+            </summary>
+        </member>
+        <member name="F:QuantConnect.Order.Id">
+            <summary>
+            Order ID.
+            </summary>
+        </member>
+        <member name="F:QuantConnect.Order.Symbol">
+            <summary>
+            Symbol of the Asset
+            </summary>
+        </member>
+        <member name="F:QuantConnect.Order.Price">
+            <summary>
+            Price of the Order.
+            </summary>
+        </member>
+        <member name="F:QuantConnect.Order.Time">
+            <summary>
+            Time the order was created.
+            </summary>
+        </member>
+        <member name="F:QuantConnect.Order.Quantity">
+            <summary>
+            Number of shares to execute.
+            </summary>
+        </member>
+        <member name="F:QuantConnect.Order.Type">
+            <summary>
+            Order Type
+            </summary>
+        </member>
+        <member name="F:QuantConnect.Order.Status">
+            <summary>
+            Status of the Order
             </summary>
         </member>
         <member name="M:QuantConnect.Order.#ctor(System.String,System.Int32,QuantConnect.OrderType,System.DateTime,System.Decimal)">
@@ -832,35 +1656,98 @@
             Value of the Order:
             </summary>
         </member>
-        <member name="T:QuantConnect.HungarianOrder">
+        <member name="T:QuantConnect.Securities.SecurityTransactionModel">
             <summary>
-            Orders Struct for communication with JS IDE (JS/PHP code uses hungarian notation)
+            Default Transaction Model for User Defined Securities:
             </summary>
         </member>
-        <member name="M:QuantConnect.HungarianOrder.#ctor(QuantConnect.Order)">
+        <member name="T:QuantConnect.Securities.ISecurityTransactionModel">
             <summary>
-            Hungarian translation of the order class for the js side of IDE.
-            </summary>
-            <param name="cOrder"></param>
-        </member>
-        <member name="P:QuantConnect.HungarianOrder.eDirection">
-            <summary>
-            Order Direction Property based off Quantity.
+            Security Transaction Model
             </summary>
         </member>
-        <member name="P:QuantConnect.HungarianOrder.dQuantity">
+        <member name="M:QuantConnect.Securities.ISecurityTransactionModel.Fill(QuantConnect.Securities.Security,QuantConnect.Order@)">
             <summary>
-            Get the decimal quantity
+            Perform neccessary check to see if the model has been filled, appoximate the best we can.
+            </summary>
+            <param name="asset">Asset we're trading this order</param>
+            <param name="order">Order class to check if filled.</param>
+        </member>
+        <member name="M:QuantConnect.Securities.ISecurityTransactionModel.GetSlippageApproximation(QuantConnect.Securities.Security,QuantConnect.Order)">
+            <summary>
+            Get the Slippage approximation for this order:
             </summary>
         </member>
-        <member name="P:QuantConnect.HungarianOrder.iAbsoluteQuantity">
+        <member name="M:QuantConnect.Securities.ISecurityTransactionModel.MarketFill(QuantConnect.Securities.Security,QuantConnect.Order@)">
             <summary>
-            Get the Absolute (non-negative) quantity.
+            Model the slippage on a market order: fixed percentage of order price
+            </summary>
+            <param name="asset">Asset we're trading this order</param>
+            <param name="order">Order to update</param>
+        </member>
+        <member name="M:QuantConnect.Securities.ISecurityTransactionModel.StopFill(QuantConnect.Securities.Security,QuantConnect.Order@)">
+            <summary>
+            Check if the model has stopped out our position yet:
+            </summary>
+            <param name="asset">Asset we're trading this order</param>
+            <param name="order">Stop Order to Check, return filled if true</param>
+        </member>
+        <member name="M:QuantConnect.Securities.ISecurityTransactionModel.LimitFill(QuantConnect.Securities.Security,QuantConnect.Order@)">
+            <summary>
+            Model for a limit fill.
+            </summary>
+            <param name="asset">Stock Object to use to help model limit fill</param>
+            <param name="order">Order to fill. Alter the values directly if filled.</param>
+        </member>
+        <member name="M:QuantConnect.Securities.ISecurityTransactionModel.GetOrderFee(System.Decimal,System.Decimal)">
+            <summary>
+            Get the fees from one order. Currently defaults to interactive
+            </summary>
+            <param name="quantity">Quantity for this Order</param>
+            <param name="price">Average Price for this Order</param>
+            <returns>Decimal value of the Order Fee</returns>
+        </member>
+        <member name="M:QuantConnect.Securities.SecurityTransactionModel.#ctor">
+            <summary>
+            Initialise the Algorithm Transaction Class
             </summary>
         </member>
-        <member name="P:QuantConnect.HungarianOrder.dValue">
+        <member name="M:QuantConnect.Securities.SecurityTransactionModel.Fill(QuantConnect.Securities.Security,QuantConnect.Order@)">
             <summary>
-            Value of the Order:
+            Perform neccessary check to see if the model has been filled, appoximate the best we can.
+            </summary>
+            <param name="vehicle">Asset we're working with</param>
+            <param name="order">Order class to check if filled.</param>
+        </member>
+        <member name="M:QuantConnect.Securities.SecurityTransactionModel.GetSlippageApproximation(QuantConnect.Securities.Security,QuantConnect.Order)">
+            <summary>
+            Get the Slippage approximation for this order:
+            </summary>
+        </member>
+        <member name="M:QuantConnect.Securities.SecurityTransactionModel.MarketFill(QuantConnect.Securities.Security,QuantConnect.Order@)">
+            <summary>
+            Default market order model. Fill at last price
+            </summary>
+            <param name="security">Asset we're working with</param>
+            <param name="order">Order to update</param>
+        </member>
+        <member name="M:QuantConnect.Securities.SecurityTransactionModel.StopFill(QuantConnect.Securities.Security,QuantConnect.Order@)">
+            <summary>
+            Check if the model has stopped out our position yet:
+            </summary>
+            <param name="security">Asset we're working with</param>
+            <param name="order">Stop Order to Check, return filled if true</param>
+        </member>
+        <member name="M:QuantConnect.Securities.SecurityTransactionModel.LimitFill(QuantConnect.Securities.Security,QuantConnect.Order@)">
+            <summary>
+            Check if the price MarketDataed to our limit price yet:
+            </summary>
+            <param name="security">Asset we're working with</param>
+            <param name="order">Limit order in market</param>
+        </member>
+        <member name="M:QuantConnect.Securities.SecurityTransactionModel.GetOrderFee(System.Decimal,System.Decimal)">
+            <summary>
+            Default Security Transaction Model - No Fees.
             </summary>
         </member>
         <member name="T:QuantConnect.Securities.Equity">
@@ -873,7 +1760,7 @@
             A base "Market" Vehicle Class for Providing a common interface to Indexes / Equities / FOREX Trading.
             </summary>
         </member>
-        <member name="M:QuantConnect.Securities.Security.#ctor(System.String,QuantConnect.SecurityType,QuantConnect.Resolution,System.Boolean,System.Decimal,System.Boolean)">
+        <member name="M:QuantConnect.Securities.Security.#ctor(System.String,QuantConnect.SecurityType,QuantConnect.Resolution,System.Boolean,System.Decimal,System.Boolean,System.Boolean)">
             <summary>
             Construct the Market Vehicle
             </summary>
@@ -884,12 +1771,12 @@
             </summary>
             <returns></returns>
         </member>
-        <member name="M:QuantConnect.Securities.Security.Update(System.DateTime,QuantConnect.Models.MarketData)">
+        <member name="M:QuantConnect.Securities.Security.Update(System.DateTime,QuantConnect.Models.BaseData)">
             <summary>
             Update the Market Online Calculations:
             </summary>
             <param name="data">New Data packet:</param>
-            <param name="frontier"></param>
+            <param name="frontier">time frontier / where we are in time.</param>
         </member>
         <member name="P:QuantConnect.Securities.Security.Symbol">
             <summary>
@@ -941,6 +1828,11 @@
             Read only property that checks if we currently own stock in the company.
             </summary>
         </member>
+        <member name="P:QuantConnect.Securities.Security.Invested">
+            <summary>
+            Alias for HoldStock - Do we have any of this security
+            </summary>
+        </member>
         <member name="P:QuantConnect.Securities.Security.Time">
             <summary>
             Local Time for this Market 
@@ -954,6 +1846,11 @@
         <member name="P:QuantConnect.Securities.Security.Leverage">
             <summary>
             Leverage for this Security.
+            </summary>
+        </member>
+        <member name="P:QuantConnect.Securities.Security.IsQuantConnectData">
+            <summary>
+            Use QuantConnect data source flag, or is the security a user object
             </summary>
         </member>
         <member name="P:QuantConnect.Securities.Security.High">
@@ -976,7 +1873,7 @@
             If this uses tradebar data, return the most recent open.
             </summary>
         </member>
-        <member name="M:QuantConnect.Securities.Equity.#ctor(System.String,QuantConnect.Resolution,System.Boolean,System.Decimal,System.Boolean)">
+        <member name="M:QuantConnect.Securities.Equity.#ctor(System.String,QuantConnect.Resolution,System.Boolean,System.Decimal,System.Boolean,System.Boolean)">
             <summary>
             Construct the Market Vehicle
             </summary>
@@ -1021,27 +1918,12 @@
             Last data for this security.
             </summary>
         </member>
-        <member name="F:QuantConnect.Securities.SecurityCache.DataCache">
-            <summary>
-            Incoming Data Cached.
-            </summary>
-        </member>
-        <member name="F:QuantConnect.Securities.SecurityCache.colorMarkCache">
-            <summary>
-            Colour Mark Caches for Algo Design:
-            </summary>
-        </member>
         <member name="M:QuantConnect.Securities.SecurityCache.#ctor">
             <summary>
             Start a new Cache for the set Index Code
             </summary>
         </member>
-        <member name="M:QuantConnect.Securities.SecurityCache.AddMark(System.DateTime,System.Decimal,System.Drawing.Color,System.String)">
-            <summary>
-            Add the mark to the colour cache for dynamic graphing.
-            </summary>
-        </member>
-        <member name="M:QuantConnect.Securities.SecurityCache.AddData(QuantConnect.Models.MarketData)">
+        <member name="M:QuantConnect.Securities.SecurityCache.AddData(QuantConnect.Models.BaseData)">
             <summary>
             Add a list of new MarketData samples to the cache
             </summary>
@@ -1100,11 +1982,32 @@
             <param name="dateToCheck">Date to check</param>
             <returns>Return true if the exchange is open for this date</returns>
         </member>
+        <member name="M:QuantConnect.Securities.SecurityExchange.TimeOfDayOpen(System.DateTime)">
+            <summary>
+            Set this datetime object to the open time for the exchange,
+            </summary>
+            <param name="time"></param>
+            <returns></returns>
+        </member>
+        <member name="M:QuantConnect.Securities.SecurityExchange.TimeOfDayClosed(System.DateTime)">
+            <summary>
+            Set this datetime object to the open time for the exchange,
+            </summary>
+            <param name="time"></param>
+            <returns></returns>
+        </member>
         <member name="M:QuantConnect.Securities.SecurityExchange.DateTimeIsOpen(System.DateTime)">
             <summary>
             Ensure this date time is open
             </summary>
             <param name="dateTime"></param>
+            <returns></returns>
+        </member>
+        <member name="M:QuantConnect.Securities.SecurityExchange.DateTimeIsExtendedOpen(System.DateTime)">
+            <summary>
+            Check if the object is open including the *Extended* market hours
+            </summary>
+            <param name="time">Time of day</param>
             <returns></returns>
         </member>
         <member name="P:QuantConnect.Securities.SecurityExchange.TimeZone">
@@ -1134,12 +2037,33 @@
             <param name="dateToCheck">Time to check</param>
             <returns>True if open</returns>
         </member>
+        <member name="M:QuantConnect.Securities.EquityExchange.TimeOfDayOpen(System.DateTime)">
+            <summary>
+            Set the incoming datetime object date to the market open time:
+            </summary>
+            <param name="time">Date we want to set:</param>
+            <returns></returns>
+        </member>
+        <member name="M:QuantConnect.Securities.EquityExchange.TimeOfDayClosed(System.DateTime)">
+            <summary>
+            
+            </summary>
+            <param name="time"></param>
+            <returns></returns>
+        </member>
         <member name="M:QuantConnect.Securities.EquityExchange.DateIsOpen(System.DateTime)">
             <summary>
             Conditions to check if the equity markets are open
             </summary>
             <param name="dateToCheck">datetime to check</param>
             <returns>true if open</returns>
+        </member>
+        <member name="M:QuantConnect.Securities.EquityExchange.DateTimeIsExtendedOpen(System.DateTime)">
+            <summary>
+            Check if this datetime is open, including extended market hours:
+            </summary>
+            <param name="time">Time to check</param>
+            <returns>Bool true if in normal+extended market hours.</returns>
         </member>
         <member name="P:QuantConnect.Securities.EquityExchange.ExchangeOpen">
             <summary>
@@ -1292,52 +2216,6 @@
             Default Transaction Model for Equity Security Orders
             </summary>
         </member>
-        <member name="T:QuantConnect.Securities.ISecurityTransactionModel">
-            <summary>
-            Security Transaction Model
-            </summary>
-        </member>
-        <member name="M:QuantConnect.Securities.ISecurityTransactionModel.Fill(QuantConnect.Securities.Security,QuantConnect.Order@)">
-            <summary>
-            Perform neccessary check to see if the model has been filled, appoximate the best we can.
-            </summary>
-            <param name="asset">Asset we're trading this order</param>
-            <param name="order">Order class to check if filled.</param>
-        </member>
-        <member name="M:QuantConnect.Securities.ISecurityTransactionModel.GetSlippageApproximation(QuantConnect.Securities.Security,QuantConnect.Order)">
-            <summary>
-            Get the Slippage approximation for this order:
-            </summary>
-        </member>
-        <member name="M:QuantConnect.Securities.ISecurityTransactionModel.MarketFill(QuantConnect.Securities.Security,QuantConnect.Order@)">
-            <summary>
-            Model the slippage on a market order: fixed percentage of order price
-            </summary>
-            <param name="asset">Asset we're trading this order</param>
-            <param name="order">Order to update</param>
-        </member>
-        <member name="M:QuantConnect.Securities.ISecurityTransactionModel.StopFill(QuantConnect.Securities.Security,QuantConnect.Order@)">
-            <summary>
-            Check if the model has stopped out our position yet:
-            </summary>
-            <param name="asset">Asset we're trading this order</param>
-            <param name="order">Stop Order to Check, return filled if true</param>
-        </member>
-        <member name="M:QuantConnect.Securities.ISecurityTransactionModel.LimitFill(QuantConnect.Securities.Security,QuantConnect.Order@)">
-            <summary>
-            Model for a limit fill.
-            </summary>
-            <param name="asset">Stock Object to use to help model limit fill</param>
-            <param name="order">Order to fill. Alter the values directly if filled.</param>
-        </member>
-        <member name="M:QuantConnect.Securities.ISecurityTransactionModel.GetOrderFee(System.Decimal,System.Decimal)">
-            <summary>
-            Get the fees from one order. Currently defaults to interactive
-            </summary>
-            <param name="quantity">Quantity for this Order</param>
-            <param name="price">Average Price for this Order</param>
-            <returns>Decimal value of the Order Fee</returns>
-        </member>
         <member name="M:QuantConnect.Securities.EquityTransactionModel.#ctor">
             <summary>
             Initialise the Algorithm Transaction Class
@@ -1388,7 +2266,7 @@
             FOREX Implementation of the base Market Class.
             </summary>
         </member>
-        <member name="M:QuantConnect.Securities.Forex.#ctor(System.String,QuantConnect.Resolution,System.Boolean,System.Decimal,System.Boolean)">
+        <member name="M:QuantConnect.Securities.Forex.#ctor(System.String,QuantConnect.Resolution,System.Boolean,System.Decimal,System.Boolean,System.Boolean)">
             <summary>
             Construct the Forex Object
             </summary>
@@ -1537,7 +2415,7 @@
             <param name="resolution"></param>
             <param name="fillDataForward"></param>
         </member>
-        <member name="M:QuantConnect.Securities.SecurityManager.Add(System.String,QuantConnect.SecurityType,QuantConnect.Resolution,System.Boolean,System.Decimal,System.Boolean)">
+        <member name="M:QuantConnect.Securities.SecurityManager.Add(System.String,QuantConnect.SecurityType,QuantConnect.Resolution,System.Boolean,System.Decimal,System.Boolean,System.Boolean)">
             <summary>
             Add a New Security we'll need data and updates for:
             </summary>
@@ -1546,6 +2424,8 @@
             <param name="resolution">Resolution of Data Required</param>
             <param name="fillDataForward">If true, returns previous tradeBar when none are available in current second.</param>
             <param name="leverage">Leverage for this security, default = 1</param>
+            <param name="extendedMarketHours">Request ALL the data available, from 4am - 8pm.</param>
+            <param name="useQuantConnectData">Use quantconnect's data for equity and forex requests</param>
         </member>
         <member name="M:QuantConnect.Securities.SecurityManager.Add(System.Collections.Generic.KeyValuePair{System.String,QuantConnect.Securities.Security})">
             <summary>
@@ -1626,12 +2506,12 @@
             <param name="resolution">Resolution to look for.</param>
             <returns>int iCount.</returns>
         </member>
-        <member name="M:QuantConnect.Securities.SecurityManager.Update(System.DateTime,System.Collections.Generic.Dictionary{System.String,System.Collections.Generic.List{QuantConnect.Models.MarketData}})">
+        <member name="M:QuantConnect.Securities.SecurityManager.Update(System.DateTime,QuantConnect.Models.BaseData)">
             <summary>
             Update the security properties, online functions with these data packets.
             </summary>
-            <param name="frontier"></param>
-            <param name="data"></param>
+            <param name="time">Time Frontier</param>
+            <param name="data">Data packets to update</param>
         </member>
         <member name="P:QuantConnect.Securities.SecurityManager.Count">
             <summary>
@@ -1679,6 +2559,36 @@
             <summary>
             Initialise Security Portfolio Manager
             </summary>
+        </member>
+        <member name="M:QuantConnect.Securities.SecurityPortfolioManager.Add(System.String,QuantConnect.Securities.SecurityHolding)">
+            <summary>
+            Portfolio Manager Dictionary Implementation Placeholder - Not Implemented.
+            </summary>
+            <param name="symbol">Symbol of dictionary</param>
+            <param name="holding">SecurityHoldings object</param>
+        </member>
+        <member name="M:QuantConnect.Securities.SecurityPortfolioManager.Add(System.Collections.Generic.KeyValuePair{System.String,QuantConnect.Securities.SecurityHolding})">
+            <summary>
+            Portfolio Manager Dictionary Implementation Placeholder - Not Implemented.
+            </summary>
+            <param name="pair">Key value pair of dictionary</param>
+        </member>
+        <member name="M:QuantConnect.Securities.SecurityPortfolioManager.Clear">
+            <summary>
+            Portfolio Manager Dictionary Implementation Placeholder - Not Implemented.
+            </summary>
+        </member>
+        <member name="M:QuantConnect.Securities.SecurityPortfolioManager.Remove(System.Collections.Generic.KeyValuePair{System.String,QuantConnect.Securities.SecurityHolding})">
+            <summary>
+            Portfolio Manager Dictionary Implementation Placeholder - Not Implemented.
+            </summary>
+            <param name="pair">Key value pair of dictionary</param>
+        </member>
+        <member name="M:QuantConnect.Securities.SecurityPortfolioManager.Remove(System.String)">
+            <summary>
+            Portfolio Manager Dictionary Implementation Placeholder - Not Implemented.
+            </summary>
+            <param name="symbol">Symbol of dictionary</param>
         </member>
         <member name="M:QuantConnect.Securities.SecurityPortfolioManager.ContainsKey(System.String)">
             <summary>
@@ -1788,6 +2698,11 @@
             Check if we have holdings:
             </summary>
         </member>
+        <member name="P:QuantConnect.Securities.SecurityPortfolioManager.Invested">
+            <summary>
+            Alias for HoldStock. Check if we have and holdings.
+            </summary>
+        </member>
         <member name="P:QuantConnect.Securities.SecurityPortfolioManager.TotalUnrealisedProfit">
             <summary>
             Get the total unrealised profit in our portfolio
@@ -1830,14 +2745,9 @@
             Algorithm Transactions Manager - Recording Transactions
             </summary>
         </member>
-        <member name="F:QuantConnect.Securities.SecurityTransactionManager.ProcessedOrders">
+        <member name="F:QuantConnect.Securities.SecurityTransactionManager.OrderQueue">
             <summary>
-            Orders which have been processed / filled and are saved for future reference:
-            </summary>
-        </member>
-        <member name="F:QuantConnect.Securities.SecurityTransactionManager.OutstandingOrders">
-            <summary>
-            Orders waiting to be filled:
+            Processing Line for Orders Not Sent To Transaction Handler:
             </summary>
         </member>
         <member name="F:QuantConnect.Securities.SecurityTransactionManager.TransactionRecord">
@@ -1850,12 +2760,18 @@
             Initialise the Algorithm Transaction Class
             </summary>
         </member>
-        <member name="M:QuantConnect.Securities.SecurityTransactionManager.AddOrder(QuantConnect.Order,QuantConnect.Securities.SecurityPortfolioManager)">
+        <member name="M:QuantConnect.Securities.SecurityTransactionManager.SetOrderCache(System.Collections.Concurrent.ConcurrentDictionary{System.Int32,QuantConnect.Order})">
+            <summary>
+            Set the order cache, 
+            </summary>
+            <param name="orders">New orders cache</param>
+        </member>
+        <member name="M:QuantConnect.Securities.SecurityTransactionManager.AddOrder(QuantConnect.Order)">
             <summary>
             Add an Order and return the Order ID or negative if an error.
             </summary>
         </member>
-        <member name="M:QuantConnect.Securities.SecurityTransactionManager.UpdateOrder(QuantConnect.Order,QuantConnect.Securities.SecurityPortfolioManager,System.Int32)">
+        <member name="M:QuantConnect.Securities.SecurityTransactionManager.UpdateOrder(QuantConnect.Order,QuantConnect.Securities.SecurityPortfolioManager)">
             <summary>
             Update an order yet to be filled / stop / limit.
             </summary>
@@ -1863,19 +2779,13 @@
             <param name="portfolio"></param>
             <returns>id if the order we modified.</returns>
         </member>
-        <member name="M:QuantConnect.Securities.SecurityTransactionManager.RefreshOrderModel(QuantConnect.Securities.SecurityPortfolioManager,System.Int32,System.Boolean)">
+        <member name="M:QuantConnect.Securities.SecurityTransactionManager.ProcessOrderEvents(System.Collections.Concurrent.ConcurrentQueue{QuantConnect.OrderEvent},QuantConnect.Securities.SecurityPortfolioManager,System.Int32,System.Boolean)">
             <summary>
-            Scan through all the outstanding order cache and see if any have been filled:
+            Scan through all the order events and update the user's portfolio
             </summary>
-            <returns>Dictionary fillErrors of order key with error-id value: 0 for no error.</returns>
+            <returns>.</returns>
         </member>
-        <member name="M:QuantConnect.Securities.SecurityTransactionManager.AddOutstandingOrder(QuantConnect.Order)">
-            <summary>
-            Add an order to attempt a fill. If this is a market order it will be filled immediately.
-            </summary>
-            <param name="order">New Order to Fill</param>
-        </member>
-        <member name="M:QuantConnect.Securities.SecurityTransactionManager.RemoveOutstandingOrder(System.Int32)">
+        <member name="M:QuantConnect.Securities.SecurityTransactionManager.RemoveOrder(System.Int32)">
             <summary>
             Remove this order from outstanding queue: its been filled or cancelled.
             </summary>
@@ -1915,6 +2825,12 @@
             <param name="order">Order requested to process </param>
             <returns>decimal final holdings </returns>
         </member>
+        <member name="P:QuantConnect.Securities.SecurityTransactionManager.Orders">
+            <summary>
+            Holding All Orders: Clone of the TransactionHandler.Orders
+            -> Read only.
+            </summary>
+        </member>
         <member name="P:QuantConnect.Securities.SecurityTransactionManager.MinimumOrderSize">
             <summary>
             Configurable Minimum Order Size to override bad orders, Default 0:
@@ -1925,50 +2841,20 @@
             Configurable Minimum Order Quantity: Default 0
             </summary>
         </member>
-        <member name="M:QuantConnect.Statistics.Generate(System.Collections.Generic.SortedDictionary{System.DateTime,System.Decimal},System.Collections.Generic.SortedDictionary{System.DateTime,System.Decimal},System.Collections.Generic.SortedDictionary{System.DateTime,System.Decimal},System.Decimal,System.Double)">
+        <member name="T:QuantConnect.OS">
             <summary>
-            Run a full set of orders and return a 
+            Operating Systems Class Manager
             </summary>
-            <param name="equity">Equity value over time.</param>
-            <param name="profitLoss">profit loss from trades</param>
-            <param name="startingCash">Amount of starting cash in USD </param>
-            <param name="fractionOfYears">Number of years as a double number 1 = 1 year. </param>
-            <returns>Statistics Array, Broken into Annual Periods</returns>
         </member>
-        <member name="M:QuantConnect.Statistics.ProfitLossRatio(System.Decimal,System.Decimal)">
+        <member name="P:QuantConnect.OS.RamTotalCounter">
             <summary>
-            Return profit loss ratio safely.
+            Total Physical Ram on the Machine:
             </summary>
-            <param name="averageWin"></param>
-            <param name="averageLoss"></param>
-            <returns></returns>
         </member>
-        <member name="M:QuantConnect.Statistics.Frequency(System.Decimal,System.DateTime,System.DateTime)">
+        <member name="P:QuantConnect.OS.RamAvailableBytes">
             <summary>
-            Get an approximation of the trade frequency:
+            Memory free on the machine available for use:
             </summary>
-            <param name="dTotalTrades">Number of trades in this period</param>
-            <param name="dtStart">Start of Period</param>
-            <param name="dtEnd">End of Period</param>
-            <returns>Enum Frequency</returns>
-        </member>
-        <member name="M:QuantConnect.Statistics.Drawdown(System.Collections.Generic.SortedDictionary{System.DateTime,System.Decimal},System.Int32)">
-            <summary>
-            Get the Drawdown Statistic for this Period.
-            </summary>
-            <param name="equityOverTime">Array of portfolio value over time.</param>
-            <param name="rounding">Round the drawdown statistics </param>
-            <returns>Draw down percentage over period.</returns>
-        </member>
-        <member name="M:QuantConnect.Statistics.SharpeRatio(System.Collections.Generic.SortedDictionary{System.DateTime,System.Decimal},System.Collections.Generic.SortedDictionary{System.DateTime,System.Decimal},System.Decimal,System.Decimal,System.Int32)">
-            <summary>
-            Get the Sharpe Ratio of this period:
-            </summary>
-            <param name="equity">Equity of this period.</param>
-            <param name="averageAnnualGrowth">Percentage annual growth</param>
-            <param name="rounding">decimal rounding</param>
-            <param name="startingCash">Starting cash for the conversion to percentages</param>
-            <returns>decimal sharpe.</returns>
         </member>
         <member name="P:QuantConnect.OS.IsLinux">
             <summary>
@@ -1983,6 +2869,26 @@
         <member name="P:QuantConnect.OS.PathSeparation">
             <summary>
             Character Separating directories in this OS:
+            </summary>
+        </member>
+        <member name="P:QuantConnect.OS.DriveSpaceRemaining">
+            <summary>
+            Get the drive space remaining on windows and linux in MB
+            </summary>
+        </member>
+        <member name="P:QuantConnect.OS.ApplicationMemoryUsed">
+            <summary>
+            Get the RAM remaining on the machine:
+            </summary>
+        </member>
+        <member name="P:QuantConnect.OS.TotalPhysicalMemory">
+            <summary>
+            Get the RAM remaining on the machine:
+            </summary>
+        </member>
+        <member name="P:QuantConnect.OS.TotalPhysicalMemoryUsed">
+            <summary>
+            Get the RAM remaining on the machine:
             </summary>
         </member>
         <member name="T:QuantConnect.Time">

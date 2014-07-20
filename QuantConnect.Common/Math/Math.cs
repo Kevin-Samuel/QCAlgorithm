@@ -19,16 +19,27 @@ namespace QuantConnect {
     /******************************************************** 
     * CLASS DEFINITIONS
     *********************************************************/
-
+    /// <summary>
+    /// QC Math Helper Functions and Classes.
+    /// </summary>
     public partial class QCMath {
         /******************************************************** 
         * CLASS VARIABLES
         *********************************************************/
+        /// <summary>
+        /// Constant Declaration of PI.
+        /// </summary>
         public static readonly decimal Pi = 3.14159265358979323846264338327950288419716939937510m;
+
+        /// <summary>
+        /// Constant Declaration of Phi
+        /// </summary>
         public static readonly decimal Phi = 1.6180339887498948482m;
+
+        /// <summary>
+        /// Constant declaration of inverse Phi
+        /// </summary>
         public static readonly decimal InvPhi = 0.6180339887498948482m;
-        public static readonly decimal Phi618 = 0.6180339887498948482m;
-        public static readonly decimal Phi381 = 0.5819660112501051518m;
 
         /******************************************************** 
         * CLASS METHODS
@@ -52,6 +63,32 @@ namespace QuantConnect {
         /// <returns></returns>
         public static decimal Round(decimal dNumber, int iDecimalPlaces = 2) {
             return System.Math.Round(dNumber, iDecimalPlaces);
+        }
+
+
+        /// <summary>
+        /// Based on the significant figures in the number, round its decimals accordingly
+        /// </summary>
+        /// <param name="number"></param>
+        /// <returns>Rounded number close as possible to 4-5 significant figures</returns>
+        public static decimal SmartRound(decimal number) {
+            if (number < 1) {
+                return Math.Round(number, 4);
+            }
+            else if (number < 10) {
+                return Math.Round(number, 3);
+            }
+            else if (number < 100)
+            {
+                return Math.Round(number, 2);
+            }
+            else if (number < 1000)
+            {
+                return Math.Round(number, 1);
+            }
+            else {
+                return Math.Round(number, 0);
+            }
         }
 
 

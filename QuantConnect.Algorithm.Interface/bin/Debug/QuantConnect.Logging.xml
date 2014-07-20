@@ -4,23 +4,29 @@
         <name>QuantConnect.Logging</name>
     </assembly>
     <members>
+        <member name="T:QuantConnect.Logging.Log">
+            <summary>
+            Logging Top Level Class
+            </summary>
+        </member>
         <member name="M:QuantConnect.Logging.Log.Error(System.String,System.Boolean)">
             <summary>
             Log an Error
             </summary>
             <param name="error">String Error</param>
+            <param name="overrideMessageFloodProtection">Force sending a message, overriding the "do not flood" directive</param>
         </member>
-        <member name="M:QuantConnect.Logging.Log.Trace(System.String)">
+        <member name="M:QuantConnect.Logging.Log.Trace(System.String,System.Boolean)">
             <summary>
             Log a Trace Message
             </summary>
-            <param name="traceText">String Trace</param>
         </member>
         <member name="M:QuantConnect.Logging.Log.Debug(System.String,System.Int32,System.Int32)">
             <summary>
             Output to the console, and sleep the thread for a little period to monitor the results.
             </summary>
             <param name="text"></param>
+            <param name="level">debug level</param>
             <param name="delay"></param>
         </member>
         <member name="M:QuantConnect.Logging.Log.VarDump(System.Object,System.Int32)">

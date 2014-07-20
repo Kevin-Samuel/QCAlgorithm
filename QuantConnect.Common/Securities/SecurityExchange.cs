@@ -132,6 +132,29 @@ namespace QuantConnect.Securities {
             return true;
         }
 
+
+        /// <summary>
+        /// Set this datetime object to the open time for the exchange,
+        /// </summary>
+        /// <param name="time"></param>
+        /// <returns></returns>
+        public virtual DateTime TimeOfDayOpen(DateTime time) {
+            //Default to midnight, start of day.
+            return time.Date;
+        }
+
+        
+        /// <summary>
+        /// Set this datetime object to the open time for the exchange,
+        /// </summary>
+        /// <param name="time"></param>
+        /// <returns></returns>
+        public virtual DateTime TimeOfDayClosed(DateTime time)
+        {
+            //Default to midnight, start of *next* day.
+            return time.Date.AddDays(1);
+        }
+
         /// <summary>
         /// Ensure this date time is open
         /// </summary>
@@ -142,6 +165,18 @@ namespace QuantConnect.Securities {
             if (!DateIsOpen(dateTime))
                 return false;
 
+            return true;
+        }
+
+
+        /// <summary>
+        /// Check if the object is open including the *Extended* market hours
+        /// </summary>
+        /// <param name="time">Time of day</param>
+        /// <returns></returns>
+        public virtual bool DateTimeIsExtendedOpen(DateTime time) {
+            if (!DateIsOpen(time))
+                return false;
             return true;
         }
 

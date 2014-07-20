@@ -37,7 +37,6 @@ namespace QuantConnect.Securities {
         /******************************************************** 
         * CLASS VARIABLES
         *********************************************************/
-        public new Equity Vehicle { get; set; }
 
         /******************************************************** 
         * CONSTRUCTOR/DELEGATE DEFINITIONS

@@ -8,12 +8,13 @@
 **********************************************************/
 using System;
 using System.Collections.Generic;
+using System.Collections.Concurrent;
 
 using QuantConnect.Securities;
 using QuantConnect.Models;
 
-namespace QuantConnect {
-
+namespace QuantConnect 
+{
     /******************************************************** 
     * CLASS DEFINITIONS
     *********************************************************/
@@ -21,8 +22,8 @@ namespace QuantConnect {
     /// QC Algorithm Base Class - Handle the basic requirement of a trading algorithm, 
     /// allowing user to focus on event methods.
     /// </summary>
-    public class QCAlgorithm : MarshalByRefObject, IAlgorithm {
-
+    public class QCAlgorithm : MarshalByRefObject, IAlgorithm 
+    {
         /******************************************************** 
         * CLASS PRIVATE VARIABLES
         *********************************************************/
@@ -31,38 +32,19 @@ namespace QuantConnect {
         private DateTime _endDate = DateTime.Today.AddDays(-1);     //Default end to yesterday
         private RunMode _runMode = RunMode.Automatic;
         private bool _locked = false;
-        private string _resolution = "";
         private string _simulationId = "";
         private bool _quit = false;
         private List<string> _debugMessages = new List<string>();
         private List<string> _logMessages = new List<string>();
+        private List<string> _errorMessages = new List<string>();
+        private Dictionary<string, Chart> _charts = new Dictionary<string, Chart>();
 
         public Console Console = new Console(null);
 
-        /******************************************************** 
-        * CLASS PUBLIC VARIABLES
-        *********************************************************/
+        //Error tracking to avoid message flooding:
+        private string previousDebugMessage = "";
+        private bool sentNoDataError = false;
 
-        /// <summary>
-        /// Security Object Collection
-        /// </summary>
-        public SecurityManager Securities { get; set; }
-
-        /// <summary>
-        /// Portfolio Adaptor/Wrapper: Easy access to securities holding properties:
-        /// </summary>
-        public SecurityPortfolioManager Portfolio { get; set; }
-
-        /// <summary>
-        /// Transaction Manager - Process transaction fills and order management.
-        /// </summary>
-        public SecurityTransactionManager Transacions { get; set; }
-
-        /// <summary>
-        /// Generic Data Manager - Required for compiling all data feeds in order,
-        /// and passing them into algorithm event methods.
-        /// </summary>
-        public DataManager DataManager { get; set; }
 
 
         /******************************************************** 
@@ -71,16 +53,17 @@ namespace QuantConnect {
         /// <summary>
         /// Initialise the Algorithm
         /// </summary>
-        public QCAlgorithm() { 
+        public QCAlgorithm()
+        {
             //Initialise the Algorithm Helper Classes:
             //- Note - ideally these wouldn't be here, but because of the DLL we need to make the classes shared across 
             //  the Worker & Algorithm, limiting ability to do anything else.
             Securities = new SecurityManager();
-            Transacions = new SecurityTransactionManager(Securities);
-            Portfolio = new SecurityPortfolioManager(Securities, Transacions);
+            Transactions = new SecurityTransactionManager(Securities);
+            Portfolio = new SecurityPortfolioManager(Securities, Transactions);
 
             //Initialise Data Manager 
-            DataManager = new DataManager();
+            SubscriptionManager = new SubscriptionManager();
 
             //Initialise Algorithm RunMode to Automatic:
             _runMode = RunMode.Automatic;
@@ -91,18 +74,54 @@ namespace QuantConnect {
             //Initialise Start and End Dates:
             _startDate = new DateTime();
             _endDate = new DateTime();
+            _charts = new Dictionary<string, Chart>();
 
             //Init Console Override:
             Console = new Console(this);
         }
 
+
         /******************************************************** 
-        * CLASS PROPERTIES
+        * CLASS PUBLIC VARIABLES
         *********************************************************/
+        /// <summary>
+        /// Security Object Collection
+        /// </summary>
+        public SecurityManager Securities { 
+            get; 
+            set; 
+        }
+
+        /// <summary>
+        /// Portfolio Adaptor/Wrapper: Easy access to securities holding properties:
+        /// </summary>
+        public SecurityPortfolioManager Portfolio { 
+            get; 
+            set; 
+        }
+
+        /// <summary>
+        /// Transaction Manager - Process transaction fills and order management.
+        /// </summary>
+        public SecurityTransactionManager Transactions { 
+            get; 
+            set; 
+        }
+
+        /// <summary>
+        /// Generic Data Manager - Required for compiling all data feeds in order,
+        /// and passing them into algorithm event methods.
+        /// </summary>
+        public SubscriptionManager SubscriptionManager { 
+            get; 
+            set; 
+        }
+
         /// <summary>
         /// Set a public name for the algorithm.
         /// </summary>
-        public string Name {
+        public string Name 
+        {
             get;
             set;
         }
@@ -110,172 +129,264 @@ namespace QuantConnect {
         /// <summary>
         /// Get the current date/time.
         /// </summary>
-        public DateTime Time {
-            get {
+        public DateTime Time 
+        {
+            get 
+            {
                 return _time;
             }
         }
 
-
         /// <summary>
         /// Get requested simulation start date set with SetStartDate()
         /// </summary>
-        public DateTime StartDate {
-            get {
+        public DateTime StartDate 
+        {
+            get 
+            {
                 return _startDate;
             }
         }
 
-
         /// <summary>
         /// Get requested simulation end date set with SetEndDate()
         /// </summary>
-        public DateTime EndDate {
-            get {
+        public DateTime EndDate 
+        {
+            get 
+            {
                 return _endDate;
             }
         }
 
-
         /// <summary>
         /// Simulation Id for this Backtest
         /// </summary>
-        public string SimulationId {
-            get {
+        public string SimulationId 
+        {
+            get 
+            {
                 return _simulationId;
             }
         }
 
-
-        /// <summary>
-        /// Catchable Error List.
-        /// </summary>
-        public List<string> Errors {
-            get;
-            set;
-        }
-
-
         /// <summary>
         /// Accessor for Filled Orders:
         /// </summary>
-        public Dictionary<int, Order> Orders {
-            get {
-                return Transacions.ProcessedOrders;
+        public ConcurrentDictionary<int, Order> Orders 
+        {
+            get 
+            {
+                return Transactions.Orders;
             }
         }
-
 
         /// <summary>
         /// Simulation Server setup RunMode for the Algorithm: Automatic, Parallel or Series.
         /// </summary>
-        public RunMode RunMode {
-            get {
+        public RunMode RunMode 
+        {
+            get 
+            {
                 return _runMode;
             }
         }
 
-
         /// <summary>
         /// Check if the algorithm is locked from any further init changes.
         /// </summary>
-        public bool Locked {
-            get {
+        public bool Locked 
+        {
+            get 
+            {
                 return _locked;
             }
         }
-
 
         /// <summary>
         /// Get the debug messages from inner list
         /// </summary>
         public List<string> DebugMessages
         {
-            get {
+            get 
+            {
                 return _debugMessages;
             }
+            set 
+            {
+                _debugMessages = value;
+            }
         }
-
 
         /// <summary>
         /// Downloadable large scale messaging systems
         /// </summary>
-        public List<string> LogMessages {
-            get {
+        public List<string> LogMessages 
+        {
+            get 
+            {
                 return _logMessages;
+            }
+            set 
+            {
+                _logMessages = value;
             }
         }
 
-
+        /// <summary>
+        /// Catchable Error List.
+        /// </summary>
+        public List<string> ErrorMessages
+        {
+            get
+            {
+                return _errorMessages;
+            }
+            set
+            {
+                _errorMessages = value;
+            }
+        }
 
         /******************************************************** 
         * CLASS METHODS
         *********************************************************/
-        
         /// <summary>
         /// Initialise the data and resolution requiredv 
         /// </summary>
-        public virtual void Initialize() {
+        public virtual void Initialize() 
+        {
             //Setup Required Data
             throw new NotImplementedException("Please override the Intitialize() method");
         }
 
         /// <summary>
+        /// DEPRECATED - v1.0 TRADEBAR EVENT HANDLER
         /// New data routine: handle new data packets. Algorithm starts here..
         /// </summary>
         /// <param name="symbols">Dictionary of MarketData Objects</param>
-        public virtual void OnTradeBar(Dictionary<string, TradeBar> symbols) {
+        public virtual void OnTradeBar(Dictionary<string, TradeBar> data)
+        {
             //Algorithm Implementation
-            throw new NotImplementedException("Please override the OnTradeBar() method");
+            //throw new NotImplementedException("OnTradeBar has been made obsolete. Please use OnData(TradeBars data) instead.");
         }
 
         /// <summary>
-        /// Twitter sentiment data in 10 minute bars:
-        /// </summary>
-        /// <param name="reports">Buzz/Sentiment values of twitter for this stock.</param>
-        public virtual void OnStockPulse(Dictionary<string, StockPulse> reports) {
-            //StockPulse Implementation
-            throw new NotImplementedException("Please override the OnStockPulse() method");
-        }
-
-        /// <summary>
+        /// DEPRECATED - v1.0 TICK EVENT HANDLER
         /// Handle a new incoming Tick Packet:
         /// </summary>
         /// <param name="ticks">Ticks arriving at the same moment come in a list. Because the "tick" data is actually list ordered within a second, you can get lots of ticks at once.</param>
-        public virtual void OnTick(Dictionary<string, List<Tick>> ticks) {
+        public virtual void OnTick(Dictionary<string, List<Tick>> data)
+        {
             //Algorithm Implementation
-            throw new NotImplementedException("Please override the OnTick() method");
+            //throw new NotImplementedException("OnTick has been made obsolete. Please use OnData(Ticks data) instead.");
         }
 
         /// <summary>
-        /// Handle a new incoming Estimize Packet:
+        /// v2.0 TRADEBAR EVENT HANDLER: (Pattern)
+        /// Basic template for user to override when requesting tradebar data.
         /// </summary>
-        /// <param name="estimates">New Estimize</param>
-        public virtual void OnEstimize(Dictionary<string, List<Estimize>> estimates) {
-            //Estimize Implementation
-            throw new NotImplementedException("Please override the OnEstimize() method");
-        }
+        /// <param name="data"></param>
+        //public void OnData(TradeBars data)
+        //{
+        //
+        //}
+
+        /// <summary>
+        /// v2.0 TICK EVENT HANDLER: (Pattern)
+        /// Basic template for user to override when requesting tick data.
+        /// </summary>
+        /// <param name="data">List of Tick Data</param>
+        //public void OnData(Ticks data)
+        //{
+        //
+        //}
 
         /// <summary>
         /// Call this method at the end of the algorithm day
         /// </summary>
-        public virtual void OnEndOfDay() {
+        public virtual void OnEndOfDay() 
+        {
             
         }
 
         /// <summary>
         /// Call this at the end of the algorithm running.
         /// </summary>
-        public virtual void OnEndOfAlgorithm() { 
+        public virtual void OnEndOfAlgorithm() 
+        { 
             
         }
 
+        /// <summary>
+        /// Plot using a default chart name,
+        /// </summary>
+        /// <param name="series">Name of the plot series</param>
+        /// <param name="value">Value to plot</param>
+        public void Plot(string series, decimal value)
+        {
+            this.Plot("Custom", series, value);
+        }
+
+        /// <summary>
+        /// Alias of Plot();
+        /// </summary>
+        /// <param name="series">Name of the series</param>
+        /// <param name="value">Value of the series plot</param>
+        public virtual void Record(string series, decimal value)
+        {
+            this.Plot("Custom", series, value);
+        }
+
+        /// <summary>
+        /// Add this chart to our collection
+        /// </summary>
+        /// <param name="name">string name of our chart</param>
+        /// <param name="chart">chart object</param>
+        public void AddChart(string name, Chart chart) 
+        {
+            if (!_charts.ContainsKey(name)) 
+            {
+                _charts.Add(name, chart);
+            }
+        }
+
+        /// <summary>
+        /// Plot a value to a chart. If chart does not exist, create it:
+        /// </summary>
+        /// <param name="chart">Chart name</param>
+        /// <param name="series">Series name</param>
+        /// <param name="value">Value of the point</param>
+        public void Plot(string chart, string series, decimal value) 
+        {
+            //Ignore the reserved chart names:
+            if ((chart == "Strategy Equity" && series == "Equity") || (chart == "Daily Performance"))
+            {
+                throw new Exception("Algorithm.Plot(): 'Equity' and 'Performance' are reserved chart names create for all backtests.");
+            }
+
+            // If we don't have the chart, create it:
+            if (!_charts.ContainsKey(chart))
+            {
+                _charts.Add(chart, new Chart(chart)); 
+            }
+
+            if (!_charts[chart].Series.ContainsKey(series)) 
+            {
+                //If we don't have the series, create it:
+                _charts[chart].AddSeries(new ChartSeries(series));
+            }
+
+            //Now add the point to the chart:
+            _charts[chart].Series[series].AddPoint(Time, value);
+        }
 
         /// <summary>
         /// Set the current datetime frontier: the most forward looking tick so far. This is used by backend to advance time. Do not modify
         /// </summary>
         /// <param name="frontier">Current datetime.</param>
-        public void SetDateTime(DateTime frontier) {
+        public void SetDateTime(DateTime frontier) 
+        {
             this._time = frontier;
         }
 
@@ -284,10 +395,18 @@ namespace QuantConnect {
         /// Automatic will analyse the selected data, and if you selected only minute data we'll select series for you.
         /// </summary>
         /// <param name="mode">Enum RunMode with options Series, Parallel or Automatic. Automatic scans your requested symbols and resolutions and makes a decision on the fastest analysis</param>
-        public void SetRunMode(RunMode mode) {
-            if (!Locked) {
-                this._runMode = mode;
-            } else {
+        public void SetRunMode(RunMode mode) 
+        {
+            if (!Locked) 
+            {
+                this._runMode = RunMode.Series;
+                if (mode == RunMode.Parallel) 
+                {
+                    throw new Exception("Algorithm.SetRunMode(): RunMode-Parallel Type has been deprecated. Please use series analysis instead");
+                }
+            }
+            else 
+            {
                 throw new Exception("Algorithm.SetRunMode(): Cannot change run mode after algorithm initialized.");
             }
         }
@@ -296,14 +415,17 @@ namespace QuantConnect {
         /// Set the requested balance to launch this algorithm
         /// </summary>
         /// <param name="startingCash">Minimum required cash</param>
-        public void SetCash(decimal startingCash) {
-            if (!Locked) {
+        public void SetCash(decimal startingCash) 
+        {
+            if (!Locked) 
+            {
                 Portfolio.SetCash(startingCash);
-            } else {
+            }
+            else 
+            {
                 throw new Exception("Algorithm.SetCash(): Cannot change cash available after algorithm initialized.");
             }
         }
-
 
         /// <summary>
         /// Wrapper for SetStartDate(DateTime). Set the start date for simulation.
@@ -314,9 +436,12 @@ namespace QuantConnect {
         /// <param name="day">int day</param>
         public void SetStartDate(int year, int month, int day) 
         {
-            try {
+            try 
+            {
                 this.SetStartDate(new DateTime(year, month, day));
-            } catch (Exception err) {
+            } 
+            catch (Exception err) 
+            {
                 throw new Exception("Date Invalid: " + err.Message);
             }
         }
@@ -329,9 +454,12 @@ namespace QuantConnect {
         /// <param name="day">int day</param>
         public void SetEndDate(int year, int month, int day) 
         {
-            try {
+            try 
+            {
                 this.SetEndDate(new DateTime(year, month, day));
-            } catch (Exception err) {
+            } 
+            catch (Exception err) 
+            {
                 throw new Exception("Date Invalid: " + err.Message);
             }
         }
@@ -347,8 +475,6 @@ namespace QuantConnect {
             _simulationId = simulationId;
         }
 
-
-
         /// <summary>
         /// Set the start date for the simulation 
         /// Must be less than end date and within data available
@@ -358,19 +484,27 @@ namespace QuantConnect {
         { 
             //Validate the start date:
             //1. Check range;
-            if (start < (new DateTime(1998, 01, 01))) {
+            if (start < (new DateTime(1998, 01, 01))) 
+            {
                 throw new Exception("Please select data between January 1st, 1998 to July 31st, 2012.");
             }
+
             //2. Check end date greater:
-            if (_endDate != new DateTime()) {
-                if (start > _endDate) {
+            if (_endDate != new DateTime()) 
+            {
+                if (start > _endDate) 
+                {
                     throw new Exception("Please select start date less than end date.");
                 }
             }
+
             //3. Check not locked already:
-            if (!Locked) {
+            if (!Locked) 
+            {
                 this._startDate = start;
-            } else {
+            } 
+            else
+            {
                 throw new Exception("Algorithm.SetStartDate(): Cannot change start date after algorithm initialized.");
             }
         }
@@ -384,19 +518,27 @@ namespace QuantConnect {
         { 
             //Validate:
             //1. Check Range:
-            if (end > DateTime.Now.Date.AddDays(-1)) {
+            if (end > DateTime.Now.Date.AddDays(-1)) 
+            {
                 throw new Exception("Please select data from between January 1st, 1998 to until yesterday.");
             }
+
             //2. Check start date less:
-            if (_startDate != new DateTime()) {
-                if (end < _startDate) {
+            if (_startDate != new DateTime()) 
+            {
+                if (end < _startDate) 
+                {
                     throw new Exception("Please select end date greater than start date.");
                 }
             }
+
             //3. Check not locked already:
-            if (!Locked) {
+            if (!Locked) 
+            {
                 this._endDate = end;
-            } else {
+            }
+            else 
+            {
                 throw new Exception("Algorithm.SetEndDate(): Cannot change end date after algorithm initialized.");
             }
         }
@@ -410,38 +552,16 @@ namespace QuantConnect {
         }
 
         /// <summary>
-        /// Get a list of the debug messages sent so far.
-        /// </summary>
-        /// <returns>List of debug string messages sent</returns>
-        public List<string> GetDebugMessages() 
-        {
-            return _debugMessages;
-        }
-
-
-        /// <summary>
-        /// Clear the debug message cache: real time messages, limit 20 per day.
-        /// </summary>
-        public void ClearDebugMessages() {
-            _debugMessages.Clear();
-        }
-
-
-        /// <summary>
-        /// Public Access to Log Messages: 
+        /// Get the chart updates: fetch the recent points added and return for dynamic plotting.
         /// </summary>
         /// <returns></returns>
-        public List<string> GetLogMessages() {
-            return _logMessages;
-        }
-
-
-        /// <summary>
-        /// Clear the log message cache: archived post simulation messages, limit 500MB.
-        /// </summary>
-        public void ClearLogMessages()
+        public List<Chart> GetChartUpdates() 
         {
-            _logMessages.Clear();
+            List<Chart> _updates = new List<Chart>();
+            foreach (Chart _chart in _charts.Values) {
+                _updates.Add(_chart.GetUpdates());
+            }
+            return _updates;
         }
 
         /// <summary>
@@ -457,7 +577,6 @@ namespace QuantConnect {
             AddSecurity(securityType, symbol, resolution, fillDataForward, 0, extendedMarketHours);
         }
 
-
         /// <summary>
         /// Add specified data to required list. QC will funnel this data to the handle data routine.
         /// </summary>
@@ -470,22 +589,13 @@ namespace QuantConnect {
         {
             try
             {
-                if (!_locked) {
-
+                if (!_locked) 
+                {
                     symbol = symbol.ToUpper();
-
-                    if (securityType != SecurityType.Equity && securityType != SecurityType.Forex) {
-                        throw new Exception("We only support Equities or FOREX at this time.");
-                    }
-
-                    if (_resolution != "" && _resolution != resolution.ToString()) {
-                        throw new Exception("We can only accept one resolution at this time. Make all your datafeeds the lowest resolution you require.");
-                    }
-
                     //If it hasn't been set, use some defaults based on the portfolio type:
-                    if (leverage <= 0)
+                    if (leverage <= 0) 
                     {
-                        switch (securityType)
+                        switch (securityType) 
                         {
                             case SecurityType.Equity:
                                 leverage = 1;   //RegT = 2 or 4.
@@ -497,36 +607,39 @@ namespace QuantConnect {
                     }
 
                     //Add the symbol to Data Manager -- generate unified data streams for algorithm events
-                    DataManager.Add(securityType, symbol, resolution, fillDataForward, extendedMarketHours);
-
+                    SubscriptionManager.Add(securityType, symbol, resolution, fillDataForward, extendedMarketHours);
                     //Add the symbol to Securities Manager -- manage collection of portfolio entities for easy access.
-                    Securities.Add(symbol, securityType, resolution, fillDataForward, leverage, extendedMarketHours);
-                    
-                } else {
+                    Securities.Add(symbol, securityType, resolution, fillDataForward, leverage, extendedMarketHours, useQuantConnectData: true);
+                }
+                else 
+                {
                     throw new Exception("Algorithm.AddSecurity(): Cannot add another security after algorithm running.");
                 }
-
-            } catch (Exception err) {
-                Error("Algorithm.AddMarketData(): " + err.Message);
+            }
+            catch (Exception err) 
+            {
+                Error("Algorithm.AddSecurity(): " + err.Message);
             }
         }
 
+
         /// <summary>
-        /// Add this sentiment-data to list of requested data streams for events:
+        /// Add a new user defined data source, requiring only the minimum config options:
         /// </summary>
-        /// <param name="type">Enum SentimentDataType: Estimize, Stockpulse</param>
-        /// <param name="symbol">String symbol of asset we'd like sentiment data</param>
-        public void AddSentimentData(SentimentDataType type, string symbol) 
+        /// <param name="type">typeof(Type) data</param>
+        /// <param name="symbol">Key/Symbol for data</param>
+        public void AddData<T>(string symbol, Resolution resolution = Resolution.Second) 
         {
-            try {
-                if (!_locked) {
-                    symbol = symbol.ToUpper();
-                    DataManager.Add(type, symbol);
-                } else {
-                    throw new Exception("Algorithm.AddMetaData(): Modify meta-data requested while algorithm running.");
-                }
-            } catch (Exception err) {
-                Error("Algorithm.AddMetaData(): " + err.Message);
+            if (!_locked)
+            {
+                //Add this to the data-feed subscriptions
+                SubscriptionManager.Add(typeof(T), SecurityType.Base, symbol, resolution, fillDataForward:false, extendedMarketHours:true);
+
+                //Add this new generic data as a tradeable security: 
+                // Defaults:extended market hours"      = true because we want events 24 hours, 
+                //          fillforward                 = false because only want to trigger when there's new custom data.
+                //          leverage                    = 1 because no leverage on nonmarket data?
+                Securities.Add(symbol, SecurityType.Base, resolution, fillDataForward: false, leverage:1, extendedMarketHours:true, useQuantConnectData:false);
             }
         }
 
@@ -547,34 +660,33 @@ namespace QuantConnect {
             symbol = symbol.ToUpper();
 
             //Ordering 0 is useless.
-            if (quantity == 0) {
+            if (quantity == 0) 
+            {
                 return orderId;
             }
 
-            if (type != OrderType.Market) {
-                Debug(orderRejected + "Currently only market orders supported.");
-            }
-
             //If we're not tracking this symbol: throw error:
-            if (!Securities.ContainsKey(symbol)) {
+            if (!Securities.ContainsKey(symbol) && !sentNoDataError)
+            {
+                sentNoDataError = true;
                 Debug(orderRejected + "You haven't requested " + symbol + " data. Add this with AddSecurity() in the Initialize() Method.");
             }
 
             //Set a temporary price for validating order for market orders:
-            if (type == OrderType.Market) {
-                price = Securities[symbol].Price;
-            }
+            price = Securities[symbol].Price;
 
             try
             {
-                orderId = Transacions.AddOrder(new Order(symbol, quantity, type, Time, price), Portfolio);
+                orderId = Transactions.AddOrder(new Order(symbol, quantity, type, Time, price));
 
-                if (orderId < 0) { 
+                if (orderId < 0) 
+                { 
                     //Order failed validaity checks and was rejected:
                     Debug(orderRejected + OrderErrors.ErrorTypes[orderId]);
                 }
             }
-            catch (Exception err) {
+            catch (Exception err) 
+            {
                 Error("Algorithm.Order(): Error sending order. " + err.Message);
             }
             return orderId;
@@ -591,10 +703,11 @@ namespace QuantConnect {
 
             symbolToLiquidate = symbolToLiquidate.ToUpper();
 
-            foreach (string symbol in Securities.Keys) {
-
+            foreach (string symbol in Securities.Keys) 
+            {
                 //Send market order to liquidate if 1, we have stock, 2, symbol matches.
-                if (Portfolio[symbol].HoldStock && (symbol == symbolToLiquidate || symbolToLiquidate == "")) {
+                if (Portfolio[symbol].HoldStock && (symbol == symbolToLiquidate || symbolToLiquidate == "")) 
+                {
                     
                     if (Portfolio[symbol].IsLong)
                     {
@@ -605,7 +718,7 @@ namespace QuantConnect {
                         quantity = Math.Abs(Portfolio[symbol].Quantity);
                     }
                     //Liquidate at market price.
-                    orderIdList.Add(Transacions.AddOrder(new Order(symbol, quantity, OrderType.Market, Time, Securities[symbol].Price), Portfolio));
+                    orderIdList.Add(Transactions.AddOrder(new Order(symbol, quantity, OrderType.Market, Time, Securities[symbol].Price)));
                 }
             }
             return orderIdList;
@@ -617,19 +730,20 @@ namespace QuantConnect {
         /// <param name="message">Message to send to debug console</param>
         public void Debug(string message)
         {
-            if (message == "") return;
+            if (message == "" || previousDebugMessage == message) return;
             _debugMessages.Add(message);
+            previousDebugMessage = message;
         }
 
         /// <summary>
         /// Added another method for logging if user guessed.
         /// </summary>
         /// <param name="message"></param>
-        public void Log(string message) {
+        public void Log(string message) 
+        {
             if (message == "") return;
             _logMessages.Add(message);
         }
-
 
         /// <summary>
         /// Send Error Message to the Console.
@@ -638,7 +752,8 @@ namespace QuantConnect {
         public void Error(string message)
         {
             if (message == "") return;
-            Debug("Error:: " + message);
+            _errorMessages.Add(message);
+            Debug("SimulationId:(" + _simulationId + ") Error: " + message);
         }
 
         /// <summary>

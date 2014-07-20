@@ -100,9 +100,9 @@ namespace QuantConnect.Securities {
                 case Resolution.Minute:
                 case Resolution.Second:
                     //Get the last data packet:
-                    TradeBar lastBar = (TradeBar)security.GetLastData();
-                    //Assume slippage is 1/1000th of the price
-                    slippage = lastBar.Price*0.001m;
+                    TradeBar lastBar = (TradeBar) security.GetLastData();
+                    //Assume slippage is 1/10,000th of the price
+                    slippage = lastBar.Value*0.0001m;
                     break;
 
                 case Resolution.Tick:
@@ -205,14 +205,15 @@ namespace QuantConnect.Securities {
                 if (order.Status == OrderStatus.Canceled) return;
 
                 //Depending on the resolution, return different data types:
-                MarketData marketData = security.GetLastData();
+                BaseData marketData = security.GetLastData();
 
-                if (marketData.Type == MarketDataType.TradeBar) {
+                if (marketData.DataType == MarketDataType.TradeBar)
+                {
                     marketDataMinPrice = ((TradeBar)marketData).Low;
                     marketDataMaxPrice = ((TradeBar)marketData).High;
                 } else {
-                    marketDataMinPrice = marketData.Price;
-                    marketDataMaxPrice = marketData.Price;
+                    marketDataMinPrice = marketData.Value;
+                    marketDataMaxPrice = marketData.Value;
                 }
 
                 //-> Valid Live/Model Order: 

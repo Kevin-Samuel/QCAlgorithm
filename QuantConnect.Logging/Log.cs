@@ -20,6 +20,9 @@ namespace QuantConnect.Logging {
     /******************************************************** 
     * CLASS DEFINITIONS
     *********************************************************/
+    /// <summary>
+    /// Logging Top Level Class
+    /// </summary>
     public class Log {
         /******************************************************** 
         * CLASS VARIABLES
@@ -77,6 +80,7 @@ namespace QuantConnect.Logging {
         /// Log an Error
         /// </summary>
         /// <param name="error">String Error</param>
+        /// <param name="overrideMessageFloodProtection">Force sending a message, overriding the "do not flood" directive</param>
         public static void Error(string error, bool overrideMessageFloodProtection = false) {
             try {
                 if (error != lastErrorText || overrideMessageFloodProtection)
@@ -93,10 +97,9 @@ namespace QuantConnect.Logging {
         /// <summary>
         /// Log a Trace Message
         /// </summary>
-        /// <param name="traceText">String Trace</param>
-        public static void Trace(string traceText) {
+        public static void Trace(string traceText, bool overrideMessageFloodProtection = false) { 
             try {
-                if (traceText != lastTraceText)
+                if (traceText != lastTraceText || overrideMessageFloodProtection)
                 {
                     Console.WriteLine(DateTime.Now.ToString(dateFormat) + " Trace:: " + traceText);
                     lastTraceText = traceText;
@@ -112,8 +115,9 @@ namespace QuantConnect.Logging {
         /// Output to the console, and sleep the thread for a little period to monitor the results.
         /// </summary>
         /// <param name="text"></param>
+        /// <param name="level">debug level</param>
         /// <param name="delay"></param>
-        public static void Debug(string text, int level = 1, int delay = 50) {
+        public static void Debug(string text, int level = 1, int delay = 0) {
             if (_debuggingEnabled && level >= _level) {
                 Console.WriteLine(DateTime.Now.ToString(dateFormat) + " DEBUGGING :: " + text);
                 System.Threading.Thread.Sleep(delay);

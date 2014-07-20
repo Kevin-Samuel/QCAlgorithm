@@ -12,8 +12,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Drawing;
-
-//QuantConnect Libraries:
 using QuantConnect;
 using QuantConnect.Logging;
 using QuantConnect.Models;
@@ -33,8 +31,10 @@ namespace QuantConnect.Securities {
         /// <summary>
         /// Public Symbol Property: Code for the asset:
         /// </summary>
-        public string Symbol {
-            get {
+        public string Symbol 
+        {
+            get 
+            {
                 return _symbol;
             }
         }
@@ -42,28 +42,32 @@ namespace QuantConnect.Securities {
         /// <summary>
         /// Public Type of Market: Equity Forex etc.
         /// </summary>
-        public SecurityType Type {
-            get {
+        public SecurityType Type 
+        {
+            get 
+            {
                 return _type;
             }
         }
 
-
         /// <summary>
         /// Public Resolution of this Market Asset.
         /// </summary>
-        public Resolution Resolution {
-            get {
+        public Resolution Resolution 
+        {
+            get 
+            {
                 return _resolution;
             }
         }
 
-
         /// <summary>
         /// Public Readonly Property: If there's no new data packets for each second, we'll fill in the last packet we recieved.
         /// </summary>
-        public bool IsFillDataForward {
-            get {
+        public bool IsFillDataForward 
+        {
+            get 
+            {
                 return _isFillDataForward;
             }
         }
@@ -73,7 +77,8 @@ namespace QuantConnect.Securities {
         /// </summary>
         public bool IsExtendedMarketHours
         {
-            get {
+            get 
+            {
                 return _isExtendedMarketHours;
             }
         }
@@ -99,12 +104,12 @@ namespace QuantConnect.Securities {
         public virtual ISecurityTransactionModel Model { get; set; }
 
         //Market Data Type:
-        private Type _dataType = typeof(TradeBar);
         private string _symbol = "";
         private SecurityType _type = SecurityType.Equity;
         private Resolution _resolution = Resolution.Second;
         private bool _isFillDataForward = false;
         private bool _isExtendedMarketHours = false;
+        private bool _isQuantConnectData = false;
         private decimal _leverage = 1;
 
         /******************************************************** 
@@ -113,7 +118,8 @@ namespace QuantConnect.Securities {
         /// <summary>
         /// Construct the Market Vehicle
         /// </summary>
-        public Security(string symbol, SecurityType type, Resolution resolution, bool fillDataForward, decimal leverage, bool extendedMarketHours) {
+        public Security(string symbol, SecurityType type, Resolution resolution, bool fillDataForward, decimal leverage, bool extendedMarketHours, bool useQuantConnectData = false) 
+        {
             //Set Basics:
             this._symbol = symbol;
             this._type = type;
@@ -121,21 +127,26 @@ namespace QuantConnect.Securities {
             this._isFillDataForward = fillDataForward;
             this._leverage = leverage;
             this._isExtendedMarketHours = extendedMarketHours;
+            this._isQuantConnectData = useQuantConnectData;
+
+            //Setup Transaction Model for this Asset
+            switch (type) 
+            { 
+                case SecurityType.Equity:
+                    Model = new EquityTransactionModel();
+                    break;
+                case SecurityType.Forex:
+                    Model = new ForexTransactionModel();
+                    break;
+                case SecurityType.Base:
+                    Model = new SecurityTransactionModel();
+                    break;
+            }
 
             //Holdings for new Vehicle:
             Cache = new SecurityCache();
             Holdings = new SecurityHolding(symbol, Model);
             Exchange = new SecurityExchange();
-
-            //Cannot initalise a default model.
-            Model = null;
-
-            //Set data type:
-            if (resolution == Resolution.Minute || resolution == Resolution.Second) {
-                _dataType = typeof(TradeBar);
-            } else {
-                _dataType = typeof(Tick);
-            }
         }
 
 
@@ -146,87 +157,117 @@ namespace QuantConnect.Securities {
         /// <summary>
         /// Read only property that checks if we currently own stock in the company.
         /// </summary>
-        public virtual bool HoldStock {
+        public virtual bool HoldStock 
+        {
             //Get a boolean, true if we own this stock.
-            get {
-                if (Holdings.AbsoluteQuantity > 0) {
-                    //If we find stock in the holdings table we own stock, return true.
-                    return true;
-                } else {
-                    //No stock found.
-                    return false;
+            get 
+            {
+                if (Holdings.AbsoluteQuantity > 0) 
+                {
+                    return true; //If we find stock in the holdings table we own stock, return true.
+                } 
+                else 
+                {
+                    return false; //No stock found. 
                 }
             }
         }
 
-
+        /// <summary>
+        /// Alias for HoldStock - Do we have any of this security
+        /// </summary>
+        public virtual bool Invested 
+        {
+            get
+            {
+                return HoldStock;
+            }
+        }
 
         /// <summary>
         /// Local Time for this Market 
         /// </summary>
-        public virtual DateTime Time {
-            get {
+        public virtual DateTime Time 
+        {
+            get 
+            {
                 return Exchange.Time;
             }
         }
-
-
 
         /// <summary>
         /// Get the current value of a Market Code
         /// </summary>
         public virtual decimal Price {
             //Get the current Market value from the database
-            get {
-                MarketData data = GetLastData();
-                if (data != null) {
-                    return data.Price;
-                } else {
+            get 
+            {
+                BaseData data = GetLastData();
+                if (data != null) 
+                {
+                    return data.Value;
+                } 
+                else 
+                {
                     //Error fetching depth
                     return 0;
                 }
             }
         }
 
-
-
         /// <summary>
         /// Leverage for this Security.
         /// </summary>
         public virtual decimal Leverage
         {
-            get { 
+            get 
+            { 
                 return _leverage; 
             }
         }
 
-
+        /// <summary>
+        /// Use QuantConnect data source flag, or is the security a user object
+        /// </summary>
+        public virtual bool IsQuantConnectData 
+        {
+            get
+            {
+                return _isQuantConnectData;
+            }
+        }
 
         /// <summary>
         /// If this uses tradebar data, return the most recent high.
         /// </summary>
         public virtual decimal High {
-            get { 
-                MarketData data = GetLastData();
-                if (data.Type == MarketDataType.TradeBar) {
+            get 
+            { 
+                BaseData data = GetLastData();
+                if (data.DataType == MarketDataType.TradeBar) 
+                {
                     return ((TradeBar)data).High;
-                } else {
-                    return data.Price;
+                } 
+                else 
+                {
+                    return data.Value;
                 }
             }
         }
-
 
         /// <summary>
         /// If this uses tradebar data, return the most recent low.
         /// </summary>
         public virtual decimal Low {
             get {
-                MarketData data = GetLastData();
-                if (data.Type == MarketDataType.TradeBar) {
+                BaseData data = GetLastData();
+                if (data.DataType == MarketDataType.TradeBar) 
+                {
                     return ((TradeBar)data).Low;
-                } else {
-                    return data.Price;
+                } 
+                else 
+                {
+                    return data.Value;
                 }
             }
         }
@@ -236,65 +277,58 @@ namespace QuantConnect.Securities {
         /// </summary>
         public virtual decimal Close {
             get {
-                MarketData data = GetLastData();
-                if (data.Type == MarketDataType.TradeBar) {
-                    return ((TradeBar)data).Close;
-                } else {
-                    return data.Price;
-                }
+                BaseData data = GetLastData();
+                if (data == null) return 0;
+                return data.Value;
             }
         }
-
 
         /// <summary>
         /// If this uses tradebar data, return the most recent open.
         /// </summary>
         public virtual decimal Open {
             get {
-                MarketData data = GetLastData();
-                if (data.Type == MarketDataType.TradeBar) {
+                BaseData data = GetLastData();
+                if (data.DataType == MarketDataType.TradeBar) 
+                {
                     return ((TradeBar)data).Open;
-                } else {
-                    return data.Price;
+                } 
+                else 
+                {
+                    return data.Value;
                 }
             }
         }
+
         /******************************************************** 
         * CLASS METHODS
         *********************************************************/
-        
         /// <summary>
         /// Get a single data packet
         /// </summary>
         /// <returns></returns>
-        public MarketData GetLastData() {
+        public BaseData GetLastData() 
+        {
             return this.Cache.GetData();
         }
-
 
         /// <summary>
         /// Update the Market Online Calculations:
         /// </summary>
         /// <param name="data">New Data packet:</param>
-        /// <param name="frontier"></param>
-        public void Update(DateTime frontier, MarketData data) { 
-
+        /// <param name="frontier">time frontier / where we are in time.</param>
+        public void Update(DateTime frontier, BaseData data) 
+        { 
             //Update the Exchange/Timer:
             Exchange.SetDateTimeFrontier(frontier);
-
-            //Update the Holdings Copy of Price Variable:
-            Holdings.UpdatePrice(Close);
 
             //Add new point to cache:
             if (data != null)
             {
                 Cache.AddData(data);
+                Holdings.UpdatePrice(data.Value);
             }
-
-            //Update Online Calculations:
-
         }
-
 
     } // End Market
 

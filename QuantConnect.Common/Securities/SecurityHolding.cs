@@ -288,7 +288,11 @@ namespace QuantConnect.Securities {
         /// </summary>
         public virtual decimal TotalCloseProfit() {
             decimal gross = 0, net = 0;
-            decimal orderFee = _model.GetOrderFee(AbsoluteQuantity, _price);
+            decimal orderFee = 0;
+
+            if (AbsoluteQuantity > 0) {
+                _model.GetOrderFee(AbsoluteQuantity, _price);
+            }
 
             if (IsLong) {
                 //if we're long on a position, profit from selling off $10,000 stock:

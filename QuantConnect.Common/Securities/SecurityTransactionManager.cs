@@ -8,6 +8,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.Concurrent;
 using System.Linq;
 using System.Text;
 
@@ -28,28 +29,18 @@ namespace QuantConnect.Securities {
         * CLASS PRIVATE VARIABLES
         *********************************************************/
         private SecurityManager Securities;
-        
+        private ConcurrentDictionary<int, Order> _orders = new ConcurrentDictionary<int, Order>();
+        private int _orderId = 1;
+        private decimal _minimumOrderSize = 0;
+        private int _minimumOrderQuantity = 1;
 
         /******************************************************** 
         * CLASS PUBLIC VARIABLES
         *********************************************************/
-        //System for keeping Live/modelled data uniform.
-        private int _orderID = 1;
-        private decimal _minimumOrderSize = 0;
-        private int _minimumOrderQuantity = 1;
-
-        //Order Monitor Cache:
-        //Order Cache: Record of Orders
-
         /// <summary>
-        /// Orders which have been processed / filled and are saved for future reference:
+        /// Processing Line for Orders Not Sent To Transaction Handler:
         /// </summary>
-        public Dictionary<int, Order> ProcessedOrders = new Dictionary<int, Order>();
-
-        /// <summary>
-        /// Orders waiting to be filled:
-        /// </summary>
-        public Dictionary<int, Order> OutstandingOrders = new Dictionary<int,Order>();
+        public ConcurrentQueue<Order> OrderQueue = new ConcurrentQueue<Order>();
 
         /// <summary>
         /// Trade record of profits and losses for each trade statistics calculations
@@ -67,15 +58,26 @@ namespace QuantConnect.Securities {
             //Private reference for processing transactions
             this.Securities = security;
 
-            //Initialise the Order Caches:
-            this.ProcessedOrders = new Dictionary<int, Order>();
-            this.OutstandingOrders = new Dictionary<int, Order>();
+            //Initialise the Order Cache -- Its a mirror of the TransactionHandler.
+            this._orders = new ConcurrentDictionary<int, Order>();
+
+            //Temporary Holding Queue of Orders to be Processed.
+            this.OrderQueue = new ConcurrentQueue<Order>();
         }
 
 
         /******************************************************** 
         * CLASS PROPERTIES
         *********************************************************/
+        /// <summary>
+        /// Holding All Orders: Clone of the TransactionHandler.Orders
+        /// -> Read only.
+        /// </summary>
+        public ConcurrentDictionary<int, Order> Orders {
+            get {
+                return _orders;
+            }
+        }
 
         /// <summary>
         /// Configurable Minimum Order Size to override bad orders, Default 0:
@@ -85,7 +87,6 @@ namespace QuantConnect.Securities {
                 return _minimumOrderSize;
             }
         }
-
 
         /// <summary>
         /// Configurable Minimum Order Quantity: Default 0
@@ -99,36 +100,33 @@ namespace QuantConnect.Securities {
         /******************************************************** 
         * CLASS METHODS
         *********************************************************/
-            
+        /// <summary>
+        /// Set the order cache, 
+        /// </summary>
+        /// <param name="orders">New orders cache</param>
+        public void SetOrderCache(ConcurrentDictionary<int, Order> orders) 
+        {
+            _orders = orders;
+        }
+        
         /// <summary>
         /// Add an Order and return the Order ID or negative if an error.
         /// </summary>
-        public virtual int AddOrder(Order order, SecurityPortfolioManager portfolio) {
-
+        public virtual int AddOrder(Order order) 
+        {
             try {
-                //Ensure its rounded off:
-                order.Status = order.Status = OrderStatus.Submitted;
+                //Ensure its flagged as a new order for the transaction handler.
+                order.Id = _orderId++;
+                order.Status = OrderStatus.New;
 
-                //Perform last minute validations on the requested order to ensure not loco.
-                /*int orderError = ValidateOrder(order, portfolio, order.Time, Int32.MaxValue, order.Price);
-                if (orderError < 0) {
-                    //The order hasn't past validations: return no order:
-                    return orderError;
-                }*/
-
-                //Increment the global ID counter.
-                order.Id = _orderID++;
-
-                //This hasn't been processed yet: add to outstanding cache:
-                AddOutstandingOrder(order);
+                //Add the order to the cache to monitor
+                OrderQueue.Enqueue(order);
 
             } catch (Exception err) {
                 Log.Error("Algorithm.Transaction.AddOrder(): " + err.Message);
             }
-
             return order.Id;
         }
-
 
         /// <summary>
         /// Update an order yet to be filled / stop / limit.
@@ -136,148 +134,104 @@ namespace QuantConnect.Securities {
         /// <param name="order">Order to Update</param>
         /// <param name="portfolio"></param>
         /// <returns>id if the order we modified.</returns>
-        public int UpdateOrder(Order order, SecurityPortfolioManager portfolio, int maxOrders) {
+        public int UpdateOrder(Order order, SecurityPortfolioManager portfolio) 
+        {
             try {
                 //Update the order from the behaviour
                 int id = order.Id;
                 order.Time = Securities[order.Symbol].Time;
 
                 //Run through a list of prepurchase checks, if any are false stop the transaction
-                int orderError = ValidateOrder(order, portfolio, order.Time, maxOrders, order.Price);
+                int orderError = ValidateOrder(order, portfolio, order.Time, int.MaxValue, order.Price);
                 if (orderError < 0) {
                     return orderError;
                 }
 
-                if (OutstandingOrders.ContainsKey(id)) {
+                if (_orders.ContainsKey(id))
+                {
                     //-> If its already filled return false; can't be updated
-                    if (OutstandingOrders[id].Status == OrderStatus.Filled || OutstandingOrders[id].Status == OrderStatus.Canceled) {
+                    if (_orders[id].Status == OrderStatus.Filled || _orders[id].Status == OrderStatus.Canceled)
+                    {
                         return -5;
                     } else {
-                        OutstandingOrders[id] = order;
+                        //Flag the order to be resubmitted.
+                        order.Status = OrderStatus.Update;
+                        _orders[id] = order;
+                        //Send the order to transaction handler to be processed.
+                        OrderQueue.Enqueue(order);
                     }
-
                 } else {
                     //-> Its not in the orders cache, shouldn't get here
                     return -6;
                 }
-
-                return 0;
-
             } catch (Exception err) {
                 Log.Error("Algorithm.Transactions.UpdateOrder(): " + err.Message);
                 return -7;
             }
+            return 0;
         }
-
-
 
         /// <summary>
-        /// Scan through all the outstanding order cache and see if any have been filled:
+        /// Scan through all the order events and update the user's portfolio
         /// </summary>
-        /// <returns>Dictionary fillErrors of order key with error-id value: 0 for no error.</returns>
-        public virtual Dictionary<Order, int> RefreshOrderModel(SecurityPortfolioManager portfolio, int maxOrders, bool skipValidations = false) {
+        /// <returns>.</returns>
+        public virtual void ProcessOrderEvents(ConcurrentQueue<OrderEvent> orderEvents, SecurityPortfolioManager portfolio, int maxOrders, bool skipValidations = false) 
+        {
+            int orderEventsLoopCounter = 0;
+            //Initialize:
+            while (orderEvents.Count > 0 && orderEventsLoopCounter < 10000)
+            {
+                OrderEvent orderData;
+                if (orderEvents.TryDequeue(out orderData)) 
+                {
+                    Order order = _orders[orderData.Id];
 
-            //Remove outstanding after to preserve the iterating list:
-            int orderError = 0;
-            Dictionary<Order, int> orderStatus = new Dictionary<Order, int>();
-            List<int> ordersToRemove = new List<int>();
+                    //Update the order:
+                    order.Price = orderData.FillPrice;
+                    order.Status = orderData.Status;
+                    order.Time = Securities[order.Symbol].Time;
 
-            try {
-                //Loop by the order id's for easy updating.
-                foreach (int id in OutstandingOrders.Keys) {
-                    //Fetch the required order:
-                    Order order = OutstandingOrders[id];
-
-                    //Now re-validate the order:
-                    if (skipValidations == false)
+                    //Update the portfolio.
+                    if (order.Status == OrderStatus.Filled)
                     {
-                        orderError = ValidateOrder(order, portfolio, order.Time, maxOrders, order.Price);
-                        orderStatus.Add(order, orderError);
-                        if (orderError != 0)
-                        {
-                            Log.Debug("Order Rejected: Symbol:" + order.Symbol + " Price: " + order.Price + "  Time: " + order.Time.ToLongTimeString());
-                            continue;
-                        }
-                        orderStatus.Remove(order);
+                        portfolio.ProcessFill(order);
                     }
 
-                    //IF order is valid -- use the fill model to determine fill status:
-                    Securities[order.Symbol].Model.Fill(Securities[order.Symbol], ref order);
-                    
-                    //If its filled, update the local & behaviour holdings.
-                    switch (order.Status)
-                    {
-                        case OrderStatus.Filled:
-                            order.Time = Securities[order.Symbol].Time;
-                            ordersToRemove.Add(order.Id);
-                            portfolio.ProcessFill(order);   //Although not returned to parent, fill here to people can't order more than buying power.
-                            ProcessedOrders.Add(order.Id, order);
-                            break;
-
-                        case OrderStatus.Canceled:
-                            order.Time = Securities[order.Symbol].Time;
-                            ordersToRemove.Add(order.Id);
-                            break;
-                    }
-
-                    //Update the order: set to 0 for successful exit.
-                    orderStatus.Add(order, 0);
-
-                    Log.Debug("NEW ORDER: Price: " + order.Price.ToString("C") + " Date: " + order.Time.Date.ToLongDateString() + " Time:" + order.Time.ToLongTimeString() + " Symbol: " + order.Symbol);
+                    //Set it back:
+                    _orders[orderData.Id] = order;
                 }
-
-                //Remove all requested id's:
-                ordersToRemove.ForEach(i => RemoveOutstandingOrder(i));
-
-            } catch (Exception err) {
-                Log.Error("Algorithm.Transaction.RefreshOrderModel(): " + err.Message);
-            }
-
-            return orderStatus;
-        }
-
-
-
-        /// <summary>
-        /// Add an order to attempt a fill. If this is a market order it will be filled immediately.
-        /// </summary>
-        /// <param name="order">New Order to Fill</param>
-        public virtual void AddOutstandingOrder(Order order) {
-            try
-            {
-                //Add the order to the cache to monitor
-                if (!OutstandingOrders.ContainsKey(order.Id)) {
-                    OutstandingOrders.Add(order.Id, order);
-                } else {
-                    Log.Error("Security.Holdings.AddOutstandingOrder(): Duplicate order id in OutstandingOrderCache");
-                }
-            }
-            catch (Exception err)
-            {
-                Log.Error("TransactionManager.AddOutstandingOrder(): " + err.Message);
+                //Log.Debug("SecurityTransactionManager.ProcessOrderFillEvents(): Processed Order Event.");
             }
         }
-
 
         /// <summary>
         /// Remove this order from outstanding queue: its been filled or cancelled.
         /// </summary>
         /// <param name="orderId">Specific order id to remove</param>
-        public virtual void RemoveOutstandingOrder(int orderId) {
+        public virtual void RemoveOrder(int orderId) {
             try
             {
-                if (OutstandingOrders.ContainsKey(orderId)) {
-                    OutstandingOrders.Remove(orderId);
-                } else {
-                    Log.Error("Security.Holdings.RemoveOutstandingOrder(): Cannot remove outstanding order, not found");
+                //Error check
+                if (!Orders.ContainsKey(orderId)) {
+                    Log.Error("Security.Holdings.RemoveOutstandingOrder(): Cannot find this id.");
+                    return;
                 }
+
+                if (Orders[orderId].Status != OrderStatus.Submitted) {
+                    Log.Error("Security.Holdings.RemoveOutstandingOrder(): Order already filled");
+                    return;
+                }
+
+                Order orderToRemove = new Order("", 0, OrderType.Market, new DateTime());
+                orderToRemove.Id = orderId;
+                orderToRemove.Status = OrderStatus.Canceled;
+                OrderQueue.Enqueue(orderToRemove);
             }
             catch (Exception err)
             {
-                Log.Error("TransactionManager.RemoveOutstandingOrder(): " + err.Message);
+                Log.Error("TransactionManager.RemoveOrder(): " + err.Message);
             }
         }
-
 
         /// <summary>
         /// Validate the transOrderDirection is a sensible choice, factoring in basic limits.
@@ -288,47 +242,22 @@ namespace QuantConnect.Securities {
         /// <param name="maxOrders">Maximum orders per day/period before rejecting.</param>
         /// <param name="price">Current actual price of security</param>
         /// <returns>If negative its an error, or if 0 no problems.</returns>
-        public int ValidateOrder(Order order, SecurityPortfolioManager portfolio, DateTime time, int maxOrders = 50, decimal price = 0) {
-
-            //Calculate the run mode:
-
+        public int ValidateOrder(Order order, SecurityPortfolioManager portfolio, DateTime time, int maxOrders = 50, decimal price = 0) 
+        {
             //-1: Order quantity must not be zero
-            if (order.Quantity == 0 || order.Direction == OrderDirection.Hold) {
-                return -1;
-            }
-
+            if (order.Quantity == 0 || order.Direction == OrderDirection.Hold) return -1;
             //-2: There is no data yet for this security - please wait for data (market order price not available yet)
-            if (order.Price <= 0) {
-                return -2;
-            }
-
+            if (order.Price <= 0) return -2;
             //-3: Attempting market order outside of market hours
-
-
-            if (!Securities[order.Symbol].Exchange.ExchangeOpen && order.Type == OrderType.Market)
-            {
-                return -3;
-            }
-
+            if (!Securities[order.Symbol].Exchange.ExchangeOpen && order.Type == OrderType.Market) return -3;
             //-4: Insufficient capital to execute order
-            if (GetSufficientCapitalForOrder(portfolio, order) == false) {
-                return -4;
-            }
-
+            if (GetSufficientCapitalForOrder(portfolio, order) == false) return -4;
             //-5: Exceeded maximum allowed orders for one analysis period.
-            if (ProcessedOrders.Count > maxOrders) {
-                return -5;
-            }
-
+            if (Orders.Count > maxOrders) return -5;
             //-6: Order timestamp error. Order appears to be executing in the future
-            if (order.Time > time) {
-                return -6;
-            }
-
+            if (order.Time > time) return -6;
             return 0;
         }
-
-
 
         /// <summary>
         /// Check if there is sufficient capital to execute this order.
@@ -340,14 +269,13 @@ namespace QuantConnect.Securities {
         {
             //First simple check, when don't hold stock, this will always increase portfolio regardless of direction
             if (Math.Abs(GetOrderRequiredBuyingPower(order)) > portfolio.GetBuyingPower(order.Symbol, order.Direction)) {
-                Log.Debug("GetOrderRequiredBuyingPower(): " + Math.Abs(GetOrderRequiredBuyingPower(order)) + " PortfolioGetBuyingPower(): " + portfolio.GetBuyingPower(order.Symbol, order.Direction)); 
+                //Log.Debug("Symbol: " + order.Symbol + " Direction: " + order.Direction.ToString() + " Quantity: " + order.Quantity);
+                //Log.Debug("GetOrderRequiredBuyingPower(): " + Math.Abs(GetOrderRequiredBuyingPower(order)) + " PortfolioGetBuyingPower(): " + portfolio.GetBuyingPower(order.Symbol, order.Direction)); 
                 return false;
             } else {
                 return true;
             }
         }
-
-
 
         /// <summary>
         /// Using leverage property of security find the required cash for this order:
@@ -367,7 +295,6 @@ namespace QuantConnect.Securities {
             return decimal.MaxValue;
         }
 
-
         /// <summary>
         /// Given this portfolio and order, what would the final portfolio holdings be if it were filled.
         /// </summary>
@@ -385,7 +312,7 @@ namespace QuantConnect.Securities {
                     {
                         //If the same holding, we must check if its long or short.
                         expectedFinalHoldings += Math.Abs(company.Holdings.HoldingValue + (order.Price * (decimal)order.Quantity));
-                        Log.Debug("HOLDINGS: " + company.Holdings.HoldingValue + " - " + "ORDER: (P: " + order.Price + " Q:" + order.Quantity + ") EXPECTED FINAL HOLDINGS: " + expectedFinalHoldings + " BUYING POWER: " + portfolio.GetBuyingPower(order.Symbol));
+                        //Log.Debug("HOLDINGS: " + company.Holdings.HoldingValue + " - " + "ORDER: (P: " + order.Price + " Q:" + order.Quantity + ") EXPECTED FINAL HOLDINGS: " + expectedFinalHoldings + " BUYING POWER: " + portfolio.GetBuyingPower(order.Symbol));
                     } else {
                         //If not the same asset, then just add the absolute holding to the final total:
                         expectedFinalHoldings += company.Holdings.AbsoluteHoldings;
@@ -398,7 +325,6 @@ namespace QuantConnect.Securities {
 
             return expectedFinalHoldings;
         }
-
 
     } // End Algorithm Transaction Filling Classes
 

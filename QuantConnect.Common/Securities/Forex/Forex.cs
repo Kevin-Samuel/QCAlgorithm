@@ -33,9 +33,9 @@ namespace QuantConnect.Securities {
         /// <summary>
         /// Construct the Forex Object
         /// </summary>
-        public Forex(string symbol, Resolution resolution, bool fillDataForward, decimal leverage, bool extendedMarketHours) :
-            base(symbol, SecurityType.Forex, resolution, fillDataForward, leverage, extendedMarketHours) {
-            
+        public Forex(string symbol, Resolution resolution, bool fillDataForward, decimal leverage, bool extendedMarketHours, bool useQuantConnectData = false) :
+            base(symbol, SecurityType.Forex, resolution, fillDataForward, leverage, extendedMarketHours, useQuantConnectData)
+        {
             //Holdings for new Vehicle:
             Cache = new ForexCache();
             Holdings = new ForexHolding(symbol, this.Model);

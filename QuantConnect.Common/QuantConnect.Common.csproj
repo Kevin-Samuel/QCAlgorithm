@@ -79,9 +79,9 @@
     <Reference Include="ICSharpCode.SharpZipLib">
       <HintPath>..\QuantConnect.Libraries\ICSharpCode.SharpZipLib\ICSharpCode.SharpZipLib.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\QuantConnect.Libraries\Newtonsoft.Json\Newtonsoft.Json.dll</HintPath>
+      <HintPath>..\packages\Newtonsoft.Json.6.0.3\lib\net40\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.configuration" />
@@ -94,22 +94,22 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="MimeTypes.cs" />
-    <Compile Include="Data\DataManager.cs" />
-    <Compile Include="Data\DataBase.cs" />
+    <Compile Include="Data\BaseData.cs" />
+    <Compile Include="Data\SubscriptionDataConfig.cs" />
     <Compile Include="Data\Market\Tick.cs" />
     <Compile Include="Data\Market\TradeBar.cs" />
-    <Compile Include="Data\Market\Market.cs" />
-    <Compile Include="Data\Sentiment\StockPulse.cs" />
-    <Compile Include="Data\Sentiment\Estimize.cs" />
-    <Compile Include="Data\Sentiment\Sentiment.cs" />
+    <Compile Include="MimeTypes.cs" />
+    <Compile Include="Data\SubscriptionManager.cs" />
+    <Compile Include="Data\Market\Ticks.cs" />
+    <Compile Include="Data\Market\TradeBars.cs" />
     <Compile Include="Isolator.cs" />
     <Compile Include="Global.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="Loader.cs" />
     <Compile Include="Math\Math.cs" />
     <Compile Include="Math\Math.StandardDeviation.cs" />
-    <Compile Include="Orders\OrderModels.cs" />
+    <Compile Include="Orders\Order.cs" />
+    <Compile Include="Securities\SecurityTransactionModel.cs" />
     <Compile Include="Securities\Equity\Equity.cs" />
     <Compile Include="Securities\Equity\EquityCache.cs" />
     <Compile Include="Securities\Equity\EquityExchange.cs" />
@@ -128,7 +128,6 @@
     <Compile Include="Securities\SecurityManager.cs" />
     <Compile Include="Securities\SecurityPortfolioManager.cs" />
     <Compile Include="Securities\SecurityTransactionManager.cs" />
-    <Compile Include="Statistics\Statistics.cs" />
     <Compile Include="OS.cs" />
     <Compile Include="Time.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -138,6 +137,9 @@
       <Project>{01911409-86BE-4E7D-9947-DF714138610D}</Project>
       <Name>QuantConnect.Logging</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

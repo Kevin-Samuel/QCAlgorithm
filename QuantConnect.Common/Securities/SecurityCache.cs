@@ -39,22 +39,11 @@ namespace QuantConnect.Securities {
         /// Cache for the orders processed
         /// </summary>
         public List<Order> OrderCache;                //Orders Cache
-        
-        /// <summary>
-        /// Incoming Data Cached.
-        /// </summary>
-        public Queue<MarketData> DataCache;             //Cache for entire loaded model
-
-        /// <summary>
-        /// Colour Mark Caches for Algo Design:
-        /// </summary>
-        public Dictionary<Color, ChartList> colorMarkCache;
-
-
+       
         /// <summary>
         /// Last data for this security.
         /// </summary>
-        private MarketData _lastData;
+        private BaseData _lastData;
 
         /******************************************************** 
         * CONSTRUCTOR/DELEGATE DEFINITIONS
@@ -64,13 +53,7 @@ namespace QuantConnect.Securities {
         /// </summary>
         public SecurityCache() {
             //ORDER CACHES:
-            OrderCache = new List<Order>();
-
-            //DATA CACHES
-            DataCache = new Queue<MarketData>();
-
-            // CHARTING CACHES:
-            colorMarkCache = new Dictionary<Color, ChartList>();               
+            OrderCache = new List<Order>();           
         }
 
 
@@ -79,33 +62,12 @@ namespace QuantConnect.Securities {
         *********************************************************/
 
         /// <summary>
-        /// Add the mark to the colour cache for dynamic graphing.
-        /// </summary>
-        public virtual void AddMark(DateTime time, decimal price, Color color, string text) {
-            if (!colorMarkCache.ContainsKey(color)) {
-                colorMarkCache.Add(color, new ChartList());
-            }
-            colorMarkCache[color].Add(time, price, text);
-        }
-
-
-
-        /// <summary>
         /// Add a list of new MarketData samples to the cache
         /// </summary>
-        public virtual void AddData(MarketData data) {
-            //Only add to the database when its not in use.
-            lock (DataCache) {
-                //Record as Last Added Packet:
-                _lastData = data;
-                //Add it to the depth cache:
-                DataCache.Enqueue(data);
-
-                //Dumping old data because lots of tick data results in memory overflows.
-                if (DataCache.Count > 1000) {
-                    DataCache.Dequeue();
-                }
-            }
+        public virtual void AddData(BaseData data)
+        {
+            //Record as Last Added Packet:
+            if (data != null) _lastData = data;
         }
 
 
@@ -114,7 +76,8 @@ namespace QuantConnect.Securities {
         /// Get Last Data Packet Recieved for this Vehicle.
         /// </summary>
         /// <returns></returns>
-        public virtual MarketData GetData() {
+        public virtual BaseData GetData()
+        {
             return _lastData;
         }
 
@@ -136,9 +99,7 @@ namespace QuantConnect.Securities {
         /// </summary>
         public virtual void Reset() {
             //Data Cache
-            DataCache = new Queue<MarketData>();
-            _lastData = new MarketData();
-                
+            _lastData = null; //Tick or TradeBar
             //Order Cache:
             OrderCache = new List<Order>();
         }

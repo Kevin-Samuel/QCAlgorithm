@@ -196,14 +196,15 @@ namespace QuantConnect.Securities {
                 decimal slip = GetSlippageApproximation(security, order);
 
                 //Depending on the resolution, return different data types:
-                MarketData marketData = security.GetLastData();
+                BaseData marketData = security.GetLastData();
 
-                if (marketData.Type == MarketDataType.TradeBar) {
+                if (marketData.DataType == MarketDataType.TradeBar)
+                {
                     marketDataMinPrice = ((TradeBar)marketData).Low;
                     marketDataMaxPrice = ((TradeBar)marketData).High;
                 } else {
-                    marketDataMinPrice = marketData.Price;
-                    marketDataMaxPrice = marketData.Price;
+                    marketDataMinPrice = marketData.Value;
+                    marketDataMaxPrice = marketData.Value;
                 }
 
                 //-> Valid Live/Model Order: 
