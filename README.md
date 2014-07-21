@@ -1,13 +1,15 @@
-# QCAlgorithm
+# QuantConnect.com - QCAlgorithm Interface Class
 
-## Introduction
+## 1.0 Introduction
 
-QCAlgorithm is the C# base class to access the QC-Cloud Cluster of computers, and US equities tick data. It provides an interface which connects which the QuantConnect cloud/backend.
+QuantConnect is a powerful flexible online backtesting platform capable of supporting any type of market data and performing time-series analysis. It uses the following " QCALGORITHM " base class to provide all the support tools for building a portfolio, managing your assets and performing trades.
+
+Using this class you can access a powerful cluster of cloud machines which automatically scale to your demands. We provide a 4TB library of data for you to design financial strategies and test how your algorithm performs on historical market data.
 
 To get started:
-1. Download the library and unzip it somewhere on your PC.
+1. Clone the library and unzip it somewhere on your PC.
 2. Open the solution in Visual Studio or Mono Develop (an open sourced C# IDE).
-3. Modify the file "MyAlgorithm.cs" which contains your algorithm code.
+3. Modify the file "Algorithm.cs" files in QuantConnect.Algorithm Project which contains your algorithm code.
 4. Compile the entire project, including all the support libraries.
 
 This will output "QuantConnect.Algorithm.dll" which contains your algorithm. This can be uploaded to the QuantConnect cloud by committing it to your personal GIT URL. You may wish to modify the compile output directory to somewhere useful on your computer; such as the root directory of your project code. 
@@ -18,8 +20,10 @@ You can access this GIT URL inside the IDE, on the project tab. Firstly you'll n
 
 The repository has several building blocks: Common, Interface and Algorithm.
 
-* **Common** - Provides the basic security objects for accessing financial data, securities and math libraries.
-* **Interface** - Interaction interface between the Algorithm and the backtesting platform.
+* **Common** - Provides the basic security objects for accessing financial data, securities and math libraries. These methods are available all across your algorithm.
+
+* **Interface** - Interaction interface pattern between the Algorithm and the QuantConnect LEAN back-testing engine.
+
 * **Algorithm** - Underlying class handling the logistics of placing orders, event placeholders.
 
 ## Extensions
