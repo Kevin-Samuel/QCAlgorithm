@@ -198,7 +198,7 @@ namespace QuantConnect.Models
                     //Create a new instance of our tradebar:
                     _tick = new Tick(config, line, date, datafeed);
                     break;
-                case DataFeedEndpoint.LiveCloud:
+                case DataFeedEndpoint.LiveTrading:
                     break;
                 case DataFeedEndpoint.Tradier:
                     break;
@@ -230,7 +230,7 @@ namespace QuantConnect.Models
                     break;
 
                 //Source location for live trading: do you have an endpoint for streaming data?
-                case DataFeedEndpoint.LiveCloud:
+                case DataFeedEndpoint.LiveTrading:
                     break;
             }
 

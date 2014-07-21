@@ -895,11 +895,14 @@
         <member name="F:QuantConnect.DataFeedEndpoint.FileSystem">
             Loading files off the local system
         </member>
-        <member name="F:QuantConnect.DataFeedEndpoint.LiveCloud">
+        <member name="F:QuantConnect.DataFeedEndpoint.LiveTrading">
             Getting datafeed from a QC-Live-Cloud
         </member>
         <member name="F:QuantConnect.DataFeedEndpoint.Tradier">
-            Tradier Supplied Free Data Feed 
+            Tradier Supplied Free Data Feed
+        </member>
+        <member name="F:QuantConnect.DataFeedEndpoint.InteractiveBrokers">
+            Interactive Brokers Supplied Free Datafeed
         </member>
         <member name="T:QuantConnect.ResultHandlerEndPoint">
             <summary>

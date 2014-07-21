@@ -323,9 +323,11 @@ namespace QuantConnect
         /// Loading files off the local system
         FileSystem,
         /// Getting datafeed from a QC-Live-Cloud
-        LiveCloud,
-        /// Tradier Supplied Free Data Feed 
-        Tradier
+        LiveTrading,
+        /// Tradier Supplied Free Data Feed
+        Tradier,
+        /// Interactive Brokers Supplied Free Datafeed
+        InteractiveBrokers
     }
 
     /// <summary>

@@ -10,3 +10,12 @@ C:\Server\www\QCo\QuantConnect.Common\bin\Debug\Newtonsoft.Json.xml
 C:\Server\www\QCo\QuantConnect.Common\obj\Debug\QuantConnect.Common.csprojResolveAssemblyReference.cache
 C:\Server\www\QCo\QuantConnect.Common\obj\Debug\QuantConnect.Common.dll
 C:\Server\www\QCo\QuantConnect.Common\obj\Debug\QuantConnect.Common.pdb
+C:\Server\www\QCAlgorithm\QuantConnect.Common\obj\Debug\QuantConnect.Common.csprojResolveAssemblyReference.cache
+C:\Server\www\QCAlgorithm\QuantConnect.Common\obj\Debug\QuantConnect.Common.dll
+C:\Server\www\QCAlgorithm\QuantConnect.Common\bin\Debug\QuantConnect.Common.XML
+C:\Server\www\QCAlgorithm\QuantConnect.Common\bin\Debug\QuantConnect.Common.dll
+C:\Server\www\QCAlgorithm\QuantConnect.Common\bin\Debug\QuantConnect.Common.pdb
+C:\Server\www\QCAlgorithm\QuantConnect.Common\bin\Debug\QuantConnect.Logging.dll
+C:\Server\www\QCAlgorithm\QuantConnect.Common\bin\Debug\QuantConnect.Logging.pdb
+C:\Server\www\QCAlgorithm\QuantConnect.Common\bin\Debug\Newtonsoft.Json.xml
+C:\Server\www\QCAlgorithm\QuantConnect.Common\obj\Debug\QuantConnect.Common.pdb

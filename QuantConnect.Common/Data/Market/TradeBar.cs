@@ -175,7 +175,7 @@ namespace QuantConnect.Models {
                     break;
 
                 //QuantConnect Live Tick Stream:
-                case DataFeedEndpoint.LiveCloud:
+                case DataFeedEndpoint.LiveTrading:
                     break;
             }
 
@@ -220,7 +220,7 @@ namespace QuantConnect.Models {
                     break;
 
                 //Source location for live trading: do you have an endpoint for streaming data?
-                case DataFeedEndpoint.LiveCloud:
+                case DataFeedEndpoint.LiveTrading:
                     break;
             }
 

@@ -67,9 +67,10 @@
     <Reference Include="System.Numerics" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Main.cs" />
+    <Compile Include="1_Algorithm_BasicTemplate.cs" />
+    <Compile Include="2_Algorithm_ExponentialMovingAverage.cs" />
     <Compile Include="QCAlgorithm.cs" />
-    <Compile Include="MyAlgorithm.cs" />
+    <Compile Include="3-Algorithm-CustomDataSource.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
