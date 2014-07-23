@@ -44,7 +44,8 @@ namespace QuantConnect.Securities {
         /// <summary>
         /// Initialise the exchange for this vehicle.
         /// </summary>
-        public SecurityExchange() {
+        public SecurityExchange() 
+        {
                 
         }
         
@@ -54,18 +55,32 @@ namespace QuantConnect.Securities {
         /// <summary>
         /// Timezone for the exchange
         /// </summary>
-        public string TimeZone {
+        public string TimeZone 
+        {
             get;
             set;
         }
 
 
+        /// <summary>
+        /// Number of trading days per year for this security, used for performance statistics.
+        /// </summary>
+        public virtual int TradingDaysPerYear 
+        {
+            get 
+            {
+                return 365;
+            }
+        }
+
 
         /// <summary>
         /// System Time - the time on the most recent data MarketData, this is the commonly used time.
         /// </summary>
-        public DateTime Time {
-            get {
+        public DateTime Time 
+        {
+            get 
+            {
                 return _frontier;
             }
         }
@@ -74,8 +89,12 @@ namespace QuantConnect.Securities {
         /// <summary>
         /// Property version of the equity ExchangeOpen method:
         /// </summary>
-        public virtual bool ExchangeOpen {
-            get { return DateTimeIsOpen(Time); }
+        public virtual bool ExchangeOpen 
+        {
+            get 
+            { 
+                return DateTimeIsOpen(Time); 
+            }
         }
 
         /******************************************************** 

@@ -67,6 +67,18 @@ namespace QuantConnect.Securities {
 
 
         /// <summary>
+        /// Number of trading days per year for this security, used for performance statistics.
+        /// </summary>
+        public override int TradingDaysPerYear
+        {
+            get
+            {
+                return 365;
+            }
+        }
+
+
+        /// <summary>
         /// Check this date time is open for the forex market.
         /// </summary>
         /// <param name="dateToCheck">time of day</param>

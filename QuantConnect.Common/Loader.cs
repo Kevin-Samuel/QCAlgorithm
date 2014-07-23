@@ -74,11 +74,13 @@ namespace QuantConnect {
                 List<string> lTypes = GetExtendedTypeNames(assembly, baseTypeName);
 
                 //No extensions, nothing to load.
-                if (lTypes.Count == 0 || lTypes.Count > 1) {
+                if (lTypes.Count == 0) {
                     return false;
                 } else {
+                    //Otherwise just load the first one matching the pattern:
                     algorithmInstance = (T)assembly.CreateInstance(lTypes[0], true);
                 }
+
             } catch (ReflectionTypeLoadException err) {
                 Log.Error("QC.Loader.CreateInstance(): " + err.Message);
                 errorMessage = err.InnerException.Message;

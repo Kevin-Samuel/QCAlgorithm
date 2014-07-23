@@ -70,11 +70,12 @@ namespace QuantConnect
         /// Chart Constructor:
         /// </summary>
         /// <param name="name">Name of the Chart</param>
-        public Chart(string name) 
+        /// <param name="type"> Type of the chart</param>
+        public Chart(string name, ChartType type = QuantConnect.ChartType.Overlay) 
         {
             this.Name = name;
             this.Series = new Dictionary<string, ChartSeries>();
-            this.ChartType = ChartType.Overlay;
+            this.ChartType = type;
         }
 
         /// <summary>
@@ -100,10 +101,16 @@ namespace QuantConnect
         /// <returns></returns>
         public Chart GetUpdates() 
         {
-            Chart _copy = new Chart(Name);
-            foreach (ChartSeries _series in Series.Values) 
-            {
-                _copy.AddSeries(_series.GetUpdates());
+            Chart _copy = new Chart(Name, ChartType);
+            try
+            {   
+                foreach (ChartSeries _series in Series.Values)
+                {
+                    _copy.AddSeries(_series.GetUpdates());
+                }
+            }
+            catch (Exception err) {
+                Log.Error("Chart.GetUpdates(): " + err.Message);
             }
             return _copy;
         }
@@ -152,8 +159,17 @@ namespace QuantConnect
         /// <param name="value">Value of the chart point</param>
         public void AddPoint(DateTime time, decimal value) 
         {
-            Values.Add(new ChartPoint(time, value));
+            //Round off the chart values to significant figures:
+            double v = ((double)value).RoundToSignificantDigits(3);
+
+            if (Values.Count < 4000)
+            {
+                Values.Add(new ChartPoint(time, Convert.ToDecimal(v)));
+            } else { 
+                //Cannot add more than 4000 points per chart
+            }
         }
+
 
         /// <summary>
         /// Get the updates since the last call to this function.
@@ -161,15 +177,21 @@ namespace QuantConnect
         /// <returns>List of the updates from the series</returns>
         public ChartSeries GetUpdates() 
         {
-            ChartSeries _series = new ChartSeries(Name, SeriesType);
-            //Add the updates since the last 
-            for (int i = updatePosition; i < this.Values.Count; i++) 
+            ChartSeries _copy = new ChartSeries(Name, SeriesType);
+            try
             {
-                _series.Values.Add(this.Values[i]);
+                //Add the updates since the last 
+                for (int i = updatePosition; i < this.Values.Count; i++)
+                {
+                    _copy.Values.Add(this.Values[i]);
+                }
+                //Shuffle the update point to now:
+                updatePosition = this.Values.Count;
             }
-            //Shuffle the update point to now:
-            updatePosition = _series.Values.Count;
-            return _series;
+            catch (Exception err) {
+                Log.Error("Series.GetUpdates(): " + err.Message);
+            }
+            return _copy;
         }
     }
 
@@ -181,20 +203,15 @@ namespace QuantConnect
     public struct ChartPoint
     {
         /// Time of this chart point:
-        public DateTime x;
+        public long x;
 
         /// Value of this chart point:
         public decimal y;
 
-        /// Time as Unixtime:
-        public double GetUnixTime() {
-            return QuantConnect.Time.DateTimeToUnixTimeStamp(x);        
-        }
-
         ///Constructor for datetime-value arguements:
         public ChartPoint(DateTime time, decimal value) 
         {
-            this.x = time;
+            this.x = Convert.ToInt64(Time.DateTimeToUnixTimeStamp(time));
             this.y = value;
         }
 
@@ -324,10 +341,8 @@ namespace QuantConnect
         FileSystem,
         /// Getting datafeed from a QC-Live-Cloud
         LiveTrading,
-        /// Tradier Supplied Free Data Feed
-        Tradier,
-        /// Interactive Brokers Supplied Free Datafeed
-        InteractiveBrokers
+        /// Tradier Supplied Free Data Feed 
+        Tradier
     }
 
     /// <summary>

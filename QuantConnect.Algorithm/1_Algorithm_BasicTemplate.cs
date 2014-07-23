@@ -17,21 +17,32 @@ namespace QuantConnect
     /// </summary>
     public class BasicTemplateAlgorithm : QCAlgorithm
     {
+        DateTime date = DateTime.Now;
+
         /// <summary>
         /// Called at the start of your algorithm to setup your requirements:
         /// </summary>
         public override void Initialize()
         {
             //Set the date range you want to run your algorithm:
-            SetStartDate(1998, 1, 1);
-            SetEndDate(DateTime.Today.AddDays(-1));
+            SetStartDate(2010, 3, 3);
+            SetEndDate(2014, 3, 3);
 
             //Set the starting cash for your strategy:
             SetCash(100000);
 
             //Add any stocks you'd like to analyse, and set the resolution:
             // Find more symbols here: http://quantconnect.com/data
+            //AddSecurity(SecurityType.Forex, "EURUSD", resolution: Resolution.Tick);
+            //AddSecurity(SecurityType.Forex, "NZDUSD", resolution: Resolution.Tick);
             AddSecurity(SecurityType.Equity, "SPY", resolution: Resolution.Minute);
+        }
+
+
+        int count = 0;
+        public override void OnEndOfDay()
+        {
+            Plot("Counter", "Count", (decimal)count++);
         }
 
 
@@ -42,20 +53,37 @@ namespace QuantConnect
         /// <param name="data">TradeBars data type synchronized and pushed into this function. The tradebars are grouped in a dictionary.</param>
         public void OnData(TradeBars data)
         {
-            // The portfolio object contains a lot of helper functions and method. Explore here for more information:
-            // QuantConnect.Common\Securities\SecurityPortfolioManager.cs
             if (!Portfolio.Invested)
             {
-                //The "SPY" tradebar inside the price data dictionary.
-                // you can also access .High, .Low and .Open
-                decimal price = data["SPY"].Close;
-
-                // Send an order, you need the market data for the order requested.
                 Order("SPY", (int)(Portfolio.Cash / data["SPY"].Close));
-
-                //We override the console command and pipe the messages to the browser.
-                Console.WriteLine("Buying SPY: " + price);
             }
+
+            //Portfolio.TotalPortfolioValue
+
+
+            //if (data.ContainsKey("EURUSD"))
+            //{
+            //    // The portfolio object contains a lot of helper functions and method. Explore here for more information:
+            //    // QuantConnect.Common\Securities\SecurityPortfolioManager.cs
+            //    if (!Portfolio.Invested)
+            //    {
+            //        //The "SPY" tradebar inside the price data dictionary.
+            //        // you can also access .High, .Low and .Open
+            //        decimal price = data["EURUSD"][0].Value;
+
+            //        // Send an order, you need the market data for the order requested.
+            //        Order("EURUSD", (int)(Portfolio.Cash / price));
+
+            //        //We override the console command and pipe the messages to the browser.
+            //        Console.WriteLine("Buying EURUSD: " + price);
+            //    }
+
+            //    if (date.Date != data["EURUSD"][0].Time.Date)
+            //    {
+            //        Debug("Date Changed: " + date.Date.ToString("d MMM yyyy"));
+            //        date = Time;
+            //    }
+            //}
         }
     }
 }

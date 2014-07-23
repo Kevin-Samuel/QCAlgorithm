@@ -50,8 +50,16 @@ namespace QuantConnect.Models {
         /// All timeseries data is a time-value pair:
         /// </summary>
         public decimal Value;
-        
 
+
+        /// <summary>
+        /// Alias of Value.
+        /// </summary>
+        public decimal Price {
+            get {
+                return Value;
+            }
+        }
         /******************************************************** 
         * CLASS CONSTRUCTOR
         *********************************************************/

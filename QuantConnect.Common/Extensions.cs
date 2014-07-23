@@ -110,18 +110,23 @@ namespace QuantConnect {
             return builder.ToString();
         }
 
-
         /// <summary>
         /// Extension method to automatically set the update value to same as "add" value for TryAddUpdate
         /// </summary>
-        /// <typeparam name="K"></typeparam>
-        /// <typeparam name="V"></typeparam>
-        /// <param name="dictionary"></param>
-        /// <param name="key"></param>
-        /// <param name="value"></param>
         public static void AddOrUpdate<K, V>(this ConcurrentDictionary<K, V> dictionary, K key, V value)
         {
             dictionary.AddOrUpdate(key, value, (oldkey, oldvalue) => value);
+        }
+
+
+        /// <summary>
+        /// Round a double to a x-significant figures:
+        /// </summary>
+        public static double RoundToSignificantDigits(this double d, int digits)
+        {
+            if (d == 0) return 0;
+            double scale = Math.Pow(10, Math.Floor(Math.Log10(Math.Abs(d))) + 1);
+            return scale * Math.Round(d / scale, digits);
         }
 
 

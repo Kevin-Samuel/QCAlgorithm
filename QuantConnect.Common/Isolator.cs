@@ -96,7 +96,7 @@ namespace QuantConnect {
         /// </summary>
         /// <param name="timeSpan">Timeout.</param>
         /// <param name="codeBlock">Code to execute</param>
-        /// <param name="memoryCap">Maximum memory allocation, default 1GB/1024Mb</param>
+        /// <param name="memoryCap">Maximum memory allocation, default 2GB/1024Mb</param>
         /// <returns>True if successful, False if Cancelled.</returns>
         public static bool ExecuteWithTimeLimit(TimeSpan timeSpan, Action codeBlock, long memoryCap = 1024)
         {
@@ -113,15 +113,14 @@ namespace QuantConnect {
 
             while (!task.IsCompleted && DateTime.Now < dtEnd)
             {
-                //if (GC.GetTotalMemory(false) > memoryCap)
-                //{
-                //    if (GC.GetTotalMemory(true) > memoryCap)
-                //    {
-                //        message = "Execution Security Error: Memory Maxed Out - " + Math.Round(Convert.ToDouble(memoryCap / (1024 * 1024))) + "MB max. Check for recursive loops.";
-                //        Console.WriteLine("Isolator.ExecuteWithTimeLimit(): " + message);
-                //        break;
-                //    }
-                //}
+                if (GC.GetTotalMemory(false) > memoryCap)
+                {
+                    if (GC.GetTotalMemory(true) > memoryCap)
+                    {
+                        message = "Execution Security Error: Memory Usage Maxed Out - " + Math.Round(Convert.ToDouble(memoryCap / (1024 * 1024))) + "MB max.";
+                        break;
+                    }
+                }
                 Thread.Sleep(100);
             }
 
@@ -135,7 +134,6 @@ namespace QuantConnect {
             {
                 cancellation.Cancel();
                 Log.Error("Security.ExecuteWithTimeLimit(): " + message);
-                Log.Trace("Security.ExecuteWithTimeLimit(): " + message);
                 throw new Exception(message);
             }
             return task.IsCompleted;

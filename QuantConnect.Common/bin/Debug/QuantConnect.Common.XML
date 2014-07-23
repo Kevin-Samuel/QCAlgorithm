@@ -57,6 +57,11 @@
             </summary>
             <returns></returns>
         </member>
+        <member name="P:QuantConnect.Models.BaseData.Price">
+            <summary>
+            Alias of Value.
+            </summary>
+        </member>
         <member name="T:QuantConnect.Models.SubscriptionDataConfig">
             <summary>
             Subscription data required including the type of data.
@@ -644,7 +649,7 @@
             </summary>
             <param name="timeSpan">Timeout.</param>
             <param name="codeBlock">Code to execute</param>
-            <param name="memoryCap">Maximum memory allocation, default 1GB/1024Mb</param>
+            <param name="memoryCap">Maximum memory allocation, default 2GB/1024Mb</param>
             <returns>True if successful, False if Cancelled.</returns>
         </member>
         <member name="P:QuantConnect.Isolator.IsCancellationRequested">
@@ -694,11 +699,12 @@
             Default constructor for chart:
             </summary>
         </member>
-        <member name="M:QuantConnect.Chart.#ctor(System.String)">
+        <member name="M:QuantConnect.Chart.#ctor(System.String,QuantConnect.ChartType)">
             <summary>
             Chart Constructor:
             </summary>
             <param name="name">Name of the Chart</param>
+            <param name="type"> Type of the chart</param>
         </member>
         <member name="M:QuantConnect.Chart.AddSeries(QuantConnect.ChartSeries)">
             <summary>
@@ -764,9 +770,6 @@
         </member>
         <member name="F:QuantConnect.ChartPoint.y">
             Value of this chart point:
-        </member>
-        <member name="M:QuantConnect.ChartPoint.GetUnixTime">
-            Time as Unixtime:
         </member>
         <member name="M:QuantConnect.ChartPoint.#ctor(System.DateTime,System.Decimal)">
             Constructor for datetime-value arguements:
@@ -899,10 +902,7 @@
             Getting datafeed from a QC-Live-Cloud
         </member>
         <member name="F:QuantConnect.DataFeedEndpoint.Tradier">
-            Tradier Supplied Free Data Feed
-        </member>
-        <member name="F:QuantConnect.DataFeedEndpoint.InteractiveBrokers">
-            Interactive Brokers Supplied Free Datafeed
+            Tradier Supplied Free Data Feed 
         </member>
         <member name="T:QuantConnect.ResultHandlerEndPoint">
             <summary>
@@ -1129,11 +1129,11 @@
             <summary>
             Extension method to automatically set the update value to same as "add" value for TryAddUpdate
             </summary>
-            <typeparam name="K"></typeparam>
-            <typeparam name="V"></typeparam>
-            <param name="dictionary"></param>
-            <param name="key"></param>
-            <param name="value"></param>
+        </member>
+        <member name="M:QuantConnect.Extensions.RoundToSignificantDigits(System.Double,System.Int32)">
+            <summary>
+            Round a double to a x-significant figures:
+            </summary>
         </member>
         <member name="M:QuantConnect.Extensions.ToDecimal(System.String)">
             <summary>
@@ -2018,6 +2018,11 @@
             Timezone for the exchange
             </summary>
         </member>
+        <member name="P:QuantConnect.Securities.SecurityExchange.TradingDaysPerYear">
+            <summary>
+            Number of trading days per year for this security, used for performance statistics.
+            </summary>
+        </member>
         <member name="P:QuantConnect.Securities.SecurityExchange.Time">
             <summary>
             System Time - the time on the most recent data MarketData, this is the commonly used time.
@@ -2071,6 +2076,11 @@
         <member name="P:QuantConnect.Securities.EquityExchange.ExchangeOpen">
             <summary>
             US Equities Exchange Open Critieria
+            </summary>
+        </member>
+        <member name="P:QuantConnect.Securities.EquityExchange.TradingDaysPerYear">
+            <summary>
+            Number of trading days per year for this security, used for performance statistics.
             </summary>
         </member>
         <member name="T:QuantConnect.Securities.EquityHolding">
@@ -2331,6 +2341,11 @@
         <member name="P:QuantConnect.Securities.ForexExchange.ExchangeOpen">
             <summary>
             Override the base ExchangeOpen property with FXCM Market Hours
+            </summary>
+        </member>
+        <member name="P:QuantConnect.Securities.ForexExchange.TradingDaysPerYear">
+            <summary>
+            Number of trading days per year for this security, used for performance statistics.
             </summary>
         </member>
         <member name="T:QuantConnect.Securities.ForexHolding">
@@ -2892,6 +2907,95 @@
         <member name="P:QuantConnect.OS.TotalPhysicalMemoryUsed">
             <summary>
             Get the RAM remaining on the machine:
+            </summary>
+        </member>
+        <member name="T:QuantConnect.Statistics">
+            <summary>
+            QuantConnect Summary Statistics Class
+            </summary>
+        </member>
+        <member name="M:QuantConnect.Statistics.ChartPointToDictionary(System.Collections.Generic.IEnumerable{QuantConnect.ChartPoint})">
+            <summary>
+            Convert the charting data into an equity array:
+            </summary>
+            <param name="points"></param>
+            <returns></returns>
+        </member>
+        <member name="M:QuantConnect.Statistics.Generate(System.Collections.Generic.IEnumerable{QuantConnect.ChartPoint},System.Collections.Generic.SortedDictionary{System.DateTime,System.Decimal},System.Collections.Generic.IEnumerable{QuantConnect.ChartPoint},System.Decimal,System.Double)">
+            <summary>
+            Run a full set of orders and return a 
+            </summary>
+            <param name="equity">Equity value over time.</param>
+            <param name="performance"> Daily performance</param>
+            <param name="profitLoss">profit loss from trades</param>
+            <param name="startingCash">Amount of starting cash in USD </param>
+            <returns>Statistics Array, Broken into Annual Periods</returns>
+            <param name="tradingDaysPerYear">Number of trading days per year</param>
+        </member>
+        <member name="M:QuantConnect.Statistics.ProfitLossRatio(System.Decimal,System.Decimal)">
+            <summary>
+            Return profit loss ratio safely.
+            </summary>
+            <param name="averageWin"></param>
+            <param name="averageLoss"></param>
+            <returns></returns>
+        </member>
+        <member name="M:QuantConnect.Statistics.Drawdown(System.Collections.Generic.SortedDictionary{System.DateTime,System.Decimal},System.Int32)">
+            <summary>
+            Get the Drawdown Statistic for this Period.
+            </summary>
+            <param name="equityOverTime">Array of portfolio value over time.</param>
+            <param name="rounding">Round the drawdown statistics </param>
+            <returns>Draw down percentage over period.</returns>
+        </member>
+        <member name="M:QuantConnect.Statistics.AnnualPerformance(System.Collections.Generic.List{System.Double},System.Double)">
+            <summary>
+            Annualized Returns
+            </summary>
+        </member>
+        <member name="M:QuantConnect.Statistics.AnnualVariance(System.Collections.Generic.List{System.Double},System.Double)">
+            <summary>
+            Annualized Variance
+            </summary>
+        </member>
+        <member name="M:QuantConnect.Statistics.AnnualStandardDeviation(System.Collections.Generic.List{System.Double},System.Double)">
+            <summary>
+            Annualized Standard Deviation
+            </summary>
+        </member>
+        <member name="M:QuantConnect.Statistics.Beta(System.Collections.Generic.List{System.Double},System.Collections.Generic.List{System.Double})">
+            <summary>
+            BETA: Covariance between the Algorith and Benchmark performance, divided by Benchmark's variance
+            </summary>
+        </member>
+        <member name="M:QuantConnect.Statistics.Alpha(System.Collections.Generic.List{System.Double},System.Collections.Generic.List{System.Double},System.Double)">
+            <summary>
+            ALPHA: Abnormal returns over the risk free rate and the relationshio (beta) with the benchmark returns
+            </summary>
+        </member>
+        <member name="M:QuantConnect.Statistics.TrackingError(System.Collections.Generic.List{System.Double},System.Collections.Generic.List{System.Double})">
+            <summary>
+            Tracking Error Volatility (TEV): Measure of how closely a portfolio follows the index to which it is benchmarked (e.g. If algo = benchmark, TEV = 0)
+            </summary>
+        </member>
+        <member name="M:QuantConnect.Statistics.InformationRatio(System.Collections.Generic.List{System.Double},System.Collections.Generic.List{System.Double})">
+            <summary>
+            Information Ratio: Risk Adjusted Return (Risk = TEV, a volatility measures that considers the volatility of both algo and benchmark)
+            </summary>
+        </member>
+        <member name="M:QuantConnect.Statistics.SharpeRatio(System.Collections.Generic.List{System.Double},System.Double)">
+            <summary>
+            Sharpe Ratio wrt Risk Free Rate: Measures excess of return per unit of risk (risk = Algo's volatility)
+            </summary>
+        </member>
+        <member name="M:QuantConnect.Statistics.TreynorRatio(System.Collections.Generic.List{System.Double},System.Collections.Generic.List{System.Double},System.Double)">
+            <summary>
+            Treynor Ratio:  Measurement of the returns earned in excess of that which could have been earned on an investment that has no diversifiable risk
+            </summary>
+        </member>
+        <member name="P:QuantConnect.Statistics.Benchmark">
+            <summary>
+            Static S-P500 Benchmark
             </summary>
         </member>
         <member name="T:QuantConnect.Time">

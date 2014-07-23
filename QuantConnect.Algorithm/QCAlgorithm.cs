@@ -7,9 +7,9 @@
 * USING NAMESPACES
 **********************************************************/
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.Collections.Concurrent;
-
 using QuantConnect.Securities;
 using QuantConnect.Models;
 
@@ -28,7 +28,7 @@ namespace QuantConnect
         * CLASS PRIVATE VARIABLES
         *********************************************************/
         private DateTime _time = new DateTime();
-        private DateTime _startDate = new DateTime(2012, 01, 01);   //Default start and end dates.
+        private DateTime _startDate = new DateTime(2000, 01, 01);   //Default start and end dates.
         private DateTime _endDate = DateTime.Today.AddDays(-1);     //Default end to yesterday
         private RunMode _runMode = RunMode.Automatic;
         private bool _locked = false;
@@ -373,12 +373,27 @@ namespace QuantConnect
 
             if (!_charts[chart].Series.ContainsKey(series)) 
             {
+                //Number of series in total.
+                int seriesCount = (from x in _charts.Values select x.Series.Count).Sum();
+
+                if (seriesCount > 10)
+                {
+                    Error("Exceeded maximum series count: Each backtest can have up to 10 series in total.");
+                    return;
+                }
+
                 //If we don't have the series, create it:
                 _charts[chart].AddSeries(new ChartSeries(series));
             }
 
-            //Now add the point to the chart:
-            _charts[chart].Series[series].AddPoint(Time, value);
+            if (_charts[chart].Series[series].Values.Count < 4000)
+            {
+                _charts[chart].Series[series].AddPoint(Time, value);
+            }
+            else 
+            {
+                Debug("Exceeded maximum points per chart, data skipped.");
+            }
         }
 
         /// <summary>

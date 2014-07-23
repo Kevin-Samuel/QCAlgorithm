@@ -39,8 +39,6 @@ namespace QuantConnect.Securities {
             base() {
         }
 
-
-
         /******************************************************** 
         * CLASS PROPERTIES
         *********************************************************/
@@ -54,6 +52,16 @@ namespace QuantConnect.Securities {
             }
         }
 
+        /// <summary>
+        /// Number of trading days per year for this security, used for performance statistics.
+        /// </summary>
+        public override int TradingDaysPerYear 
+        {
+            get 
+            {
+                return 252;
+            }
+        }
 
         /******************************************************** 
         * CLASS METHODS
