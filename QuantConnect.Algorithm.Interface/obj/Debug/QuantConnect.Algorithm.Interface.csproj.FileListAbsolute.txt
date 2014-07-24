@@ -15,3 +15,4 @@ C:\Server\www\QCo\QuantConnect.Algorithm.Interface\bin\Debug\MathNet.Numerics.xm
 C:\Server\www\QCo\QuantConnect.Algorithm.Interface\obj\Debug\QuantConnect.Algorithm.Interface.csprojResolveAssemblyReference.cache
 C:\Server\www\QCo\QuantConnect.Algorithm.Interface\obj\Debug\QuantConnect.Algorithm.Interface.dll
 C:\Server\www\QCo\QuantConnect.Algorithm.Interface\obj\Debug\QuantConnect.Algorithm.Interface.pdb
+C:\Server\www\QCo\QuantConnect.Algorithm.Interface\bin\Debug\Newtonsoft.Json.xml

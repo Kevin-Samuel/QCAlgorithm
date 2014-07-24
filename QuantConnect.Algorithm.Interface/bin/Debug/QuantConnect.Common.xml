@@ -706,7 +706,7 @@
             <param name="name">Name of the Chart</param>
             <param name="type"> Type of the chart</param>
         </member>
-        <member name="M:QuantConnect.Chart.AddSeries(QuantConnect.ChartSeries)">
+        <member name="M:QuantConnect.Chart.AddSeries(QuantConnect.Series)">
             <summary>
             Add a reference to this chart series:
             </summary>
@@ -718,43 +718,43 @@
             </summary>
             <returns></returns>
         </member>
-        <member name="T:QuantConnect.ChartSeries">
+        <member name="T:QuantConnect.Series">
             <summary>
             Chart Series Object - Series data and properties for a chart:
             </summary>
         </member>
-        <member name="F:QuantConnect.ChartSeries.Name">
+        <member name="F:QuantConnect.Series.Name">
             Name of the Series:
         </member>
-        <member name="F:QuantConnect.ChartSeries.Values">
+        <member name="F:QuantConnect.Series.Values">
             Values for the series plot:
         </member>
-        <member name="F:QuantConnect.ChartSeries.SeriesType">
+        <member name="F:QuantConnect.Series.SeriesType">
             Chart type for the series:
         </member>
-        <member name="F:QuantConnect.ChartSeries.updatePosition">
+        <member name="F:QuantConnect.Series.updatePosition">
             Get the index of the last fetch update request to only retrieve the "delta" of the previous request.
         </member>
-        <member name="M:QuantConnect.ChartSeries.#ctor">
+        <member name="M:QuantConnect.Series.#ctor">
             <summary>
             Default constructor for chart series
             </summary>
         </member>
-        <member name="M:QuantConnect.ChartSeries.#ctor(System.String,QuantConnect.SeriesType)">
+        <member name="M:QuantConnect.Series.#ctor(System.String,QuantConnect.SeriesType)">
             <summary>
             Constructor method for Chart Series
             </summary>
             <param name="name">Name of the chart series</param>
             <param name="type">Type of the chart series</param>
         </member>
-        <member name="M:QuantConnect.ChartSeries.AddPoint(System.DateTime,System.Decimal)">
+        <member name="M:QuantConnect.Series.AddPoint(System.DateTime,System.Decimal)">
             <summary>
             Add a new point to this series:
             </summary>
             <param name="time">Time of the chart point</param>
             <param name="value">Value of the chart point</param>
         </member>
-        <member name="M:QuantConnect.ChartSeries.GetUpdates">
+        <member name="M:QuantConnect.Series.GetUpdates">
             <summary>
             Get the updates since the last call to this function.
             </summary>

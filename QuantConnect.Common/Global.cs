@@ -59,7 +59,7 @@ namespace QuantConnect
         public ChartType ChartType = ChartType.Overlay;
 
         /// List of Series Objects for this Chart:
-        public Dictionary<string, ChartSeries> Series = new Dictionary<string,ChartSeries>();
+        public Dictionary<string, Series> Series = new Dictionary<string,Series>();
 
         /// <summary>
         /// Default constructor for chart:
@@ -74,7 +74,7 @@ namespace QuantConnect
         public Chart(string name, ChartType type = QuantConnect.ChartType.Overlay) 
         {
             this.Name = name;
-            this.Series = new Dictionary<string, ChartSeries>();
+            this.Series = new Dictionary<string, Series>();
             this.ChartType = type;
         }
 
@@ -82,7 +82,7 @@ namespace QuantConnect
         /// Add a reference to this chart series:
         /// </summary>
         /// <param name="series">Chart series class object</param>
-        public void AddSeries(ChartSeries series) 
+        public void AddSeries(Series series) 
         {
             //If we dont already have this series, add to the chrt:
             if (!Series.ContainsKey(series.Name))
@@ -104,7 +104,7 @@ namespace QuantConnect
             Chart _copy = new Chart(Name, ChartType);
             try
             {   
-                foreach (ChartSeries _series in Series.Values)
+                foreach (Series _series in Series.Values)
                 {
                     _copy.AddSeries(_series.GetUpdates());
                 }
@@ -121,7 +121,7 @@ namespace QuantConnect
     /// Chart Series Object - Series data and properties for a chart:
     /// </summary>
     [JsonObjectAttribute]
-    public class ChartSeries
+    public class Series
     {
         /// Name of the Series:
         public string Name = "";
@@ -138,14 +138,14 @@ namespace QuantConnect
         /// <summary>
         /// Default constructor for chart series
         /// </summary>
-        public ChartSeries() { }
+        public Series() { }
 
         /// <summary>
         /// Constructor method for Chart Series
         /// </summary>
         /// <param name="name">Name of the chart series</param>
         /// <param name="type">Type of the chart series</param>
-        public ChartSeries(string name, SeriesType type = SeriesType.Line) 
+        public Series(string name, SeriesType type = SeriesType.Line) 
         {
             this.Name = name;
             this.Values = new List<ChartPoint>();
@@ -175,9 +175,9 @@ namespace QuantConnect
         /// Get the updates since the last call to this function.
         /// </summary>
         /// <returns>List of the updates from the series</returns>
-        public ChartSeries GetUpdates() 
+        public Series GetUpdates() 
         {
-            ChartSeries _copy = new ChartSeries(Name, SeriesType);
+            Series _copy = new Series(Name, SeriesType);
             try
             {
                 //Add the updates since the last 

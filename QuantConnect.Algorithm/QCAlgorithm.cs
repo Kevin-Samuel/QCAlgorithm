@@ -318,37 +318,102 @@ namespace QuantConnect
             
         }
 
-        /// <summary>
-        /// Plot using a default chart name,
-        /// </summary>
-        /// <param name="series">Name of the plot series</param>
-        /// <param name="value">Value to plot</param>
-        public void Plot(string series, decimal value)
-        {
-            this.Plot("Custom", series, value);
-        }
-
-        /// <summary>
-        /// Alias of Plot();
-        /// </summary>
-        /// <param name="series">Name of the series</param>
-        /// <param name="value">Value of the series plot</param>
-        public virtual void Record(string series, decimal value)
-        {
-            this.Plot("Custom", series, value);
-        }
 
         /// <summary>
         /// Add this chart to our collection
         /// </summary>
         /// <param name="name">string name of our chart</param>
         /// <param name="chart">chart object</param>
-        public void AddChart(Chart chart) 
+        public void AddChart(Chart chart)
         {
-            if (!_charts.ContainsKey(chart.Name)) 
+            if (!_charts.ContainsKey(chart.Name))
             {
                 _charts.Add(chart.Name, chart);
             }
+        }
+
+        /// <summary>
+        /// Plot using a default chart name.
+        /// </summary>
+        /// <param name="series">Name of the plot series</param>
+        /// <param name="value">Value to plot</param>
+        public void Plot(string series, decimal value)
+        {
+            //By default plot to the primary chart:
+            this.Plot("Strategy Equity", series, value);
+        }
+
+
+        /// <summary>
+        /// Alias of Plot();
+        /// </summary>
+        public void Record(string series, int value)
+        {
+            this.Plot(series, value);
+        }
+
+        /// <summary>
+        /// Alias of Plot();
+        /// </summary>
+        public void Record(string series, double value)
+        {
+            this.Plot(series, value);
+        }
+
+        /// <summary>
+        /// Alias of Plot();
+        /// </summary>
+        public void Record(string series, decimal value)
+        {
+            //By default plot to the primary chart:
+            this.Plot(series, value);
+        }
+
+        /// <summary>
+        /// Wrapper for Plot String-Decimal
+        /// </summary>
+        public void Plot(string series, double value) {
+            this.Plot(series, (decimal)value);
+        }
+
+        /// <summary>
+        /// Wrapper for Plot String-Decimal
+        /// </summary>
+        public void Plot(string series, int value)
+        {
+            this.Plot(series, (decimal)value);
+        }
+
+        /// <summary>
+        /// Wrapper for Plot String-Decimal
+        /// </summary>
+        public void Plot(string series, float value)
+        {
+            this.Plot(series, (decimal)value);
+        }
+
+        /// <summary>
+        /// Alias of Plot-Chart-Series-Value
+        /// </summary>
+        public void Plot(string chart, string series, double value)
+        {
+            this.Plot(chart, series, (decimal)value);
+        }
+
+        /// <summary>
+        /// Alias of Plot-Chart-Series-Value
+        /// </summary>
+        public void Plot(string chart, string series, int value)
+        {
+            this.Plot(chart, series, (decimal)value);
+        }
+
+        /// <summary>
+        /// Alias of Plot-Chart-Series-Value
+        /// </summary>
+        public void Plot(string chart, string series, float value)
+        {
+            this.Plot(chart, series, (decimal)value);
         }
 
         /// <summary>
@@ -383,7 +448,7 @@ namespace QuantConnect
                 }
 
                 //If we don't have the series, create it:
-                _charts[chart].AddSeries(new ChartSeries(series));
+                _charts[chart].AddSeries(new Series(series));
             }
 
             if (_charts[chart].Series[series].Values.Count < 4000)
@@ -424,6 +489,22 @@ namespace QuantConnect
             {
                 throw new Exception("Algorithm.SetRunMode(): Cannot change run mode after algorithm initialized.");
             }
+        }
+
+
+        /// <summary>
+        /// Alias of SetCash(decimal)
+        /// </summary>
+        public void SetCash(double startingCash) {
+            this.SetCash((decimal)startingCash);
+        }
+
+        /// <summary>
+        /// Alias of SetCash(decimal)
+        /// </summary>
+        public void SetCash(int startingCash)
+        {
+            this.SetCash((decimal)startingCash);
         }
 
         /// <summary>
@@ -656,6 +737,23 @@ namespace QuantConnect
                 //          leverage                    = 1 because no leverage on nonmarket data?
                 Securities.Add(symbol, SecurityType.Base, resolution, fillDataForward: false, leverage:1, extendedMarketHours:true, useQuantConnectData:false);
             }
+        }
+
+
+        /// <summary>
+        /// Alias wrapper for Order(string, int);
+        /// </summary>
+        public int Order(string symbol, double quantity, OrderType type = OrderType.Market) 
+        {
+            return Order(symbol, (int)quantity, type);
+        }
+
+        /// <summary>
+        /// Alias wrapper for Order(string, int);
+        /// </summary>
+        public int Order(string symbol, decimal quantity, OrderType type = OrderType.Market)
+        {
+            return Order(symbol, (int)quantity, type);
         }
 
         /// <summary>

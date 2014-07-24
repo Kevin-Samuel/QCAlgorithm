@@ -49,17 +49,17 @@ namespace QuantConnect
             //Chart - Master Container for the Chart:
             Chart stockPlot = new Chart("Trade Plot", ChartType.Overlay);
             //On the Trade Plotter Chart we want 3 series: trades and price:
-            ChartSeries buyOrders = new ChartSeries("Buy", SeriesType.Scatter);
-            ChartSeries sellOrders = new ChartSeries("Sell", SeriesType.Scatter);
-            ChartSeries assetPrice = new ChartSeries("Price", SeriesType.Line);
+            Series buyOrders = new Series("Buy", SeriesType.Scatter);
+            Series sellOrders = new Series("Sell", SeriesType.Scatter);
+            Series assetPrice = new Series("Price", SeriesType.Line);
             stockPlot.AddSeries(buyOrders);
             stockPlot.AddSeries(sellOrders);
             stockPlot.AddSeries(assetPrice);
             AddChart(stockPlot);
 
             Chart avgCross = new Chart("Strategy Equity", ChartType.Stacked);
-            ChartSeries fastMA = new ChartSeries("FastMA", SeriesType.Line);
-            ChartSeries slowMA = new ChartSeries("SlowMA", SeriesType.Line);
+            Series fastMA = new Series("FastMA", SeriesType.Line);
+            Series slowMA = new Series("SlowMA", SeriesType.Line);
             avgCross.AddSeries(fastMA);
             avgCross.AddSeries(slowMA);
             AddChart(avgCross);

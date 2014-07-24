@@ -47,7 +47,7 @@ namespace QuantConnect
                 {
                     //Fetch & Set Benchmark:
                     _benchmark.Clear();
-                    string url = "http://real-chart.finance.yahoo.com/table.csv?s=SPY&a=00&b=1&c=1998&d=" + (DateTime.Now.Month-1) + "&e=" + DateTime.Now.Day + "&f=" + DateTime.Now.Year + "&g=d&ignore=.csv";
+                    string url = "http://real-chart.finance.yahoo.com/table.csv?s=SPY&a=11&b=31&c=1997&d=" + (DateTime.Now.Month-1) + "&e=" + DateTime.Now.Day + "&f=" + DateTime.Now.Year + "&g=d&ignore=.csv";
                     using (WebClient net = new WebClient()) {
                         string data = net.DownloadString(url);
                         bool first = true;
@@ -147,7 +147,7 @@ namespace QuantConnect
                 //Get benchmark performance array for same period:
                 Benchmark.Keys.ToList().ForEach(dt =>
                 {
-                    if (dt >= equity.Keys.FirstOrDefault() && dt <= equity.Keys.LastOrDefault().AddDays(1))
+                    if (dt >= equity.Keys.FirstOrDefault().AddDays(-1) && dt < equity.Keys.LastOrDefault())
                     {
                         if (Benchmark.ContainsKey(dtPrevious))
                         {
@@ -313,7 +313,6 @@ namespace QuantConnect
                     { "Tracking Error", Math.Round(Statistics.TrackingError(listPerformance, listBenchmark), 3).ToString() },
                     { "Treynor Ratio", Math.Round(Statistics.TreynorRatio(listPerformance, listBenchmark, riskFreeRate), 3).ToString() }
                 };
-
             }
             catch (Exception err)
             {
