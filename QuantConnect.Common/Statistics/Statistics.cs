@@ -102,8 +102,8 @@ namespace QuantConnect
         /// <summary>
         /// Run a full set of orders and return a 
         /// </summary>
-        /// <param name="equity">Equity value over time.</param>
-        /// <param name="performance"> Daily performance</param>
+        /// <param name="pointsEquity">Equity value over time.</param>
+        /// <param name="pointsPerformance"> Daily performance</param>
         /// <param name="profitLoss">profit loss from trades</param>
         /// <param name="startingCash">Amount of starting cash in USD </param>
         /// <returns>Statistics Array, Broken into Annual Periods</returns>
@@ -301,7 +301,7 @@ namespace QuantConnect
                     { "Drawdown", (Statistics.Drawdown(equity, 3) * 100) + "%" },
                     { "Expectancy", Math.Round((winRate * averageWinRatio) - (lossRate), 3).ToString() },
                     { "Net Profit", Math.Round(totalNetProfit * 100, 3) + "%"},
-                    { "Sharpe Ratio", Statistics.SharpeRatio(listPerformance, riskFreeRate).ToString() },
+                    { "Sharpe Ratio", Math.Round(Statistics.SharpeRatio(listPerformance, riskFreeRate), 3).ToString() },
                     { "Loss Rate", Math.Round(lossRate * 100) + "%" },
                     { "Win Rate", Math.Round(winRate * 100) + "%" }, 
                     { "Profit-Loss Ratio", profitLossRatioHuman },

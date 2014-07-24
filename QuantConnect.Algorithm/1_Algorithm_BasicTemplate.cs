@@ -38,14 +38,6 @@ namespace QuantConnect
             AddSecurity(SecurityType.Equity, "SPY", resolution: Resolution.Minute);
         }
 
-
-        int count = 0;
-        public override void OnEndOfDay()
-        {
-            Plot("Counter", "Count", (decimal)count++);
-        }
-
-
         /// <summary>
         /// On receiving new tradebar data it will be passed into this function. The general pattern is:
         /// "public void OnData( CustomType name ) {...s"
@@ -57,33 +49,6 @@ namespace QuantConnect
             {
                 Order("SPY", (int)(Portfolio.Cash / data["SPY"].Close));
             }
-
-            //Portfolio.TotalPortfolioValue
-
-
-            //if (data.ContainsKey("EURUSD"))
-            //{
-            //    // The portfolio object contains a lot of helper functions and method. Explore here for more information:
-            //    // QuantConnect.Common\Securities\SecurityPortfolioManager.cs
-            //    if (!Portfolio.Invested)
-            //    {
-            //        //The "SPY" tradebar inside the price data dictionary.
-            //        // you can also access .High, .Low and .Open
-            //        decimal price = data["EURUSD"][0].Value;
-
-            //        // Send an order, you need the market data for the order requested.
-            //        Order("EURUSD", (int)(Portfolio.Cash / price));
-
-            //        //We override the console command and pipe the messages to the browser.
-            //        Console.WriteLine("Buying EURUSD: " + price);
-            //    }
-
-            //    if (date.Date != data["EURUSD"][0].Time.Date)
-            //    {
-            //        Debug("Date Changed: " + date.Date.ToString("d MMM yyyy"));
-            //        date = Time;
-            //    }
-            //}
         }
     }
 }

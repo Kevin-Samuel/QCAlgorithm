@@ -8,11 +8,11 @@ using QuantConnect.Models;
 namespace QuantConnect
 {
     /// <summary>
-    /// 1.0 BASIC TEMPLATE ALGORITHM
+    /// 2.0 EXPONENTIAL MOVING AVERAGE TEMPLATE ALGORITHM
     /// 
-    /// This is a bare bones minimum example to run a backtest inside QuantConnect. 
+    /// Minimalise example of the popular trading strategy - exponential moving average cross.
     /// 
-    /// Everything inside the QuantConnect.Algorithm project is included in your DLL
+    /// The code performs a rolling 200 minute - 50 minute rolling average and trades when the direction changes.
     /// 
     /// </summary>
     public class ExponentialMovingAverageAlgorithm : QCAlgorithm

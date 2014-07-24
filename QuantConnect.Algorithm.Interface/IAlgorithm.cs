@@ -254,6 +254,12 @@ namespace QuantConnect  {
         List<Chart> GetChartUpdates();
 
         /// <summary>
+        /// Add a chart to the internal algorithm list.
+        /// </summary>
+        /// <param name="chart">Chart object to add</param>
+        void AddChart(Chart chart);
+
+        /// <summary>
         /// Set a required MarketType-symbol and resolution for the simulator to prepare
         /// </summary>
         /// <param name="securityType">MarketType Enum: Equity, Commodity, FOREX or Future</param>

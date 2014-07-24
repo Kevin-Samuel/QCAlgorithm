@@ -343,11 +343,11 @@ namespace QuantConnect
         /// </summary>
         /// <param name="name">string name of our chart</param>
         /// <param name="chart">chart object</param>
-        public void AddChart(string name, Chart chart) 
+        public void AddChart(Chart chart) 
         {
-            if (!_charts.ContainsKey(name)) 
+            if (!_charts.ContainsKey(chart.Name)) 
             {
-                _charts.Add(name, chart);
+                _charts.Add(chart.Name, chart);
             }
         }
 
