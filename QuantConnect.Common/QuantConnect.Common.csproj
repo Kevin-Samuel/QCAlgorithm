@@ -102,6 +102,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Data\BaseData.cs" />
+    <Compile Include="Data\IBaseData.cs" />
     <Compile Include="Data\SubscriptionDataConfig.cs" />
     <Compile Include="Data\Market\Tick.cs" />
     <Compile Include="Data\Market\TradeBar.cs" />

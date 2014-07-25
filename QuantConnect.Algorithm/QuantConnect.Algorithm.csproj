@@ -76,6 +76,7 @@
     <Compile Include="2_Algorithm_ExponentialMovingAverage.cs" />
     <Compile Include="3_Algorithm_CustomDataSource.cs" />
     <Compile Include="4_Algorithm_Custom_Charting.cs" />
+    <Compile Include="11_Algorithm_Dump.cs" />
     <Compile Include="QCAlgorithm.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

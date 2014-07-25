@@ -247,7 +247,7 @@ namespace QuantConnect.Securities {
             //-1: Order quantity must not be zero
             if (order.Quantity == 0 || order.Direction == OrderDirection.Hold) return -1;
             //-2: There is no data yet for this security - please wait for data (market order price not available yet)
-            if (order.Price <= 0) return -2;
+            //if (order.Price <= 0) return -2; // Not valid anymore with custom data - need to accept negative data.
             //-3: Attempting market order outside of market hours
             if (!Securities[order.Symbol].Exchange.ExchangeOpen && order.Type == OrderType.Market) return -3;
             //-4: Insufficient capital to execute order

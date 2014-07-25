@@ -12,7 +12,8 @@ using System.Collections.Generic;
 using System.Collections.Concurrent;
 using System.IO;
 
-namespace QuantConnect.Models {
+namespace QuantConnect.Models
+{
 
     /******************************************************** 
     * CLASS DEFINITIONS
@@ -20,15 +21,11 @@ namespace QuantConnect.Models {
     /// <summary>
     /// Base Data Class: Type, Timestamp, Key -- Base Features.
     /// </summary>
-    public abstract class BaseData : IBaseData
+    public interface IBaseData
     {
         /******************************************************** 
         * CLASS PRIVATE VARIABLES
         *********************************************************/
-        MarketDataType _dataType = MarketDataType.Base;
-        DateTime _time = new DateTime();
-        string _symbol = "";
-        decimal _value = 0;
 
         /******************************************************** 
         * CLASS PUBLIC VARIABLES
@@ -36,87 +33,50 @@ namespace QuantConnect.Models {
         /// <summary>
         /// Market Data Type of this data - does it come in individual price packets or is it grouped into OHLC.
         /// </summary>
-        public MarketDataType DataType
+        MarketDataType DataType
         {
-            get 
-            {
-                return _dataType;
-            }
-            set 
-            {
-                _dataType = value;
-            }
+            get;
+            set;
         }
         
         /// <summary>
         /// Time keeper of data -- all data is timeseries based.
         /// </summary>
-        public DateTime Time
+        DateTime Time
         {
-            get
-            {
-                return _time;
-            }
-            set
-            {
-                _time = value;
-            }
+            get;
+            set;
         }
+        
         
         /// <summary>
         /// Symbol for underlying Security
         /// </summary>
-        public string Symbol
+        string Symbol
         {
-            get
-            {
-                return _symbol;
-            }
-            set
-            {
-                _symbol = value;
-            }
+            get;
+            set;
         }
+
 
         /// <summary>
         /// All timeseries data is a time-value pair:
         /// </summary>
-        public decimal Value
+        decimal Value
         {
-            get
-            {
-                return _value;
-            }
-            set
-            {
-                _value = value;
-            }
+            get;
+            set;
         }
+
 
         /// <summary>
         /// Alias of Value.
         /// </summary>
-        public decimal Price {
-            get 
-            {
-                return Value;
-            }
-        }
-        /******************************************************** 
-        * CLASS CONSTRUCTOR
-        *********************************************************/
-        /// <summary>
-        /// Initialise the Base Data Class
-        /// </summary>
-        public BaseData() 
-        { 
-            //Empty constructor required.
+        decimal Price
+        {
+            get;
         }
 
-        /******************************************************** 
-        * CLASS PROPERTIES
-        *********************************************************/
-        
         /******************************************************** 
         * CLASS METHODS
         *********************************************************/
@@ -126,7 +86,7 @@ namespace QuantConnect.Models {
         /// into data types.
         /// </summary>
         /// <returns>BaseData type set by Subscription Method.</returns>
-        public abstract BaseData Reader(SubscriptionDataConfig config, string line, DateTime date, DataFeedEndpoint datafeed);
+        BaseData Reader(SubscriptionDataConfig config, string line, DateTime date, DataFeedEndpoint datafeed);
 
 
         /// <summary>
@@ -136,17 +96,14 @@ namespace QuantConnect.Models {
         /// <param name="config">Configuration object</param>
         /// <param name="date">Date of this source file</param>
         /// <returns>String URL of source file.</returns>
-        public abstract string GetSource(SubscriptionDataConfig config, DateTime date, DataFeedEndpoint datafeed);
+        string GetSource(SubscriptionDataConfig config, DateTime date, DataFeedEndpoint datafeed);
+
 
         /// <summary>
         /// Return a new instance clone of this object
         /// </summary>
         /// <returns></returns>
-        public virtual BaseData Clone() 
-        { 
-            //Optional implementation
-            return default(BaseData);
-        }
+        BaseData Clone();
 
     } // End Base Data Class
 

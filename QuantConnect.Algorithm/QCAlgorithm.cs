@@ -767,7 +767,6 @@ namespace QuantConnect
             //Add an order to the transacion manager class:
             int orderId = -1;
             decimal price = 0;
-            string orderRejected = "Order Rejected at " + Time.ToShortDateString() + " " + Time.ToShortTimeString() + ": ";
 
             //Internals use upper case symbols.
             symbol = symbol.ToUpper();
@@ -782,7 +781,7 @@ namespace QuantConnect
             if (!Securities.ContainsKey(symbol) && !sentNoDataError)
             {
                 sentNoDataError = true;
-                Debug(orderRejected + "You haven't requested " + symbol + " data. Add this with AddSecurity() in the Initialize() Method.");
+                Debug("You haven't requested " + symbol + " data. Add this with AddSecurity() in the Initialize() Method.");
             }
 
             //Set a temporary price for validating order for market orders:
@@ -792,10 +791,11 @@ namespace QuantConnect
             {
                 orderId = Transactions.AddOrder(new Order(symbol, quantity, type, Time, price));
 
-                if (orderId < 0) 
+                if (orderId < 0 && !sentNoDataError) 
                 { 
                     //Order failed validaity checks and was rejected:
-                    Debug(orderRejected + OrderErrors.ErrorTypes[orderId]);
+                    sentNoDataError = true;
+                    Debug(OrderErrors.ErrorTypes[orderId]);
                 }
             }
             catch (Exception err) 

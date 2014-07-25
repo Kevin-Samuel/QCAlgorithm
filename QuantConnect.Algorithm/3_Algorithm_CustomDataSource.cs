@@ -44,10 +44,15 @@ namespace QuantConnect
             if (!Portfolio.Invested)
             {
                 //Weather used as a tradable asset, like stocks, futures etc. 
-                Order("NYCTEMP", (int)(Portfolio.Cash / data.MeanC));
+                if (data.MeanC != 0)
+                {
+                    Order("NYCTEMP", (int)(Portfolio.Cash / Math.Abs(data.MeanC + 1)));
+                }
 
                 Console.WriteLine("Buying Weather 'Shares': $" + data.MeanC);
             }
+
+            Console.WriteLine("Time: " + Time.ToLongDateString() + " " + Time.ToLongTimeString() + data.MeanC.ToString());
         }
     }
 
@@ -126,7 +131,7 @@ namespace QuantConnect
                 point.MaxC = Convert.ToDecimal(data[1]);
                 point.MeanC = Convert.ToDecimal(data[2]);
                 point.MinC = Convert.ToDecimal(data[3]);
-                point.Value = MeanC;
+                point.Value = point.MeanC;
                 point.Symbol = "NYCTEMP";
             } catch { /* Do nothing, skip first title row */ }
 
@@ -137,9 +142,9 @@ namespace QuantConnect
         /// 4. CLONE METHOD: Deep clone a weather object: only required for fillforward, not applicable here:
         /// </summary>
         /// <returns>New 'deep' exact copy of this weather object</returns>
-        public override BaseData Clone()
-        {
-            return new Weather();
-        }
+        //public override BaseData Clone()
+        //{
+        //    return new Weather();
+        //}
     }
 }
