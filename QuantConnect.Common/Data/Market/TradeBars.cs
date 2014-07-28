@@ -40,6 +40,13 @@ namespace QuantConnect.Models {
         /******************************************************** 
         * CLASS CONSTRUCTOR:
         *********************************************************/
+        public TradeBars() {
+            base.Time = new DateTime();
+            base.Value = 0;
+            base.Symbol = "";
+            base.DataType = MarketDataType.TradeBar;
+        }
+        
         /// <summary>
         /// Default constructor for tradebars collection
         /// </summary>

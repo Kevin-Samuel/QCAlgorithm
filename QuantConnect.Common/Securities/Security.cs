@@ -275,8 +275,10 @@ namespace QuantConnect.Securities {
         /// <summary>
         /// If this uses tradebar data, return the most recent close.
         /// </summary>
-        public virtual decimal Close {
-            get {
+        public virtual decimal Close 
+        {
+            get 
+            {
                 BaseData data = GetLastData();
                 if (data == null) return 0;
                 return data.Value;
@@ -296,6 +298,26 @@ namespace QuantConnect.Securities {
                 else 
                 {
                     return data.Value;
+                }
+            }
+        }
+
+
+        /// <summary>
+        /// Access to the volume of the equity today
+        /// </summary>
+        public virtual long Volume
+        {
+            get
+            {
+                BaseData data = GetLastData();
+                if (data.DataType == MarketDataType.TradeBar)
+                {
+                    return ((TradeBar)data).Volume;
+                }
+                else
+                {
+                    return 0;
                 }
             }
         }

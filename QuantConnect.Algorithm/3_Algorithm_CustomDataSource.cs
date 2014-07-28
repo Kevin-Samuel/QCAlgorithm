@@ -23,61 +23,60 @@ namespace QuantConnect
         public override void Initialize()
         {
             //Weather data we have is within these days:
-            SetStartDate(2013, 1, 1);
-            SetEndDate(2014, 5, 30);
+            SetStartDate(2011, 9, 13);
+            SetEndDate(DateTime.Now.Date.AddDays(-1));
 
             //Set the cash for the strategy:
             SetCash(100000);
 
             //Define the symbol and "type" of our generic data:
-            AddData<Weather>("NYCTEMP");
+            AddData<Bitcoin>("BTC");
         }
 
         /// <summary>
-        /// Event Handler for Weather Data Events: These weather objects are created from our 
+        /// Event Handler for Bitcoin Data Events: These weather objects are created from our 
         /// "Weather" type below and fired into this event handler.
         /// </summary>
         /// <param name="data">One(1) Weather Object, streamed into our algorithm synchronised in time with our other data streams</param>
-        public void OnData(Weather data)
+        public void OnData(Bitcoin data)
         {
             //If we don't have any weather "SHARES" -- invest"
             if (!Portfolio.Invested)
             {
                 //Weather used as a tradable asset, like stocks, futures etc. 
-                if (data.MeanC != 0)
+                if (data.Close != 0)
                 {
-                    Order("NYCTEMP", (int)(Portfolio.Cash / Math.Abs(data.MeanC + 1)));
+                    Order("BTC", (Portfolio.Cash / Math.Abs(data.Close + 1)));
                 }
-
-                Console.WriteLine("Buying Weather 'Shares': $" + data.MeanC);
+                Console.WriteLine("Buying BTC 'Shares': BTC: " + data.Close);
             }
-
-            Console.WriteLine("Time: " + Time.ToLongDateString() + " " + Time.ToLongTimeString() + data.MeanC.ToString());
+            Console.WriteLine("Time: " + Time.ToLongDateString() + " " + Time.ToLongTimeString() + data.Close.ToString());
         }
     }
 
 
     /// <summary>
-    /// Our Custom Data And Security. The Weather Class. 
-    /// In C# a class is a type of data, like a double, int or string..
+    /// Custom Data Type: Bitcoin data from Quandl.
+    /// http://www.quandl.com/help/api-for-bitcoin-data
     /// </summary>
-    public class Weather : BaseData
+    public class Bitcoin : BaseData
     {
-        // Public variables for weather: Maximum Celcius in Zip 10065
-        public decimal MaxC;
-        //Mean Celcius Temperature in Zip 10065
-        public decimal MeanC;
-        //Minimum Celcius Temperature in Zip 10065
-        public decimal MinC;
+        //Set the defaults:
+        public decimal Open = 0;
+        public decimal High = 0;
+        public decimal Low = 0;
+        public decimal Close = 0;
+        public decimal VolumeBTC = 0;
+        public decimal VolumeUSD = 0;
+        public decimal WeightedPrice = 0;
 
         /// <summary>
-        /// 1. WE NEED A DEFAULT CONSTRUCTOR: 
+        /// 1. DEFAULT CONSTRUCTOR: Custom data types need a default constructor.
         /// We search for a default constructor so please provide one here. It won't be used for data, just to generate the "Factory".
         /// </summary>
-        public Weather()
+        public Bitcoin()
         {
-            this.MeanC = 0; this.MinC = 0;
-            this.MaxC = 0; this.Symbol = "NYCTEMP";
+            this.Symbol = "BTC";
         }
 
         /// <summary>
@@ -91,19 +90,18 @@ namespace QuantConnect
         /// <returns>string URL end point.</returns>
         public override string GetSource(SubscriptionDataConfig config, DateTime date, DataFeedEndpoint datafeed)
         {
-            switch (datafeed) 
-            { 
+            switch (datafeed)
+            {
                 //Backtesting Data Source: Example of a data source which varies by day (commented out)
                 default:
                 case DataFeedEndpoint.Backtesting:
                     //return "http://my-ftp-server.com/futures-data-" + date.ToString("Ymd") + ".zip";
-
                     // OR simply return a fixed small data file. Large files will slow down your backtest
-                    return "https://www.dropbox.com/s/txgqzv2vp5lzpqc/10065.csv?dl=1";
+                    return "http://www.quandl.com/api/v1/datasets/BITCOIN/BITSTAMPUSD.csv?sort_order=asc";
 
                 case DataFeedEndpoint.LiveTrading:
                     //Alternative live socket data source for live trading (soon)/
-                    return "https://www.weather.com:2092";
+                    return "....";
             }
         }
 
@@ -120,31 +118,28 @@ namespace QuantConnect
         public override BaseData Reader(SubscriptionDataConfig config, string line, DateTime date, DataFeedEndpoint datafeed)
         {
             //New weather object
-            Weather point = new Weather();
+            Bitcoin coin = new Bitcoin();
 
-            try {
+            try
+            {
                 //Example File Format:
-                //EST,	        Max TemperatureC,	Mean TemperatureC,	Min TemperatureC
-                //1/1/2013,	    4,	                1,	                -3,
+                //Date,      Open   High    Low     Close   Volume (BTC)    Volume (Currency)   Weighted Price
+                //2011-09-13 5.8    6.0     5.65    5.97    58.37138238,    346.0973893944      5.929230648356
                 string[] data = line.Split(',');
-                point.Time = DateTime.Parse(data[0]);
-                point.MaxC = Convert.ToDecimal(data[1]);
-                point.MeanC = Convert.ToDecimal(data[2]);
-                point.MinC = Convert.ToDecimal(data[3]);
-                point.Value = point.MeanC;
-                point.Symbol = "NYCTEMP";
-            } catch { /* Do nothing, skip first title row */ }
+                coin.Time = DateTime.Parse(data[0]);
+                coin.Open = Convert.ToDecimal(data[1]);
+                coin.High = Convert.ToDecimal(data[2]);
+                coin.Low = Convert.ToDecimal(data[3]);
+                coin.Close = Convert.ToDecimal(data[4]);
+                coin.VolumeBTC = Convert.ToDecimal(data[5]);
+                coin.VolumeUSD = Convert.ToDecimal(data[6]);
+                coin.WeightedPrice = Convert.ToDecimal(data[7]);
+                coin.Symbol = "BTC";
+                coin.Value = coin.Close;
+            }
+            catch { /* Do nothing, skip first title row */ }
 
-            return point;
+            return coin;
         }
-
-        /// <summary>
-        /// 4. CLONE METHOD: Deep clone a weather object: only required for fillforward, not applicable here:
-        /// </summary>
-        /// <returns>New 'deep' exact copy of this weather object</returns>
-        //public override BaseData Clone()
-        //{
-        //    return new Weather();
-        //}
     }
 }

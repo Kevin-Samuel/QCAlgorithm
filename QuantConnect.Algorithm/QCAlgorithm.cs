@@ -28,9 +28,9 @@ namespace QuantConnect
         * CLASS PRIVATE VARIABLES
         *********************************************************/
         private DateTime _time = new DateTime();
-        private DateTime _startDate = new DateTime(2000, 01, 01);   //Default start and end dates.
+        private DateTime _startDate = new DateTime(2008, 01, 01);   //Default start and end dates.
         private DateTime _endDate = DateTime.Today.AddDays(-1);     //Default end to yesterday
-        private RunMode _runMode = RunMode.Automatic;
+        private RunMode _runMode = RunMode.Series;
         private bool _locked = false;
         private string _simulationId = "";
         private bool _quit = false;
@@ -38,14 +38,11 @@ namespace QuantConnect
         private List<string> _logMessages = new List<string>();
         private List<string> _errorMessages = new List<string>();
         private Dictionary<string, Chart> _charts = new Dictionary<string, Chart>();
-
         public Console Console = new Console(null);
 
         //Error tracking to avoid message flooding:
         private string previousDebugMessage = "";
         private bool sentNoDataError = false;
-
-
 
         /******************************************************** 
         * CLASS CONSTRUCTOR
@@ -72,11 +69,11 @@ namespace QuantConnect
             _locked = false;
 
             //Initialise Start and End Dates:
-            _startDate = new DateTime();
-            _endDate = new DateTime();
+            _startDate = new DateTime(2008, 01, 01);
+            _endDate = DateTime.Now.AddDays(-1);
             _charts = new Dictionary<string, Chart>();
 
-            //Init Console Override:
+            //Init Console Override: Pass console messages through to IDE.
             Console = new Console(this);
         }
 
@@ -477,18 +474,8 @@ namespace QuantConnect
         /// <param name="mode">Enum RunMode with options Series, Parallel or Automatic. Automatic scans your requested symbols and resolutions and makes a decision on the fastest analysis</param>
         public void SetRunMode(RunMode mode) 
         {
-            if (!Locked) 
-            {
-                this._runMode = RunMode.Series;
-                if (mode == RunMode.Parallel) 
-                {
-                    throw new Exception("Algorithm.SetRunMode(): RunMode-Parallel Type has been deprecated. Please use series analysis instead");
-                }
-            }
-            else 
-            {
-                throw new Exception("Algorithm.SetRunMode(): Cannot change run mode after algorithm initialized.");
-            }
+            Debug("Algorithm.SetRunMode(): RunMode-Parallel Type has been deprecated. Please use series analysis instead");
+            return;
         }
 
 
@@ -616,7 +603,7 @@ namespace QuantConnect
             //1. Check Range:
             if (end > DateTime.Now.Date.AddDays(-1)) 
             {
-                throw new Exception("Please select data from between January 1st, 1998 to until yesterday.");
+                end = DateTime.Now.Date.AddDays(-1);
             }
 
             //2. Check start date less:
@@ -741,6 +728,69 @@ namespace QuantConnect
 
 
         /// <summary>
+        /// Alias of Order
+        /// </summary>
+        public int Buy(string symbol, int quantity) {
+            return Order(symbol, quantity);
+        }
+
+        /// <summary>
+        /// Alias of Order
+        /// </summary>
+        public int Buy(string symbol, double quantity)
+        {
+            return Order(symbol, quantity);
+        }
+
+        /// <summary>
+        /// Alias of Order
+        /// </summary>
+        public int Buy(string symbol, decimal quantity)
+        {
+            return Order(symbol, quantity);
+        }
+
+        /// <summary>
+        /// Alias of Order
+        /// </summary>
+        public int Buy(string symbol, float quantity)
+        {
+            return Order(symbol, quantity);
+        }
+
+        /// <summary>
+        /// Alias of Order
+        /// </summary>
+        public int Sell(string symbol, int quantity) 
+        {
+            return Order(symbol, quantity);
+        }
+
+        /// <summary>
+        /// Alias of Order
+        /// </summary>
+        public int Sell(string symbol, double quantity)
+        {
+            return Order(symbol, quantity);
+        }
+
+        /// <summary>
+        /// Alias of Order
+        /// </summary>
+        public int Sell(string symbol, float quantity)
+        {
+            return Order(symbol, quantity);
+        }
+
+        /// <summary>
+        /// Alias of Order
+        /// </summary>
+        public int Sell(string symbol, decimal quantity)
+        {
+            return Order(symbol, quantity);
+        }
+
+        /// <summary>
         /// Alias wrapper for Order(string, int);
         /// </summary>
         public int Order(string symbol, double quantity, OrderType type = OrderType.Market) 
@@ -786,6 +836,11 @@ namespace QuantConnect
 
             //Set a temporary price for validating order for market orders:
             price = Securities[symbol].Price;
+
+            if (price == 0) {
+                Debug("Asset price is $0. If using custom data make sure you've set the 'Value' property.");
+                return orderId;
+            }
 
             try
             {
@@ -835,6 +890,77 @@ namespace QuantConnect
                 }
             }
             return orderIdList;
+        }
+
+
+        /// <summary>
+        /// Alias for SetHoldings to avoid the M-decimal errors.
+        /// </summary>
+        public void SetHoldings(string symbol, double percentage, bool liquidateExistingHoldings = false)
+        {
+            SetHoldings(symbol, (decimal)percentage, liquidateExistingHoldings);
+        }
+
+        /// <summary>
+        /// Alias for SetHoldings to avoid the M-decimal errors.
+        /// </summary>
+        public void SetHoldings(string symbol, int percentage, bool liquidateExistingHoldings = false)
+        {
+            SetHoldings(symbol, (decimal)percentage, liquidateExistingHoldings);
+        }
+
+        /// <summary>
+        /// Automatically place an order which will set the holdings to between 100% or -100% of buying power.
+        /// E.g. SetHoldings("AAPL", 0.1); SetHoldings("IBM", -0.2); -> Sets portfolio as long 10% APPL and short 20% IBM
+        /// </summary>
+        /// <param name="symbol">   string Symbol indexer</param>
+        /// <param name="percentage">decimal fraction of portfolio to set stock</param>
+        /// <param name="liquidateExistingHoldings">bool flag to clean all existing holdings before setting new faction.</param>
+        /// <returns>void</returns>
+        public void SetHoldings(string symbol, decimal percentage, bool liquidateExistingHoldings = false)
+        {
+            //Error checks:
+            if (!Portfolio.ContainsKey(symbol)) 
+            {
+                Debug(symbol.ToUpper() + " not found in portfolio. Request this data when initializing the algorithm.");
+                return;
+            }
+            
+            //Range check values:
+            if (percentage > 1) percentage = 1;
+            if (percentage < -1) percentage = -1;
+
+            decimal cash = Portfolio.Cash;
+            decimal currentHoldingQuantity = Portfolio[symbol].Quantity;
+
+            //If they triggered a liquidate
+            if (liquidateExistingHoldings)
+            {
+                foreach (string holdingSymbol in Portfolio.Keys)
+                {
+                    if (holdingSymbol != symbol)
+                    {
+                        //Go through all existing holdings, market order the inverse quantity
+                        Order(holdingSymbol, -Portfolio[holdingSymbol].Quantity);
+                    }
+                }
+            }
+
+            //Now rebalance the symbol requested:
+            decimal targetHoldingQuantity = 0;
+            //Potential divide by zero error for zero prices assets.
+            if (Math.Abs(Securities[symbol].Price) > 0) 
+            {
+                targetHoldingQuantity = Math.Floor((percentage * cash) / Securities[symbol].Price);
+            }
+
+            decimal netHoldingQuantity = targetHoldingQuantity - currentHoldingQuantity;
+
+            if (Math.Abs(netHoldingQuantity) > 0)
+            {
+                Order(symbol, (int)netHoldingQuantity);
+            }
+            return;
         }
 
         /// <summary>

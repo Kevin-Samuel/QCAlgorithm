@@ -74,7 +74,7 @@ namespace QuantConnect.Securities {
         public override bool DateTimeIsOpen(DateTime dateToCheck)
         {
             //Market not open yet:
-            if (dateToCheck.TimeOfDay.TotalHours < 9.5 || dateToCheck.TimeOfDay.TotalHours >= 16)
+            if (dateToCheck.TimeOfDay.TotalHours < 9.5 || dateToCheck.TimeOfDay.TotalHours >= 16 || dateToCheck.DayOfWeek == DayOfWeek.Saturday || dateToCheck.DayOfWeek == DayOfWeek.Sunday)
             {
                 return false;
             }

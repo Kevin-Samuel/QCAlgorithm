@@ -80,8 +80,6 @@ namespace QuantConnect {
             }
         }
 
-
-
         /// <summary>
         /// Convert a byte array into a string.
         /// </summary>

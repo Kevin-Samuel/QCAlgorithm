@@ -1929,6 +1929,11 @@
             If this uses tradebar data, return the most recent open.
             </summary>
         </member>
+        <member name="P:QuantConnect.Securities.Security.Volume">
+            <summary>
+            Access to the volume of the equity today
+            </summary>
+        </member>
         <member name="M:QuantConnect.Securities.Equity.#ctor(System.String,QuantConnect.Resolution,System.Boolean,System.Decimal,System.Boolean,System.Boolean)">
             <summary>
             Construct the Market Vehicle
