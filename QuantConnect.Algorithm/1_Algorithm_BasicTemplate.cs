@@ -25,7 +25,7 @@ namespace QuantConnect
         public override void Initialize()
         {
             //Set the date range you want to run your algorithm:
-            SetStartDate(2010, 3, 3);
+            SetStartDate(1997, 1, 1);
             SetEndDate(2014, 3, 3);
 
             //Set the starting cash for your strategy:
@@ -35,7 +35,7 @@ namespace QuantConnect
             // Find more symbols here: http://quantconnect.com/data
             //AddSecurity(SecurityType.Forex, "EURUSD", resolution: Resolution.Tick);
             //AddSecurity(SecurityType.Forex, "NZDUSD", resolution: Resolution.Tick);
-            AddSecurity(SecurityType.Equity, "SPY", resolution: Resolution.Minute);
+            AddSecurity(SecurityType.Equity, "SPY", resolution: Resolution.Second);
         }
 
         /// <summary>
@@ -47,8 +47,12 @@ namespace QuantConnect
         {
             if (!Portfolio.Invested)
             {
-                Order("SPY", (int)(Portfolio.Cash / data["SPY"].Close));
+                SetHoldings("SPY", 1);
             }
+        }
+
+        public void OnData(Ticks ticks) { 
+        
         }
     }
 }

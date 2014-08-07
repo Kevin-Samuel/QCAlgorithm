@@ -56,6 +56,9 @@ namespace QuantConnect.Models
         // In Base Class: DateTime of this SnapShot
         //public DateTime Time = new DateTime();
 
+
+
+
         /******************************************************** 
         * CLASS CONSTRUCTORS
         *********************************************************/
@@ -155,7 +158,6 @@ namespace QuantConnect.Models
                         }
                         break;
 
-
                     case SecurityType.Forex:
                         base.Symbol = config.Symbol;
                         TickType = TickType.Quote;
@@ -165,8 +167,6 @@ namespace QuantConnect.Models
                         Value = BidPrice + (AskPrice - BidPrice) / 2;
                         break;
                 }
-
-                
             }
             catch (Exception err)
             {

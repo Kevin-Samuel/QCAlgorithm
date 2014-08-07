@@ -28,8 +28,8 @@ namespace QuantConnect
         * CLASS PRIVATE VARIABLES
         *********************************************************/
         private DateTime _time = new DateTime();
-        private DateTime _startDate = new DateTime(2008, 01, 01);   //Default start and end dates.
-        private DateTime _endDate = DateTime.Today.AddDays(-1);     //Default end to yesterday
+        private DateTime _startDate;   //Default start and end dates.
+        private DateTime _endDate;     //Default end to yesterday
         private RunMode _runMode = RunMode.Series;
         private bool _locked = false;
         private string _simulationId = "";
@@ -62,14 +62,14 @@ namespace QuantConnect
             //Initialise Data Manager 
             SubscriptionManager = new SubscriptionManager();
 
-            //Initialise Algorithm RunMode to Automatic:
-            _runMode = RunMode.Automatic;
+            //Initialise Algorithm RunMode to Series - Parallel Mode deprecated:
+            _runMode = RunMode.Series;
 
             //Initialise to unlocked:
             _locked = false;
 
             //Initialise Start and End Dates:
-            _startDate = new DateTime(2008, 01, 01);
+            _startDate = new DateTime(1998, 01, 01);
             _endDate = DateTime.Now.AddDays(-1);
             _charts = new Dictionary<string, Chart>();
 
@@ -567,10 +567,10 @@ namespace QuantConnect
         { 
             //Validate the start date:
             //1. Check range;
-            if (start < (new DateTime(1998, 01, 01))) 
-            {
-                throw new Exception("Please select data between January 1st, 1998 to July 31st, 2012.");
-            }
+            //if (start < (new DateTime(1998, 01, 01))) 
+            //{
+            //    throw new Exception("Please select data between January 1st, 1998 to July 31st, 2012.");
+            //}
 
             //2. Check end date greater:
             if (_endDate != new DateTime()) 
@@ -897,6 +897,14 @@ namespace QuantConnect
         /// Alias for SetHoldings to avoid the M-decimal errors.
         /// </summary>
         public void SetHoldings(string symbol, double percentage, bool liquidateExistingHoldings = false)
+        {
+            SetHoldings(symbol, (decimal)percentage, liquidateExistingHoldings);
+        }
+
+        /// <summary>
+        /// Alias for SetHoldings to avoid the M-decimal errors.
+        /// </summary>
+        public void SetHoldings(string symbol, float percentage, bool liquidateExistingHoldings = false)
         {
             SetHoldings(symbol, (decimal)percentage, liquidateExistingHoldings);
         }

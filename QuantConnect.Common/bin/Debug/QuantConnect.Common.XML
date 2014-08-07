@@ -1044,6 +1044,17 @@
         <member name="F:QuantConnect.FileStatus.Deleted">
             File Deleted.
         </member>
+        <member name="T:QuantConnect.BacktestStatus">
+            <summary>
+            If the backtest has been deleted
+            </summary>
+        </member>
+        <member name="F:QuantConnect.BacktestStatus.Active">
+            Active
+        </member>
+        <member name="F:QuantConnect.BacktestStatus.Deleted">
+            Deleted/Cancelled.
+        </member>
         <member name="T:QuantConnect.ResponseCode">
             <summary>
             Use standard HTTP Status Codes for communication between servers:
@@ -1712,6 +1723,94 @@
             Value of the Order:
             </summary>
         </member>
+        <member name="T:QuantConnect.Securities.EquityDataFilter">
+            <summary>
+            Packet by Packet Data Filtering Mechanism for Dynamically Detecting Bad Ticks.
+            </summary>
+        </member>
+        <member name="T:QuantConnect.Securities.SecurityDataFilter">
+            <summary>
+            Packet by Packet Data Filtering Mechanism for Dynamically Detecting Bad Ticks.
+            </summary>
+        </member>
+        <member name="T:QuantConnect.Securities.ISecurityDataFilter">
+            <summary>
+            Security Data Filter Interface
+            </summary>
+        </member>
+        <member name="M:QuantConnect.Securities.ISecurityDataFilter.Filter(QuantConnect.Securities.Security,QuantConnect.Models.BaseData)">
+            <summary>
+            Filter out a tick from this vehicle, with this new data:
+            </summary>
+            <param name="data">New data packet:</param>
+            <param name="vehicle">Vehicle of this filter.</param>
+        </member>
+        <member name="M:QuantConnect.Securities.SecurityDataFilter.#ctor">
+            <summary>
+            Initialize Data Filter Class:
+            </summary>
+        </member>
+        <member name="M:QuantConnect.Securities.SecurityDataFilter.Filter(QuantConnect.Securities.Security,QuantConnect.Models.BaseData)">
+            <summary>
+            Filter the data: true - accept, false - fail.
+            </summary>
+            <param name="data">Data class</param>
+            <param name="vehicle">Security asset</param>
+        </member>
+        <member name="F:QuantConnect.Securities.EquityDataFilter._acceptableDeviations">
+            <summary>
+            Range of acceptable standard deviations from norm for last XXX datapoints:
+            </summary>
+        </member>
+        <member name="F:QuantConnect.Securities.EquityDataFilter._dataPointHistory">
+            <summary>
+            History we're looking at to determine the standard deviation.
+            </summary>
+        </member>
+        <member name="M:QuantConnect.Securities.EquityDataFilter.#ctor">
+            <summary>
+            Initialize Data Filter Class:
+            </summary>
+        </member>
+        <member name="M:QuantConnect.Securities.EquityDataFilter.Filter(QuantConnect.Securities.Security,QuantConnect.Models.BaseData)">
+            <summary>
+            Equity filter the data: true - accept, false - fail.
+            </summary>
+            <param name="data">Data class</param>
+            <param name="vehicle">Security asset</param>
+        </member>
+        <member name="M:QuantConnect.Securities.EquityDataFilter.OnlineStandardDeviation(System.Double)">
+            <summary>
+            Update the online standard deviation formula
+            </summary>
+            <param name="data">new data.</param>
+            <returns>decimal standard deviation</returns>
+        </member>
+        <member name="M:QuantConnect.Securities.EquityDataFilter.OnlineVariance(System.Double)">
+            <summary>
+            Online variance 
+             http://en.wikipedia.org/wiki/Algorithms_for_calculating_variance
+            </summary>
+            <param name="data"></param>
+            <returns></returns>
+        </member>
+        <member name="T:QuantConnect.Securities.ForexDataFilter">
+            <summary>
+            Packet by Packet Data Filtering Mechanism for Dynamically Detecting Bad Ticks.
+            </summary>
+        </member>
+        <member name="M:QuantConnect.Securities.ForexDataFilter.#ctor">
+            <summary>
+            Initialize Data Filter Class:
+            </summary>
+        </member>
+        <member name="M:QuantConnect.Securities.ForexDataFilter.Filter(QuantConnect.Securities.Security,QuantConnect.Models.BaseData)">
+            <summary>
+            Equity filter the data: true - accept, false - fail.
+            </summary>
+            <param name="data">Data class</param>
+            <param name="vehicle">Security asset</param>
+        </member>
         <member name="T:QuantConnect.Securities.SecurityTransactionModel">
             <summary>
             Default Transaction Model for User Defined Securities:
@@ -1877,6 +1976,11 @@
         <member name="P:QuantConnect.Securities.Security.Model">
             <summary>
             Security Transaction Model Storage
+            </summary>
+        </member>
+        <member name="P:QuantConnect.Securities.Security.DataFilter">
+            <summary>
+            Customizable Data Filter to filter outlier ticks:
             </summary>
         </member>
         <member name="P:QuantConnect.Securities.Security.HoldStock">
@@ -2217,19 +2321,34 @@
             Public Holdings Property for the symbol of the underlying asset:
             </summary>
         </member>
-        <member name="P:QuantConnect.Securities.SecurityHolding.HoldingValue">
+        <member name="P:QuantConnect.Securities.SecurityHolding.HoldingsCost">
             <summary>
-            Return the value of the companies total holdings.
+            Return the acquisition cost of the companies total holdings.
             </summary>
         </member>
-        <member name="P:QuantConnect.Securities.SecurityHolding.AbsoluteHoldings">
+        <member name="P:QuantConnect.Securities.SecurityHolding.AbsoluteHoldingsCost">
             <summary>
-            Absolute of the Holdings:
+            Absolute of the Holdings: Unlevered
+            </summary>
+        </member>
+        <member name="P:QuantConnect.Securities.SecurityHolding.HoldingsValue">
+            <summary>
+            Market value of our holdings
+            </summary>
+        </member>
+        <member name="P:QuantConnect.Securities.SecurityHolding.AbsoluteHoldingsValue">
+            <summary>
+            Absolute of the market value of our holdings.
             </summary>
         </member>
         <member name="P:QuantConnect.Securities.SecurityHolding.HoldStock">
             <summary>
             If we have stock, return boolean true.
+            </summary>
+        </member>
+        <member name="P:QuantConnect.Securities.SecurityHolding.Invested">
+            <summary>
+            Alias of Hold Stock
             </summary>
         </member>
         <member name="P:QuantConnect.Securities.SecurityHolding.TotalSaleVolume">
@@ -2724,6 +2843,13 @@
             Calculate the new average price (if buying), and new quantity/profit if selling.
             </summary>
         </member>
+        <member name="M:QuantConnect.Securities.SecurityPortfolioManager.ScanForMarginCall">
+            <summary>
+            Scan the portfolio and the updated data for a potential margin call situation. 
+            If there is a margin call, place the order, process it and 
+            </summary>
+            <returns></returns>
+        </member>
         <member name="M:QuantConnect.Securities.SecurityPortfolioManager.AddTransactionRecord(System.DateTime,System.Decimal)">
             <summary>
             Bit of a hack -- but using datetime as dictionary key is dangerous as you can process multiple orders within a second.
@@ -2759,14 +2885,14 @@
             for successful Security.
             </summary>
         </member>
-        <member name="P:QuantConnect.Securities.SecurityPortfolioManager.FreeCash">
-            <summary>
-            Get the free cash: cash that is not already allocated to assets/portfolio holdings.
-            </summary>
-        </member>
-        <member name="P:QuantConnect.Securities.SecurityPortfolioManager.TotalAbsoluteHoldings">
+        <member name="P:QuantConnect.Securities.SecurityPortfolioManager.TotalUnleveredAbsoluteHoldingsCost">
             <summary>
             Sum the individual asset holdings
+            </summary>
+        </member>
+        <member name="P:QuantConnect.Securities.SecurityPortfolioManager.TotalHoldingsValue">
+            <summary>
+            Holdings Market Value Sum
             </summary>
         </member>
         <member name="P:QuantConnect.Securities.SecurityPortfolioManager.HoldStock">
@@ -2892,14 +3018,6 @@
             </summary>
             <param name="order">Order to check</param>
             <returns>decimal cash required to purchase order</returns>
-        </member>
-        <member name="M:QuantConnect.Securities.SecurityTransactionManager.GetExpectedFinalHoldings(QuantConnect.Securities.SecurityPortfolioManager,QuantConnect.Order)">
-            <summary>
-            Given this portfolio and order, what would the final portfolio holdings be if it were filled.
-            </summary>
-            <param name="portfolio">Portfolio we're running</param>
-            <param name="order">Order requested to process </param>
-            <returns>decimal final holdings </returns>
         </member>
         <member name="P:QuantConnect.Securities.SecurityTransactionManager.Orders">
             <summary>

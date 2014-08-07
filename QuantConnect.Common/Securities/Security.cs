@@ -103,6 +103,11 @@ namespace QuantConnect.Securities {
         /// </summary>
         public virtual ISecurityTransactionModel Model { get; set; }
 
+        /// <summary>
+        /// Customizable Data Filter to filter outlier ticks:
+        /// </summary>
+        public virtual ISecurityDataFilter DataFilter { get; set; }
+
         //Market Data Type:
         private string _symbol = "";
         private SecurityType _type = SecurityType.Equity;
@@ -134,12 +139,15 @@ namespace QuantConnect.Securities {
             { 
                 case SecurityType.Equity:
                     Model = new EquityTransactionModel();
+                    DataFilter = new EquityDataFilter();
                     break;
                 case SecurityType.Forex:
                     Model = new ForexTransactionModel();
+                    DataFilter = new ForexDataFilter();
                     break;
                 case SecurityType.Base:
                     Model = new SecurityTransactionModel();
+                    DataFilter = new SecurityDataFilter();
                     break;
             }
 

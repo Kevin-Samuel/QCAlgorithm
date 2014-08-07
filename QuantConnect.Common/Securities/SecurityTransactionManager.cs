@@ -295,36 +295,6 @@ namespace QuantConnect.Securities {
             return decimal.MaxValue;
         }
 
-        /// <summary>
-        /// Given this portfolio and order, what would the final portfolio holdings be if it were filled.
-        /// </summary>
-        /// <param name="portfolio">Portfolio we're running</param>
-        /// <param name="order">Order requested to process </param>
-        /// <returns>decimal final holdings </returns>
-        private decimal GetExpectedFinalHoldings(SecurityPortfolioManager portfolio, Order order)
-        {
-            decimal expectedFinalHoldings = 0;
-
-            if (portfolio.TotalAbsoluteHoldings > 0) {
-                foreach (Security company in Securities.Values) 
-                {
-                    if (order.Symbol == company.Symbol) 
-                    {
-                        //If the same holding, we must check if its long or short.
-                        expectedFinalHoldings += Math.Abs(company.Holdings.HoldingValue + (order.Price * (decimal)order.Quantity));
-                        //Log.Debug("HOLDINGS: " + company.Holdings.HoldingValue + " - " + "ORDER: (P: " + order.Price + " Q:" + order.Quantity + ") EXPECTED FINAL HOLDINGS: " + expectedFinalHoldings + " BUYING POWER: " + portfolio.GetBuyingPower(order.Symbol));
-                    } else {
-                        //If not the same asset, then just add the absolute holding to the final total:
-                        expectedFinalHoldings += company.Holdings.AbsoluteHoldings;
-                    }
-                }
-            } else {
-                //First purchase: just make calc abs order size:
-                expectedFinalHoldings = (order.Price * (decimal)order.Quantity);
-            }
-
-            return expectedFinalHoldings;
-        }
 
     } // End Algorithm Transaction Filling Classes
 

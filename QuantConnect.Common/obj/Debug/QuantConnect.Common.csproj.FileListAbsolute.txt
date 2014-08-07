@@ -10,8 +10,8 @@ C:\Server\www\QCo\QuantConnect.Common\bin\Debug\QuantConnect.Logging.pdb
 C:\Server\www\QCo\QuantConnect.Common\bin\Debug\QuantConnect.Logging.xml
 C:\Server\www\QCo\QuantConnect.Common\bin\Debug\MathNet.Filtering.xml
 C:\Server\www\QCo\QuantConnect.Common\bin\Debug\MathNet.Numerics.xml
-C:\Server\www\QCo\QuantConnect.Common\obj\Debug\QuantConnect.Common.csprojResolveAssemblyReference.cache
 C:\Server\www\QCo\QuantConnect.Common\obj\Debug\QuantConnect.Common.dll
 C:\Server\www\QCo\QuantConnect.Common\obj\Debug\QuantConnect.Common.pdb
 C:\Server\www\QCo\QuantConnect.Common\bin\Debug\Newtonsoft.Json.dll
 C:\Server\www\QCo\QuantConnect.Common\bin\Debug\Newtonsoft.Json.xml
+C:\Server\www\QCo\QuantConnect.Common\obj\Debug\QuantConnect.Common.csprojResolveAssemblyReference.cache

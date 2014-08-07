@@ -160,11 +160,11 @@ namespace QuantConnect
         public void AddPoint(DateTime time, decimal value) 
         {
             //Round off the chart values to significant figures:
-            double v = ((double)value).RoundToSignificantDigits(3);
+            double v = ((double)value).RoundToSignificantDigits(5);
 
             if (Values.Count < 4000)
             {
-                Values.Add(new ChartPoint(time, Convert.ToDecimal(v)));
+                Values.Add(new ChartPoint(time, value));
             } else { 
                 //Cannot add more than 4000 points per chart
             }
@@ -422,6 +422,18 @@ namespace QuantConnect
         /// File currently active
         Active,
         /// File Deleted.
+        Deleted
+    }
+
+
+    /// <summary>
+    /// If the backtest has been deleted
+    /// </summary>
+    public enum BacktestStatus
+    {
+        /// Active
+        Active,
+        /// Deleted/Cancelled.
         Deleted
     }
 

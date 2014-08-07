@@ -109,37 +109,79 @@ namespace QuantConnect.Securities {
         * CLASS PROPERTIES
         *********************************************************/
         /// <summary>
-        /// Return the value of the companies total holdings.
+        /// Return the acquisition cost of the companies total holdings.
         /// </summary>
-        public virtual decimal HoldingValue {
-            get {
+        public virtual decimal HoldingsCost 
+        {
+            get 
+            {
                 return AveragePrice * Convert.ToDecimal(Quantity);
             }
         }
 
         /// <summary>
-        /// Absolute of the Holdings:
+        /// Absolute of the Holdings: Unlevered
         /// </summary>
-        public virtual decimal AbsoluteHoldings {
-            get {
-                return Math.Abs(HoldingValue);
+        public virtual decimal AbsoluteHoldingsCost 
+        {
+            get 
+            {
+                return Math.Abs(HoldingsCost);
+            }
+        }
+
+        /// <summary>
+        /// Market value of our holdings
+        /// </summary>
+        public virtual decimal HoldingsValue
+        {
+            get
+            {
+                return _price * Convert.ToDecimal(Quantity);
+            }
+        }
+
+        /// <summary>
+        /// Absolute of the market value of our holdings.
+        /// </summary>
+        public virtual decimal AbsoluteHoldingsValue
+        {
+            get
+            {
+                return Math.Abs(HoldingsValue);
             }
         }
         
         /// <summary>
         /// If we have stock, return boolean true.
         /// </summary>
-        public virtual bool HoldStock {
-            get {
+        public virtual bool HoldStock 
+        {
+            get 
+            {
                 return (AbsoluteQuantity > 0);
+            }
+        }
+
+
+        /// <summary>
+        /// Alias of Hold Stock
+        /// </summary>
+        public virtual bool Invested
+        {
+            get
+            {
+                return HoldStock;
             }
         }
 
         /// <summary>
         /// The total volume today for this stock.
         /// </summary>
-        public virtual decimal TotalSaleVolume {
-            get {
+        public virtual decimal TotalSaleVolume 
+        {
+            get 
+            {
                 return _totalSaleVolume;
             }
         }
@@ -147,8 +189,10 @@ namespace QuantConnect.Securities {
         /// <summary>
         /// Total fees for this company
         /// </summary>
-        public virtual decimal TotalFees {
-            get {
+        public virtual decimal TotalFees 
+        {
+            get 
+            {
                 return _totalFees;
             }
         }
@@ -156,11 +200,15 @@ namespace QuantConnect.Securities {
         /// <summary>
         /// Bool for when we hold long stock
         /// </summary>
-        public virtual bool IsLong {
+        public virtual bool IsLong 
+        {
             get {
-                if (Quantity > 0) {
+                if (Quantity > 0) 
+                {
                     return true;
-                } else {
+                } 
+                else 
+                {
                     return false;
                 }
             }
@@ -169,11 +217,15 @@ namespace QuantConnect.Securities {
         /// <summary>
         /// Bool indicating currently short.
         /// </summary>
-        public virtual bool IsShort {
+        public virtual bool IsShort 
+        {
             get {
-                if (Quantity < 0) {
+                if (Quantity < 0) 
+                {
                     return true;
-                } else {
+                } 
+                else
+                {
                     return false;
                 }
             }            
@@ -182,8 +234,10 @@ namespace QuantConnect.Securities {
         /// <summary>
         /// Absolute quantity
         /// </summary>
-        public virtual decimal AbsoluteQuantity {
-            get {
+        public virtual decimal AbsoluteQuantity 
+        {
+            get 
+            {
                 return Math.Abs(Quantity);
             }
         }
@@ -191,8 +245,10 @@ namespace QuantConnect.Securities {
         /// <summary>
         /// Using what was the profit from the last trade (buy or sell, need to account for shorts..)
         /// </summary>
-        public virtual decimal LastTradeProfit {
-            get {
+        public virtual decimal LastTradeProfit 
+        {
+            get 
+            {
                 return _lastTradeProfit;
             }
         }
@@ -200,8 +256,10 @@ namespace QuantConnect.Securities {
         /// <summary>
         /// Calculate the total profit for this equity.
         /// </summary>
-        public virtual decimal Profit {
-            get {
+        public virtual decimal Profit 
+        {
+            get 
+            {
                 return _profit;
             }
         }
@@ -209,8 +267,10 @@ namespace QuantConnect.Securities {
         /// <summary>
         /// Return the net for this company
         /// </summary>
-        public virtual decimal NetProfit {
-            get {
+        public virtual decimal NetProfit 
+        {
+            get 
+            {
                 return Profit - TotalFees;
             }
         }
@@ -218,8 +278,10 @@ namespace QuantConnect.Securities {
         /// <summary>
         /// The profit/loss figure from the holdings we currently have.
         /// </summary>
-        public virtual decimal UnrealizedProfit {
-            get {
+        public virtual decimal UnrealizedProfit 
+        {
+            get 
+            {
                 return TotalCloseProfit();
             }
         }
@@ -231,46 +293,46 @@ namespace QuantConnect.Securities {
         /// Add this extra fee to the running total:
         /// </summary>
         /// <param name="newFee"></param>
-        public void AddNewFee(decimal newFee) {
+        public void AddNewFee(decimal newFee) 
+        {
             this._totalFees += newFee;
         }
-
 
         /// <summary>
         /// Add a new Profit or Loss to the running total:
         /// </summary>
         /// <param name="profitLoss">The change in portfolio from closing a position</param>
-        public void AddNewProfit(decimal profitLoss) {
+        public void AddNewProfit(decimal profitLoss) 
+        {
             this._profit += profitLoss;
         }
-
 
         /// <summary>
         /// Add a new sale value to the running total trading volume.
         /// </summary>
         /// <param name="saleValue"></param>
-        public void AddNewSale(decimal saleValue) {
+        public void AddNewSale(decimal saleValue) 
+        {
             this._totalSaleVolume += saleValue;
         }
-
 
         /// <summary>
         /// Setter Method for Last Trade Profit.
         /// </summary>
         /// <param name="lastTradeProfit"></param>
-        public void SetLastTradeProfit(decimal lastTradeProfit) {
+        public void SetLastTradeProfit(decimal lastTradeProfit) 
+        {
             this._lastTradeProfit = lastTradeProfit;
         }
             
-
         /// <summary>
         /// Set the quantity - useful if running a model in running total mode and have overnight holdings.
         /// </summary>
-        public virtual void SetHoldings(decimal averagePrice, int quantity) {
+        public virtual void SetHoldings(decimal averagePrice, int quantity) 
+        {
             this._averagePrice = averagePrice;
             this._quantity = quantity;
         }
-
 
         /// <summary>
         /// Update local copy of closing price variable
@@ -281,26 +343,31 @@ namespace QuantConnect.Securities {
             _price = closingPrice;
         }
 
-
-
         /// <summary>
         /// Profit if we closed the holdings right now. If relative per dollar is true, will return the efficiency
         /// </summary>
-        public virtual decimal TotalCloseProfit() {
+        public virtual decimal TotalCloseProfit() 
+        {
             decimal gross = 0, net = 0;
             decimal orderFee = 0;
 
-            if (AbsoluteQuantity > 0) {
+            if (AbsoluteQuantity > 0) 
+            {
                 _model.GetOrderFee(AbsoluteQuantity, _price);
             }
 
-            if (IsLong) {
+            if (IsLong) 
+            {
                 //if we're long on a position, profit from selling off $10,000 stock:
                 gross = (_price - AveragePrice) * AbsoluteQuantity;
-            } else if (IsShort) {
+            } 
+            else if (IsShort) 
+            {
                 //if we're short on a position, profit from buying $10,000 stock:
                 gross = (AveragePrice - _price) * AbsoluteQuantity;
-            } else {
+            } 
+            else 
+            {
                 //no holdings, 0 profit.
                 return 0;
             }
