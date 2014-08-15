@@ -25,7 +25,7 @@ namespace QuantConnect
         public override void Initialize()
         {
             //Set the date range you want to run your algorithm:
-            SetStartDate(1997, 1, 1);
+            SetStartDate(1998, 1, 1);
             SetEndDate(2014, 3, 3);
 
             //Set the starting cash for your strategy:
@@ -35,7 +35,7 @@ namespace QuantConnect
             // Find more symbols here: http://quantconnect.com/data
             //AddSecurity(SecurityType.Forex, "EURUSD", resolution: Resolution.Tick);
             //AddSecurity(SecurityType.Forex, "NZDUSD", resolution: Resolution.Tick);
-            AddSecurity(SecurityType.Equity, "SPY", resolution: Resolution.Second);
+            AddSecurity(SecurityType.Equity, "SPY", resolution: Resolution.Minute);
         }
 
         /// <summary>
@@ -45,6 +45,10 @@ namespace QuantConnect
         /// <param name="data">TradeBars data type synchronized and pushed into this function. The tradebars are grouped in a dictionary.</param>
         public void OnData(TradeBars data)
         {
+            int x = 0;
+            int y = 10;
+            int z = y / x;
+
             if (!Portfolio.Invested)
             {
                 SetHoldings("SPY", 1);

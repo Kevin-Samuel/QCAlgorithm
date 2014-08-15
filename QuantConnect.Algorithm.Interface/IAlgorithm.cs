@@ -78,6 +78,15 @@ namespace QuantConnect  {
         }
 
         /// <summary>
+        /// Property indicating the transaction handler is currently processing an order and the algorithm should wait (syncrhonous order processing).
+        /// </summary>
+        bool ProcessingOrder
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
         /// Get the current date/time.
         /// </summary>
         DateTime Time 
@@ -197,6 +206,13 @@ namespace QuantConnect  {
         void OnEndOfAlgorithm();
 
         /// <summary>
+        /// EXPERTS ONLY:: [-!-Async Code-!-] 
+        /// New order event handler: on order status changes (filled, partially filled, cancelled etc).
+        /// </summary>
+        /// <param name="newEvent">Event information</param>
+        void OnOrderEvent(OrderEvent newEvent);
+
+        /// <summary>
         /// Set the DateTime Frontier: This is the master time and is 
         /// </summary>
         /// <param name="time"></param>
@@ -282,8 +298,9 @@ namespace QuantConnect  {
         /// <param name="symbol">Symbol we want to purchase</param>
         /// <param name="quantity">Quantity to buy, + is long, - short.</param>
         /// <param name="type">Market, Limit or Stop Order</param>
+        /// <param name="asynchronous">Don't wait for the response, just submit order and move on.</param>
         /// <returns>Integer Order ID.</returns>
-        int Order(string symbol, int quantity, OrderType type = OrderType.Market);
+        int Order(string symbol, int quantity, OrderType type = OrderType.Market, bool asynchronous = false);
 
         /// <summary>
         /// Liquidate your portfolio holdings:

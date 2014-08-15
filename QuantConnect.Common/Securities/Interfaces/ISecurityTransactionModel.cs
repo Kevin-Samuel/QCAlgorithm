@@ -30,13 +30,13 @@ namespace QuantConnect.Securities {
         /******************************************************** 
         * CLASS METHODS
         *********************************************************/
+
         /// <summary>
         /// Perform neccessary check to see if the model has been filled, appoximate the best we can.
         /// </summary>
         /// <param name="asset">Asset we're trading this order</param>
         /// <param name="order">Order class to check if filled.</param>
         void Fill(Security asset, ref Order order);
-
 
 
         /// <summary>

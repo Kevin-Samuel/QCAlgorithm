@@ -24,6 +24,13 @@
             Call this event at the end of the algorithm running.
             </summary>
         </member>
+        <member name="M:QuantConnect.IAlgorithm.OnOrderEvent(QuantConnect.OrderEvent)">
+            <summary>
+            EXPERTS ONLY:: [-!-Async Code-!-] 
+            New order event handler: on order status changes (filled, partially filled, cancelled etc).
+            </summary>
+            <param name="newEvent">Event information</param>
+        </member>
         <member name="M:QuantConnect.IAlgorithm.SetDateTime(System.DateTime)">
             <summary>
             Set the DateTime Frontier: This is the master time and is 
@@ -104,13 +111,14 @@
             </summary>
             <param name="startingCash">decimal starting capital, default $100,000</param>
         </member>
-        <member name="M:QuantConnect.IAlgorithm.Order(System.String,System.Int32,QuantConnect.OrderType)">
+        <member name="M:QuantConnect.IAlgorithm.Order(System.String,System.Int32,QuantConnect.OrderType,System.Boolean)">
             <summary>
             Send an order to the transaction manager.
             </summary>
             <param name="symbol">Symbol we want to purchase</param>
             <param name="quantity">Quantity to buy, + is long, - short.</param>
             <param name="type">Market, Limit or Stop Order</param>
+            <param name="asynchronous">Don't wait for the response, just submit order and move on.</param>
             <returns>Integer Order ID.</returns>
         </member>
         <member name="M:QuantConnect.IAlgorithm.Liquidate(System.String)">
@@ -163,6 +171,11 @@
         <member name="P:QuantConnect.IAlgorithm.Name">
             <summary>
             Set a public name for the algorithm.
+            </summary>
+        </member>
+        <member name="P:QuantConnect.IAlgorithm.ProcessingOrder">
+            <summary>
+            Property indicating the transaction handler is currently processing an order and the algorithm should wait (syncrhonous order processing).
             </summary>
         </member>
         <member name="P:QuantConnect.IAlgorithm.Time">

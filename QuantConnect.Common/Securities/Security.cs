@@ -360,6 +360,16 @@ namespace QuantConnect.Securities {
             }
         }
 
+
+        /// <summary>
+        /// Update the leverage parameter:
+        /// </summary>
+        /// <param name="leverage">Leverage for this asset:</param>
+        public void SetLeverage(decimal leverage)
+        {
+            this._leverage = leverage;
+        }
+
     } // End Market
 
 } // End QC Namespace

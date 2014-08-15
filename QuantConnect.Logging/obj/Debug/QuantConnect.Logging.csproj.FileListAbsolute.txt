@@ -3,9 +3,10 @@ C:\Server\www\QCo\QuantConnect.Logging\bin\Debug\QuantConnect.Logging.dll
 C:\Server\www\QCo\QuantConnect.Logging\bin\Debug\QuantConnect.Logging.pdb
 C:\Server\www\QCo\QuantConnect.Logging\bin\Debug\MathNet.Filtering.dll
 C:\Server\www\QCo\QuantConnect.Logging\bin\Debug\MathNet.Numerics.dll
+C:\Server\www\QCo\QuantConnect.Logging\bin\Debug\Newtonsoft.Json.dll
 C:\Server\www\QCo\QuantConnect.Logging\bin\Debug\MathNet.Filtering.xml
 C:\Server\www\QCo\QuantConnect.Logging\bin\Debug\MathNet.Numerics.xml
+C:\Server\www\QCo\QuantConnect.Logging\bin\Debug\Newtonsoft.Json.xml
+C:\Server\www\QCo\QuantConnect.Logging\obj\Debug\QuantConnect.Logging.csprojResolveAssemblyReference.cache
 C:\Server\www\QCo\QuantConnect.Logging\obj\Debug\QuantConnect.Logging.dll
 C:\Server\www\QCo\QuantConnect.Logging\obj\Debug\QuantConnect.Logging.pdb
-C:\Server\www\QCo\QuantConnect.Logging\bin\Debug\Newtonsoft.Json.dll
-C:\Server\www\QCo\QuantConnect.Logging\bin\Debug\Newtonsoft.Json.xml

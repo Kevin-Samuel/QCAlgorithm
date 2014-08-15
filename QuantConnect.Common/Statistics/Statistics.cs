@@ -41,17 +41,21 @@ namespace QuantConnect
         /// <summary>
         /// Static S-P500 Benchmark
         /// </summary>
-        public static SortedDictionary<DateTime, decimal> Benchmark {
-            get {
+        public static SortedDictionary<DateTime, decimal> Benchmark
+        {
+            get
+            {
                 if (_benchmark.Count == 0 || (DateTime.Now - _benchmarkAge) > TimeSpan.FromDays(1))
                 {
                     //Fetch & Set Benchmark:
                     _benchmark.Clear();
-                    string url = "http://real-chart.finance.yahoo.com/table.csv?s=SPY&a=11&b=31&c=1997&d=" + (DateTime.Now.Month-1) + "&e=" + DateTime.Now.Day + "&f=" + DateTime.Now.Year + "&g=d&ignore=.csv";
-                    using (WebClient net = new WebClient()) {
+                    string url = "http://real-chart.finance.yahoo.com/table.csv?s=SPY&a=11&b=31&c=1997&d=" + (DateTime.Now.Month - 1) + "&e=" + DateTime.Now.Day + "&f=" + DateTime.Now.Year + "&g=d&ignore=.csv";
+                    using (WebClient net = new WebClient())
+                    {
                         string data = net.DownloadString(url);
                         bool first = true;
-                        using (var sr = new StreamReader(data.ToStream())) {
+                        using (var sr = new StreamReader(data.ToStream()))
+                        {
                             while (sr.Peek() >= 0)
                             {
                                 string line = sr.ReadLine();
@@ -76,9 +80,10 @@ namespace QuantConnect
         /// <param name="points"></param>
         /// <returns></returns>
         private static SortedDictionary<DateTime, decimal> ChartPointToDictionary(IEnumerable<ChartPoint> points)
-        { 
+        {
             var dictionary = new SortedDictionary<DateTime, decimal>();
-            try {
+            try
+            {
                 foreach (ChartPoint point in points)
                 {
                     DateTime x = Time.UnixTimeStampToDateTime(point.x);
@@ -92,7 +97,8 @@ namespace QuantConnect
                     }
                 }
             }
-            catch (Exception err) {
+            catch (Exception err)
+            {
                 Log.Error("Statistics.ChartPointToDictionary(): " + err.Message);
             }
             return dictionary;
@@ -122,7 +128,11 @@ namespace QuantConnect
             decimal lossRate = 0;
             decimal totalNetProfit = 0;
             decimal averageAnnualReturn = 0;
+            double fractionOfYears = 1;
             decimal profitLossValue = 0, runningCash = startingCash;
+            decimal algoCompoundingPerformance = 0;
+            decimal finalBenchmarkCash = 0;
+            decimal benchCompoundingPerformance = 0;
             List<int> years = new List<int>();
             SortedDictionary<int, int> annualTrades = new SortedDictionary<int, int>();
             SortedDictionary<int, int> annualWins = new SortedDictionary<int, int>();
@@ -163,24 +173,45 @@ namespace QuantConnect
                 });
 
                 //THIS SHOULD NEVER HAPPEN --> But if it does, log it and fail silently.
-                while (listPerformance.Count < listBenchmark.Count) {
+                while (listPerformance.Count < listBenchmark.Count)
+                {
                     listPerformance.Add(0);
                     Log.Error("Statistics.Generate(): Padded Performance");
                 }
-                while (listPerformance.Count > listBenchmark.Count) {
+                while (listPerformance.Count > listBenchmark.Count)
+                {
                     listBenchmark.Add(0);
                     Log.Error("Statistics.Generate(): Padded Benchmark");
                 }
             }
-            catch (Exception err) {
+            catch (Exception err)
+            {
                 Log.Error("Statistics.Generate.Dic-Array Convert: " + err.Message);
             }
 
             try
             {
                 //Number of years in this dataset:
-                double fractionOfYears = (equity.Keys.LastOrDefault() - equity.Keys.FirstOrDefault()).TotalDays / 365;
+                fractionOfYears = (equity.Keys.LastOrDefault() - equity.Keys.FirstOrDefault()).TotalDays / 365;
+            }
+            catch (Exception err)
+            {
+                Log.Error("Statistics.Generate(): Fraction of Years: " + err.Message);
+            }
 
+            try
+            {
+                algoCompoundingPerformance = CompoundingAnnualPerformance(startingCash, equity.Values.LastOrDefault(), (decimal)fractionOfYears);
+                finalBenchmarkCash = ((Benchmark.Values.Last() - Benchmark.Values.First()) / Benchmark.Values.First()) * startingCash;
+                benchCompoundingPerformance = CompoundingAnnualPerformance(startingCash, finalBenchmarkCash, (decimal)fractionOfYears);
+            }
+            catch (Exception err)
+            {
+                Log.Error("Statistics.Generate(): Compounding: " + err.Message);
+            }
+
+            try
+            {
                 //Run over each equity day:
                 foreach (DateTime closedTrade in profitLoss.Keys)
                 {
@@ -297,7 +328,7 @@ namespace QuantConnect
                     { "Total Trades", Math.Round(totalTrades, 0).ToString() },
                     { "Average Win", Math.Round(averageWin * 100, 2) + "%"  },
                     { "Average Loss", Math.Round(averageLoss * 100, 2) + "%" },
-                    { "Annual Return", Math.Round(averageAnnualReturn * 100, 3) + "%" },
+                    { "Compounding Annual Return", Math.Round(algoCompoundingPerformance * 100, 3) + "%" },
                     { "Drawdown", (Statistics.Drawdown(equity, 3) * 100) + "%" },
                     { "Expectancy", Math.Round((winRate * averageWinRatio) - (lossRate), 3).ToString() },
                     { "Net Profit", Math.Round(totalNetProfit * 100, 3) + "%"},
@@ -379,6 +410,15 @@ namespace QuantConnect
             return 0;
         } // End Drawdown:
 
+
+        /// <summary>
+        /// Get the annual compounded returns:
+        /// </summary>
+        /// <returns></returns>
+        public static decimal CompoundingAnnualPerformance(decimal startingCapital, decimal finalCapital, decimal years)
+        {
+            return (decimal)Math.Pow((double)finalCapital / (double)startingCapital, (1 / (double)years)) - 1;
+        }
 
         /// <summary>
         /// Annualized Returns

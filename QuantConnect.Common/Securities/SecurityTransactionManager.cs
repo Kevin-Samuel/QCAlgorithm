@@ -30,6 +30,9 @@ namespace QuantConnect.Securities {
         *********************************************************/
         private SecurityManager Securities;
         private ConcurrentDictionary<int, Order> _orders = new ConcurrentDictionary<int, Order>();
+        private ConcurrentQueue<Order> _orderQueue = new ConcurrentQueue<Order>();
+        private ConcurrentDictionary<int, ConcurrentBag<OrderEvent>> _orderEvents = new ConcurrentDictionary<int, ConcurrentBag<OrderEvent>>();
+        private Dictionary<DateTime, decimal> _transactionRecord = new Dictionary<DateTime, decimal>();
         private int _orderId = 1;
         private decimal _minimumOrderSize = 0;
         private int _minimumOrderQuantity = 1;
@@ -37,15 +40,6 @@ namespace QuantConnect.Securities {
         /******************************************************** 
         * CLASS PUBLIC VARIABLES
         *********************************************************/
-        /// <summary>
-        /// Processing Line for Orders Not Sent To Transaction Handler:
-        /// </summary>
-        public ConcurrentQueue<Order> OrderQueue = new ConcurrentQueue<Order>();
-
-        /// <summary>
-        /// Trade record of profits and losses for each trade statistics calculations
-        /// </summary>
-        public Dictionary<DateTime, decimal> TransactionRecord = new Dictionary<DateTime, decimal>();
 
         /******************************************************** 
         * CLASS CONSTRUCTOR
@@ -53,8 +47,8 @@ namespace QuantConnect.Securities {
         /// <summary>
         /// Initialise the Algorithm Transaction Class
         /// </summary>
-        public SecurityTransactionManager(SecurityManager security) {
-
+        public SecurityTransactionManager(SecurityManager security)
+        {
             //Private reference for processing transactions
             this.Securities = security;
 
@@ -62,7 +56,13 @@ namespace QuantConnect.Securities {
             this._orders = new ConcurrentDictionary<int, Order>();
 
             //Temporary Holding Queue of Orders to be Processed.
-            this.OrderQueue = new ConcurrentQueue<Order>();
+            this._orderQueue = new ConcurrentQueue<Order>();
+
+            // Internal order events storage.
+            this._orderEvents = new ConcurrentDictionary<int, ConcurrentBag<OrderEvent>>();
+
+            //Interal storage for transaction records:
+            this._transactionRecord = new Dictionary<DateTime, decimal>();
         }
 
 
@@ -73,17 +73,71 @@ namespace QuantConnect.Securities {
         /// Holding All Orders: Clone of the TransactionHandler.Orders
         /// -> Read only.
         /// </summary>
-        public ConcurrentDictionary<int, Order> Orders {
-            get {
+        public ConcurrentDictionary<int, Order> Orders 
+        {
+            get 
+            {
                 return _orders;
+            }
+            set
+            {
+                _orders = value;
+            }
+        }
+
+        /// <summary>
+        /// Temporary storage while waiting for orders to process.
+        /// Processing Line for Orders Not Sent To Transaction Handler:
+        /// </summary>
+        public ConcurrentQueue<Order> OrderQueue
+        {
+            get
+            {
+                return _orderQueue;
+            }
+            set 
+            {
+                _orderQueue = value;
+            }
+        }
+
+        /// <summary>
+        /// New event from a partially-processed/pending order
+        /// </summary>
+        public ConcurrentDictionary<int, ConcurrentBag<OrderEvent>> OrderEvents
+        {
+            get
+            {
+                return _orderEvents;
+            }
+            set 
+            {
+                _orderEvents = value;
+            }
+        }
+
+        /// <summary>
+        /// Trade record of profits and losses for each trade statistics calculations
+        /// </summary>
+        public Dictionary<DateTime, decimal> TransactionRecord
+        {
+            get
+            {
+                return _transactionRecord;
+            }
+            set
+            {
+                _transactionRecord = value;
             }
         }
 
         /// <summary>
         /// Configurable Minimum Order Size to override bad orders, Default 0:
         /// </summary>
-        public decimal MinimumOrderSize {
-            get {
+        public decimal MinimumOrderSize 
+        {
+            get 
+            {
                 return _minimumOrderSize;
             }
         }
@@ -91,8 +145,10 @@ namespace QuantConnect.Securities {
         /// <summary>
         /// Configurable Minimum Order Quantity: Default 0
         /// </summary>
-        public int MinimumOrderQuantity {
-            get {
+        public int MinimumOrderQuantity 
+        {
+            get 
+            {
                 return _minimumOrderQuantity;
             }
         }
@@ -100,14 +156,6 @@ namespace QuantConnect.Securities {
         /******************************************************** 
         * CLASS METHODS
         *********************************************************/
-        /// <summary>
-        /// Set the order cache, 
-        /// </summary>
-        /// <param name="orders">New orders cache</param>
-        public void SetOrderCache(ConcurrentDictionary<int, Order> orders) 
-        {
-            _orders = orders;
-        }
         
         /// <summary>
         /// Add an Order and return the Order ID or negative if an error.
@@ -136,16 +184,14 @@ namespace QuantConnect.Securities {
         /// <returns>id if the order we modified.</returns>
         public int UpdateOrder(Order order, SecurityPortfolioManager portfolio) 
         {
-            try {
+            try 
+            {
                 //Update the order from the behaviour
                 int id = order.Id;
                 order.Time = Securities[order.Symbol].Time;
 
-                //Run through a list of prepurchase checks, if any are false stop the transaction
-                int orderError = ValidateOrder(order, portfolio, order.Time, int.MaxValue, order.Price);
-                if (orderError < 0) {
-                    return orderError;
-                }
+                //Validate order:
+                if (order.Price == 0 || order.Quantity == 0) return -1;
 
                 if (_orders.ContainsKey(id))
                 {
@@ -153,71 +199,48 @@ namespace QuantConnect.Securities {
                     if (_orders[id].Status == OrderStatus.Filled || _orders[id].Status == OrderStatus.Canceled)
                     {
                         return -5;
-                    } else {
+                    } 
+                    else 
+                    {
                         //Flag the order to be resubmitted.
                         order.Status = OrderStatus.Update;
                         _orders[id] = order;
                         //Send the order to transaction handler to be processed.
                         OrderQueue.Enqueue(order);
                     }
-                } else {
+                } 
+                else 
+                {
                     //-> Its not in the orders cache, shouldn't get here
                     return -6;
                 }
-            } catch (Exception err) {
+            } 
+            catch (Exception err) 
+            {
                 Log.Error("Algorithm.Transactions.UpdateOrder(): " + err.Message);
                 return -7;
             }
             return 0;
         }
 
-        /// <summary>
-        /// Scan through all the order events and update the user's portfolio
-        /// </summary>
-        /// <returns>.</returns>
-        public virtual void ProcessOrderEvents(ConcurrentQueue<OrderEvent> orderEvents, SecurityPortfolioManager portfolio, int maxOrders, bool skipValidations = false) 
-        {
-            int orderEventsLoopCounter = 0;
-            //Initialize:
-            while (orderEvents.Count > 0 && orderEventsLoopCounter < 10000)
-            {
-                OrderEvent orderData;
-                if (orderEvents.TryDequeue(out orderData)) 
-                {
-                    Order order = _orders[orderData.Id];
-
-                    //Update the order:
-                    order.Price = orderData.FillPrice;
-                    order.Status = orderData.Status;
-                    order.Time = Securities[order.Symbol].Time;
-
-                    //Update the portfolio.
-                    if (order.Status == OrderStatus.Filled)
-                    {
-                        portfolio.ProcessFill(order);
-                    }
-
-                    //Set it back:
-                    _orders[orderData.Id] = order;
-                }
-                //Log.Debug("SecurityTransactionManager.ProcessOrderFillEvents(): Processed Order Event.");
-            }
-        }
 
         /// <summary>
         /// Remove this order from outstanding queue: its been filled or cancelled.
         /// </summary>
         /// <param name="orderId">Specific order id to remove</param>
-        public virtual void RemoveOrder(int orderId) {
+        public virtual void RemoveOrder(int orderId) 
+        {
             try
             {
                 //Error check
-                if (!Orders.ContainsKey(orderId)) {
+                if (!Orders.ContainsKey(orderId)) 
+                {
                     Log.Error("Security.Holdings.RemoveOutstandingOrder(): Cannot find this id.");
                     return;
                 }
 
-                if (Orders[orderId].Status != OrderStatus.Submitted) {
+                if (Orders[orderId].Status != OrderStatus.Submitted) 
+                {
                     Log.Error("Security.Holdings.RemoveOutstandingOrder(): Order already filled");
                     return;
                 }
@@ -234,38 +257,12 @@ namespace QuantConnect.Securities {
         }
 
         /// <summary>
-        /// Validate the transOrderDirection is a sensible choice, factoring in basic limits.
-        /// </summary>
-        /// <param name="order">Order to Validate</param>
-        /// <param name="portfolio">Security portfolio object we're working on.</param>
-        /// <param name="time">Current actual time</param>
-        /// <param name="maxOrders">Maximum orders per day/period before rejecting.</param>
-        /// <param name="price">Current actual price of security</param>
-        /// <returns>If negative its an error, or if 0 no problems.</returns>
-        public int ValidateOrder(Order order, SecurityPortfolioManager portfolio, DateTime time, int maxOrders = 50, decimal price = 0) 
-        {
-            //-1: Order quantity must not be zero
-            if (order.Quantity == 0 || order.Direction == OrderDirection.Hold) return -1;
-            //-2: There is no data yet for this security - please wait for data (market order price not available yet)
-            //if (order.Price <= 0) return -2; // Not valid anymore with custom data - need to accept negative data.
-            //-3: Attempting market order outside of market hours
-            if (!Securities[order.Symbol].Exchange.ExchangeOpen && order.Type == OrderType.Market) return -3;
-            //-4: Insufficient capital to execute order
-            if (GetSufficientCapitalForOrder(portfolio, order) == false) return -4;
-            //-5: Exceeded maximum allowed orders for one analysis period.
-            if (Orders.Count > maxOrders) return -5;
-            //-6: Order timestamp error. Order appears to be executing in the future
-            if (order.Time > time) return -6;
-            return 0;
-        }
-
-        /// <summary>
         /// Check if there is sufficient capital to execute this order.
         /// </summary>
         /// <param name="portfolio">Our portfolio</param>
         /// <param name="order">Order we're checking</param>
         /// <returns>True if suficient capital.</returns>
-        private bool GetSufficientCapitalForOrder(SecurityPortfolioManager portfolio, Order order)
+        public bool GetSufficientCapitalForOrder(SecurityPortfolioManager portfolio, Order order)
         {
             //First simple check, when don't hold stock, this will always increase portfolio regardless of direction
             if (Math.Abs(GetOrderRequiredBuyingPower(order)) > portfolio.GetBuyingPower(order.Symbol, order.Direction)) {

@@ -492,6 +492,7 @@ namespace QuantConnect.Securities {
                     //Update Vehicle Profit Tracking:
                     _profit += _lastTradeProfit;
                     vehicle.Holdings.AddNewProfit(_lastTradeProfit);
+                    vehicle.Holdings.SetLastTradeProfit(_lastTradeProfit);
                     AddTransactionRecord(vehicle.Time, _lastTradeProfit - 2 * feeThisOrder);
                 }
 

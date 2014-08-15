@@ -10,6 +10,7 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 using System.Collections.Concurrent;
+using System.Threading;
 using QuantConnect.Securities;
 using QuantConnect.Models;
 
@@ -34,6 +35,7 @@ namespace QuantConnect
         private bool _locked = false;
         private string _simulationId = "";
         private bool _quit = false;
+        private bool _processingOrder = false;
         private List<string> _debugMessages = new List<string>();
         private List<string> _logMessages = new List<string>();
         private List<string> _errorMessages = new List<string>();
@@ -41,8 +43,8 @@ namespace QuantConnect
         public Console Console = new Console(null);
 
         //Error tracking to avoid message flooding:
-        private string previousDebugMessage = "";
-        private bool sentNoDataError = false;
+        private string _previousDebugMessage = "";
+        private bool _sentNoDataError = false;
 
         /******************************************************** 
         * CLASS CONSTRUCTOR
@@ -121,6 +123,21 @@ namespace QuantConnect
         {
             get;
             set;
+        }
+
+        /// <summary>
+        /// Wait semaphore to signal the algoritm is currently processing a synchronous order.
+        /// </summary>
+        public bool ProcessingOrder
+        {
+            get
+            {
+                return _processingOrder;
+            }
+            set 
+            {
+                _processingOrder = value;
+            }
         }
 
         /// <summary>
@@ -315,6 +332,14 @@ namespace QuantConnect
             
         }
 
+        /// <summary>
+        /// Order event - fill, update, cancel, etc. When an order is update the events is passed in here:
+        /// </summary>
+        /// <param name="orderEvent">Details of the order</param>
+        public virtual void OnOrderEvent(OrderEvent orderEvent)
+        {
+            
+        }
 
         /// <summary>
         /// Add this chart to our collection
@@ -474,7 +499,11 @@ namespace QuantConnect
         /// <param name="mode">Enum RunMode with options Series, Parallel or Automatic. Automatic scans your requested symbols and resolutions and makes a decision on the fastest analysis</param>
         public void SetRunMode(RunMode mode) 
         {
-            Debug("Algorithm.SetRunMode(): RunMode-Parallel Type has been deprecated. Please use series analysis instead");
+            if (mode == QuantConnect.RunMode.Parallel)
+            {
+                Debug("Algorithm.SetRunMode(): RunMode-Parallel Type has been deprecated. Please use series analysis instead");
+                mode = QuantConnect.RunMode.Series;
+            }
             return;
         }
 
@@ -812,51 +841,63 @@ namespace QuantConnect
         /// <param name="type">Buy/Sell Limit or Market Order Type.</param>
         /// <param name="symbol">Symbol of the MarketType Required.</param>
         /// <param name="quantity">Number of shares to request.</param>
-        public int Order(string symbol, int quantity, OrderType type = OrderType.Market)
+        public int Order(string symbol, int quantity, OrderType type = OrderType.Market, bool asynchronous = false)
         {
             //Add an order to the transacion manager class:
             int orderId = -1;
             decimal price = 0;
 
+            //Ordering 0 is useless.
+            if (quantity == 0 || symbol == null || symbol == "") 
+            {
+                return -1;
+            }
+
             //Internals use upper case symbols.
             symbol = symbol.ToUpper();
 
-            //Ordering 0 is useless.
-            if (quantity == 0) 
-            {
-                return orderId;
-            }
-
             //If we're not tracking this symbol: throw error:
-            if (!Securities.ContainsKey(symbol) && !sentNoDataError)
+            if (!Securities.ContainsKey(symbol) && !_sentNoDataError)
             {
-                sentNoDataError = true;
-                Debug("You haven't requested " + symbol + " data. Add this with AddSecurity() in the Initialize() Method.");
+                _sentNoDataError = true;
+                Error("You haven't requested " + symbol + " data. Add this with AddSecurity() in the Initialize() Method.");
             }
 
             //Set a temporary price for validating order for market orders:
             price = Securities[symbol].Price;
-
-            if (price == 0) {
-                Debug("Asset price is $0. If using custom data make sure you've set the 'Value' property.");
-                return orderId;
+            if (price == 0) 
+            {
+                Error("Asset price is $0. If using custom data make sure you've set the 'Value' property.");
+                return -1;
             }
 
-            try
+            //Check the exchange is open before sending a market order.
+            if (type == OrderType.Market && !Securities[symbol].Exchange.ExchangeOpen)
             {
-                orderId = Transactions.AddOrder(new Order(symbol, quantity, type, Time, price));
+                return -3;
+            }
 
-                if (orderId < 0 && !sentNoDataError) 
-                { 
-                    //Order failed validaity checks and was rejected:
-                    sentNoDataError = true;
-                    Debug(OrderErrors.ErrorTypes[orderId]);
+            //We've already processed too many orders: max 100 per day or the memory usage explodes
+            if (Orders.Count > (_endDate - _startDate).TotalDays * 100)
+            {
+                return -5;
+            }
+
+            //Add the order and create a new order Id.
+            orderId = Transactions.AddOrder(new Order(symbol, quantity, type, Time, price));
+
+            //Wait for the order event to process:
+            //Enqueue means send to order queue but don't wait for response:
+            if (!asynchronous && type == OrderType.Market)
+            {
+                //Wait for the market order to fill.
+                //This is processed in a parallel thread.
+                while (!Transactions.Orders.ContainsKey(orderId) || Transactions.Orders[orderId].Status != OrderStatus.Filled || _processingOrder)
+                {
+                    Thread.Sleep(1);
                 }
             }
-            catch (Exception err) 
-            {
-                Error("Algorithm.Order(): Error sending order. " + err.Message);
-            }
+
             return orderId;
         }
 
@@ -918,7 +959,7 @@ namespace QuantConnect
         }
 
         /// <summary>
-        /// Automatically place an order which will set the holdings to between 100% or -100% of buying power.
+        /// Automatically place an order which will set the holdings to between 100% or -100% of *Buying Power*.
         /// E.g. SetHoldings("AAPL", 0.1); SetHoldings("IBM", -0.2); -> Sets portfolio as long 10% APPL and short 20% IBM
         /// </summary>
         /// <param name="symbol">   string Symbol indexer</param>
@@ -938,35 +979,38 @@ namespace QuantConnect
             if (percentage > 1) percentage = 1;
             if (percentage < -1) percentage = -1;
 
-            decimal cash = Portfolio.Cash;
-            decimal currentHoldingQuantity = Portfolio[symbol].Quantity;
-
             //If they triggered a liquidate
             if (liquidateExistingHoldings)
             {
                 foreach (string holdingSymbol in Portfolio.Keys)
                 {
-                    if (holdingSymbol != symbol)
+                    if (holdingSymbol != symbol && Portfolio[holdingSymbol].AbsoluteQuantity > 0)
                     {
-                        //Go through all existing holdings, market order the inverse quantity
+                        //Go through all existing holdings [synchronously], market order the inverse quantity:
                         Order(holdingSymbol, -Portfolio[holdingSymbol].Quantity);
                     }
                 }
             }
 
-            //Now rebalance the symbol requested:
-            decimal targetHoldingQuantity = 0;
+            //1. To set a fraction of whole, we need to know the whole: Cash * Leverage for remaining buying power:
+            decimal total = Portfolio.TotalHoldingsValue + Portfolio.Cash * Securities[symbol].Leverage;
+
+            //2. Difference between our target % and our current holdings: (relative +- number).
+            decimal deltaValue = (total * percentage) - Portfolio[symbol].HoldingsValue;
+
+            decimal deltaQuantity = 0;
+            
             //Potential divide by zero error for zero prices assets.
-            if (Math.Abs(Securities[symbol].Price) > 0) 
+            if (Math.Abs(Securities[symbol].Price) > 0)
             {
-                targetHoldingQuantity = Math.Floor((percentage * cash) / Securities[symbol].Price);
+                //3. Now rebalance the symbol requested:
+                deltaQuantity = Math.Floor(deltaValue / Securities[symbol].Price);
             }
 
-            decimal netHoldingQuantity = targetHoldingQuantity - currentHoldingQuantity;
-
-            if (Math.Abs(netHoldingQuantity) > 0)
+            //Determine if we need to place an order:
+            if (Math.Abs(deltaQuantity) > 0)
             {
-                Order(symbol, (int)netHoldingQuantity);
+                Order(symbol, (int)deltaQuantity);
             }
             return;
         }
@@ -977,9 +1021,9 @@ namespace QuantConnect
         /// <param name="message">Message to send to debug console</param>
         public void Debug(string message)
         {
-            if (message == "" || previousDebugMessage == message) return;
+            if (message == "" || _previousDebugMessage == message) return;
             _debugMessages.Add(message);
-            previousDebugMessage = message;
+            _previousDebugMessage = message;
         }
 
         /// <summary>

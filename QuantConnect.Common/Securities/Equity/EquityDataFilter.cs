@@ -62,6 +62,7 @@ namespace QuantConnect.Securities {
         /// </summary>
         public EquityDataFilter() : base()
         {
+
         }
 
         /******************************************************** 
@@ -113,7 +114,7 @@ namespace QuantConnect.Securities {
         /// <summary>
         /// Update the online standard deviation formula
         /// </summary>
-        /// <param name="data">new data.</param>
+        /// <param name="value">new data.</param>
         /// <returns>decimal standard deviation</returns>
         private double OnlineStandardDeviation(double value)
         {
@@ -135,7 +136,7 @@ namespace QuantConnect.Securities {
         /// Online variance 
         ///  http://en.wikipedia.org/wiki/Algorithms_for_calculating_variance
         /// </summary>
-        /// <param name="data"></param>
+        /// <param name="value"></param>
         /// <returns></returns>
         private double OnlineVariance(double value)
         {

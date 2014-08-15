@@ -72,12 +72,13 @@
     <Reference Include="System.Numerics" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="1_Algorithm_BasicTemplate.cs" />
+    <None Include="1_Algorithm_BasicTemplate.cs" />
     <None Include="2_Algorithm_ExponentialMovingAverage.cs" />
     <None Include="3_Algorithm_CustomDataSource.cs" />
     <None Include="4_Algorithm_Custom_Charting.cs" />
     <None Include="0_Algorithm_NitfyINR.cs" />
     <None Include="0_Algorithm_CashTests.cs" />
+    <Compile Include="0_Algorithm_SetHoldingTests.cs" />
     <Compile Include="QCAlgorithm.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

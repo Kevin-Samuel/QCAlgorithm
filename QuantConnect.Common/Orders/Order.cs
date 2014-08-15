@@ -126,6 +126,11 @@ namespace QuantConnect {
         public decimal FillPrice;
 
         /// <summary>
+        /// Number of shares of the order that was filled in this event.
+        /// </summary>
+        public int FillQuantity;
+
+        /// <summary>
         /// Any message from the exchange.
         /// </summary>
         public string Message;
@@ -137,12 +142,13 @@ namespace QuantConnect {
         /// <param name="status">Status of the order</param>
         /// <param name="fillPrice">Fill price information if applicable.</param>
         /// <param name="message">Message from the exchange</param>
-        public OrderEvent(int id = 0, OrderStatus status = OrderStatus.None, decimal fillPrice = 0, string message = "")
+        public OrderEvent(int id = 0, OrderStatus status = OrderStatus.None, decimal fillPrice = 0, int fillQuantity = 0, string message = "")
         {
             this.Id = id;
             this.Status = status;
             this.FillPrice = fillPrice;
             this.Message = message;
+            this.FillQuantity = fillQuantity;
         }
 
         /// <summary>
@@ -150,11 +156,13 @@ namespace QuantConnect {
         /// </summary>
         /// <param name="order">Order for this order status</param>
         /// <param name="message">Message from exchange or QC.</param>
-        public OrderEvent(Order order, string message) {
+        public OrderEvent(Order order, string message) 
+        {
             this.Id = order.Id;
             this.Status = order.Status;
             this.FillPrice = order.Price;
             this.Message = message;
+            this.FillQuantity = order.Quantity;
         }
     }
 

@@ -545,6 +545,11 @@
             Id of this data tick
             </summary>
         </member>
+        <member name="M:QuantConnect.Models.TradeBars.#ctor">
+            <summary>
+            TradeBars Default Initializer
+            </summary>
+        </member>
         <member name="M:QuantConnect.Models.TradeBars.#ctor(System.DateTime)">
             <summary>
             Default constructor for tradebars collection
@@ -968,8 +973,25 @@
         <member name="F:QuantConnect.ResultHandlerEndPoint.Console">
             Send the Results to the Local Console
         </member>
-        <member name="F:QuantConnect.ResultHandlerEndPoint.LiveCloud">
+        <member name="F:QuantConnect.ResultHandlerEndPoint.LiveTrading">
             Send Results to the Live Web Application
+        </member>
+        <member name="T:QuantConnect.SetupHandlerEndPoint">
+            <summary>
+            Setup Handler - Configure algorithm internal state for backtesting, console or live trading.
+            </summary>
+        </member>
+        <member name="F:QuantConnect.SetupHandlerEndPoint.Backtesting">
+            Configure algorithm+job for backtesting:
+        </member>
+        <member name="F:QuantConnect.SetupHandlerEndPoint.Console">
+            Configure algorithm+job for the console:
+        </member>
+        <member name="F:QuantConnect.SetupHandlerEndPoint.PaperTrading">
+            Paper trading algorithm+job internal state configuration
+        </member>
+        <member name="F:QuantConnect.SetupHandlerEndPoint.Tradier">
+            Tradier Setup Handler
         </member>
         <member name="T:QuantConnect.TransactionHandlerEndpoint">
             <summary>
@@ -982,14 +1004,14 @@
         <member name="F:QuantConnect.TransactionHandlerEndpoint.PaperTrading">
             Use Paper Trading Model to Process Transactions
         </member>
+        <member name="F:QuantConnect.TransactionHandlerEndpoint.Tradier">
+            Use Tradier to Process Transactions
+        </member>
         <member name="F:QuantConnect.TransactionHandlerEndpoint.InteractiveBrokers">
             Use Interactive Brokers to Process Transactions
         </member>
         <member name="F:QuantConnect.TransactionHandlerEndpoint.FXCM">
             Use FXCM to Process Transactions
-        </member>
-        <member name="F:QuantConnect.TransactionHandlerEndpoint.Tradier">
-            Use Tradier to Process Transactions
         </member>
         <member name="T:QuantConnect.TickType">
             <summary>
@@ -1632,12 +1654,17 @@
             Fill price information about the order
             </summary>
         </member>
+        <member name="F:QuantConnect.OrderEvent.FillQuantity">
+            <summary>
+            Number of shares of the order that was filled in this event.
+            </summary>
+        </member>
         <member name="F:QuantConnect.OrderEvent.Message">
             <summary>
             Any message from the exchange.
             </summary>
         </member>
-        <member name="M:QuantConnect.OrderEvent.#ctor(System.Int32,QuantConnect.OrderStatus,System.Decimal,System.String)">
+        <member name="M:QuantConnect.OrderEvent.#ctor(System.Int32,QuantConnect.OrderStatus,System.Decimal,System.Int32,System.String)">
             <summary>
             Order Constructor.
             </summary>
@@ -1783,7 +1810,7 @@
             <summary>
             Update the online standard deviation formula
             </summary>
-            <param name="data">new data.</param>
+            <param name="value">new data.</param>
             <returns>decimal standard deviation</returns>
         </member>
         <member name="M:QuantConnect.Securities.EquityDataFilter.OnlineVariance(System.Double)">
@@ -1791,7 +1818,7 @@
             Online variance 
              http://en.wikipedia.org/wiki/Algorithms_for_calculating_variance
             </summary>
-            <param name="data"></param>
+            <param name="value"></param>
             <returns></returns>
         </member>
         <member name="T:QuantConnect.Securities.ForexDataFilter">
@@ -1932,6 +1959,12 @@
             </summary>
             <param name="data">New Data packet:</param>
             <param name="frontier">time frontier / where we are in time.</param>
+        </member>
+        <member name="M:QuantConnect.Securities.Security.SetLeverage(System.Decimal)">
+            <summary>
+            Update the leverage parameter:
+            </summary>
+            <param name="leverage">Leverage for this asset:</param>
         </member>
         <member name="P:QuantConnect.Securities.Security.Symbol">
             <summary>
@@ -2947,26 +2980,10 @@
             Algorithm Transactions Manager - Recording Transactions
             </summary>
         </member>
-        <member name="F:QuantConnect.Securities.SecurityTransactionManager.OrderQueue">
-            <summary>
-            Processing Line for Orders Not Sent To Transaction Handler:
-            </summary>
-        </member>
-        <member name="F:QuantConnect.Securities.SecurityTransactionManager.TransactionRecord">
-            <summary>
-            Trade record of profits and losses for each trade statistics calculations
-            </summary>
-        </member>
         <member name="M:QuantConnect.Securities.SecurityTransactionManager.#ctor(QuantConnect.Securities.SecurityManager)">
             <summary>
             Initialise the Algorithm Transaction Class
             </summary>
-        </member>
-        <member name="M:QuantConnect.Securities.SecurityTransactionManager.SetOrderCache(System.Collections.Concurrent.ConcurrentDictionary{System.Int32,QuantConnect.Order})">
-            <summary>
-            Set the order cache, 
-            </summary>
-            <param name="orders">New orders cache</param>
         </member>
         <member name="M:QuantConnect.Securities.SecurityTransactionManager.AddOrder(QuantConnect.Order)">
             <summary>
@@ -2981,28 +2998,11 @@
             <param name="portfolio"></param>
             <returns>id if the order we modified.</returns>
         </member>
-        <member name="M:QuantConnect.Securities.SecurityTransactionManager.ProcessOrderEvents(System.Collections.Concurrent.ConcurrentQueue{QuantConnect.OrderEvent},QuantConnect.Securities.SecurityPortfolioManager,System.Int32,System.Boolean)">
-            <summary>
-            Scan through all the order events and update the user's portfolio
-            </summary>
-            <returns>.</returns>
-        </member>
         <member name="M:QuantConnect.Securities.SecurityTransactionManager.RemoveOrder(System.Int32)">
             <summary>
             Remove this order from outstanding queue: its been filled or cancelled.
             </summary>
             <param name="orderId">Specific order id to remove</param>
-        </member>
-        <member name="M:QuantConnect.Securities.SecurityTransactionManager.ValidateOrder(QuantConnect.Order,QuantConnect.Securities.SecurityPortfolioManager,System.DateTime,System.Int32,System.Decimal)">
-            <summary>
-            Validate the transOrderDirection is a sensible choice, factoring in basic limits.
-            </summary>
-            <param name="order">Order to Validate</param>
-            <param name="portfolio">Security portfolio object we're working on.</param>
-            <param name="time">Current actual time</param>
-            <param name="maxOrders">Maximum orders per day/period before rejecting.</param>
-            <param name="price">Current actual price of security</param>
-            <returns>If negative its an error, or if 0 no problems.</returns>
         </member>
         <member name="M:QuantConnect.Securities.SecurityTransactionManager.GetSufficientCapitalForOrder(QuantConnect.Securities.SecurityPortfolioManager,QuantConnect.Order)">
             <summary>
@@ -3023,6 +3023,22 @@
             <summary>
             Holding All Orders: Clone of the TransactionHandler.Orders
             -> Read only.
+            </summary>
+        </member>
+        <member name="P:QuantConnect.Securities.SecurityTransactionManager.OrderQueue">
+            <summary>
+            Temporary storage while waiting for orders to process.
+            Processing Line for Orders Not Sent To Transaction Handler:
+            </summary>
+        </member>
+        <member name="P:QuantConnect.Securities.SecurityTransactionManager.OrderEvents">
+            <summary>
+            New event from a partially-processed/pending order
+            </summary>
+        </member>
+        <member name="P:QuantConnect.Securities.SecurityTransactionManager.TransactionRecord">
+            <summary>
+            Trade record of profits and losses for each trade statistics calculations
             </summary>
         </member>
         <member name="P:QuantConnect.Securities.SecurityTransactionManager.MinimumOrderSize">
@@ -3123,6 +3139,12 @@
             <param name="equityOverTime">Array of portfolio value over time.</param>
             <param name="rounding">Round the drawdown statistics </param>
             <returns>Draw down percentage over period.</returns>
+        </member>
+        <member name="M:QuantConnect.Statistics.CompoundingAnnualPerformance(System.Decimal,System.Decimal,System.Decimal)">
+            <summary>
+            Get the annual compounded returns:
+            </summary>
+            <returns></returns>
         </member>
         <member name="M:QuantConnect.Statistics.AnnualPerformance(System.Collections.Generic.List{System.Double},System.Double)">
             <summary>

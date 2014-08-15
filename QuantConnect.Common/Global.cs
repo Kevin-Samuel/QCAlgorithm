@@ -355,7 +355,22 @@ namespace QuantConnect
         /// Send the Results to the Local Console
         Console,
         /// Send Results to the Live Web Application
-        LiveCloud
+        LiveTrading
+    }
+
+    /// <summary>
+    /// Setup Handler - Configure algorithm internal state for backtesting, console or live trading.
+    /// </summary>
+    public enum SetupHandlerEndPoint
+    {
+        /// Configure algorithm+job for backtesting:
+        Backtesting,
+        /// Configure algorithm+job for the console:
+        Console,
+        /// Paper trading algorithm+job internal state configuration
+        PaperTrading,
+        /// Tradier Setup Handler
+        Tradier
     }
 
     /// <summary>
@@ -367,12 +382,12 @@ namespace QuantConnect
         Backtesting,
         /// Use Paper Trading Model to Process Transactions
         PaperTrading,
+        /// Use Tradier to Process Transactions
+        Tradier,
         /// Use Interactive Brokers to Process Transactions
         InteractiveBrokers,
         /// Use FXCM to Process Transactions
-        FXCM,
-        /// Use Tradier to Process Transactions
-        Tradier
+        FXCM
     }
 
     /// <summary>
