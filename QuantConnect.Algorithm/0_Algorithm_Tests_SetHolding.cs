@@ -49,6 +49,12 @@ namespace QuantConnect
             {
                 SetHoldings("SPY", -0.5); step++;
             }
+
+            if (Time.Date == new DateTime(2013, 11, 1) && step == 5)
+            {
+                SetHoldings("IBM", -0.5, true);  //Succeed.
+                SetHoldings("SPY", -0.5); step++;
+            }
         }
     }
 

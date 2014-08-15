@@ -892,7 +892,10 @@ namespace QuantConnect
             {
                 //Wait for the market order to fill.
                 //This is processed in a parallel thread.
-                while (!Transactions.Orders.ContainsKey(orderId) || Transactions.Orders[orderId].Status != OrderStatus.Filled || _processingOrder)
+                while (!Transactions.Orders.ContainsKey(orderId) || 
+                       (Transactions.Orders[orderId].Status != OrderStatus.Filled && 
+                        Transactions.Orders[orderId].Status != OrderStatus.Invalid &&
+                        Transactions.Orders[orderId].Status != OrderStatus.Canceled) || _processingOrder)
                 {
                     Thread.Sleep(1);
                 }
@@ -927,7 +930,8 @@ namespace QuantConnect
                         quantity = Math.Abs(Portfolio[symbol].Quantity);
                     }
                     //Liquidate at market price.
-                    orderIdList.Add(Transactions.AddOrder(new Order(symbol, quantity, OrderType.Market, Time, Securities[symbol].Price)));
+                    orderIdList.Add(Order(symbol, quantity, OrderType.Market));
+                    //orderIdList.Add(Transactions.AddOrder(new Order(symbol, quantity, OrderType.Market, Time, Securities[symbol].Price)));
                 }
             }
             return orderIdList;
@@ -1004,7 +1008,7 @@ namespace QuantConnect
             if (Math.Abs(Securities[symbol].Price) > 0)
             {
                 //3. Now rebalance the symbol requested:
-                deltaQuantity = Math.Floor(deltaValue / Securities[symbol].Price);
+                deltaQuantity = Math.Round(deltaValue / Securities[symbol].Price);
             }
 
             //Determine if we need to place an order:

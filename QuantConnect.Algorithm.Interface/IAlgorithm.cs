@@ -196,6 +196,24 @@ namespace QuantConnect  {
         //void OnData(TradeBars tradebars);
 
         /// <summary>
+        /// Send debug message
+        /// </summary>
+        /// <param name="message"></param>
+        void Debug(string message);
+
+        /// <summary>
+        /// Save entry to the Log 
+        /// </summary>
+        /// <param name="message">String message</param>
+        void Log(string message);
+
+        /// <summary>
+        /// Send an error message for the algorithm
+        /// </summary>
+        /// <param name="message">String message</param>
+        void Error(string message);
+
+        /// <summary>
         /// Call this method at the end of each day of data.
         /// </summary>
         void OnEndOfDay();

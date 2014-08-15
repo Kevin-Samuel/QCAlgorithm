@@ -14,6 +14,24 @@
             Initialise the Algorithm and Prepare Required Data:
             </summary>
         </member>
+        <member name="M:QuantConnect.IAlgorithm.Debug(System.String)">
+            <summary>
+            Send debug message
+            </summary>
+            <param name="message"></param>
+        </member>
+        <member name="M:QuantConnect.IAlgorithm.Log(System.String)">
+            <summary>
+            Save entry to the Log 
+            </summary>
+            <param name="message">String message</param>
+        </member>
+        <member name="M:QuantConnect.IAlgorithm.Error(System.String)">
+            <summary>
+            Send an error message for the algorithm
+            </summary>
+            <param name="message">String message</param>
+        </member>
         <member name="M:QuantConnect.IAlgorithm.OnEndOfDay">
             <summary>
             Call this method at the end of each day of data.

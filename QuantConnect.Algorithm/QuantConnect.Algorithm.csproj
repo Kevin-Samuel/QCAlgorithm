@@ -76,9 +76,9 @@
     <None Include="2_Algorithm_ExponentialMovingAverage.cs" />
     <None Include="3_Algorithm_CustomDataSource.cs" />
     <None Include="4_Algorithm_Custom_Charting.cs" />
-    <None Include="0_Algorithm_NitfyINR.cs" />
-    <None Include="0_Algorithm_CashTests.cs" />
-    <Compile Include="0_Algorithm_SetHoldingTests.cs" />
+    <None Include="0_Algorithm_Tests_Cash.cs" />
+    <None Include="0_Algorithm_Tests_NitfyINR.cs" />
+    <Compile Include="0_Algorithm_Tests_SetHolding.cs" />
     <Compile Include="QCAlgorithm.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
