@@ -33,7 +33,7 @@ namespace QuantConnect
         private DateTime _endDate;     //Default end to yesterday
         private RunMode _runMode = RunMode.Series;
         private bool _locked = false;
-        private string _simulationId = "";
+        private string _algorithmId = "";
         private bool _quit = false;
         private bool _processingOrder = false;
         private List<string> _debugMessages = new List<string>();
@@ -152,7 +152,7 @@ namespace QuantConnect
         }
 
         /// <summary>
-        /// Get requested simulation start date set with SetStartDate()
+        /// Get requested algorithm start date set with SetStartDate()
         /// </summary>
         public DateTime StartDate 
         {
@@ -163,7 +163,7 @@ namespace QuantConnect
         }
 
         /// <summary>
-        /// Get requested simulation end date set with SetEndDate()
+        /// Get requested algorithm end date set with SetEndDate()
         /// </summary>
         public DateTime EndDate 
         {
@@ -174,13 +174,13 @@ namespace QuantConnect
         }
 
         /// <summary>
-        /// Simulation Id for this Backtest
+        /// Algorithm Id for this Backtest
         /// </summary>
-        public string SimulationId 
+        public string AlgorithmId 
         {
             get 
             {
-                return _simulationId;
+                return _algorithmId;
             }
         }
 
@@ -196,7 +196,7 @@ namespace QuantConnect
         }
 
         /// <summary>
-        /// Simulation Server setup RunMode for the Algorithm: Automatic, Parallel or Series.
+        /// [DEPRECATED] Server setup RunMode for the Algorithm: Automatic, Parallel or Series.
         /// </summary>
         public RunMode RunMode 
         {
@@ -540,12 +540,9 @@ namespace QuantConnect
         }
 
         /// <summary>
-        /// Wrapper for SetStartDate(DateTime). Set the start date for simulation.
+        /// Wrapper for SetStartDate(DateTime). Set the start date for backtest.
         /// Must be less than end date.
         /// </summary>
-        /// <param name="year">int year</param>
-        /// <param name="month">int month</param>
-        /// <param name="day">int day</param>
         public void SetStartDate(int year, int month, int day) 
         {
             try 
@@ -559,11 +556,8 @@ namespace QuantConnect
         }
 
         /// <summary>
-        /// Wrapper for SetEndDate(datetime). Set the end simulation date. 
+        /// Wrapper for SetEndDate(datetime). Set the end backtest date. 
         /// </summary>
-        /// <param name="year">int year</param>
-        /// <param name="month">int month</param>
-        /// <param name="day">int day</param>
         public void SetEndDate(int year, int month, int day) 
         {
             try 
@@ -577,18 +571,15 @@ namespace QuantConnect
         }
 
         /// <summary>
-        /// Wrapper for SetEndDate(datetime). Set the end simulation date. 
+        /// Set the algorithm id (backtestId or deployId).
         /// </summary>
-        /// <param name="year">int year</param>
-        /// <param name="month">int month</param>
-        /// <param name="day">int day</param>
-        public void SetSimulationId(string simulationId)
+        public void SetAlgorithmId(string algorithmId)
         {
-            _simulationId = simulationId;
+            _algorithmId = algorithmId;
         }
 
         /// <summary>
-        /// Set the start date for the simulation 
+        /// Set the start date for the backtest 
         /// Must be less than end date and within data available
         /// </summary>
         /// <param name="start">Datetime start date</param>
@@ -622,7 +613,7 @@ namespace QuantConnect
         }
 
         /// <summary>
-        /// Set the end date for a simulation. 
+        /// Set the end date for a backtest. 
         /// Must be greater than the start date
         /// </summary>
         /// <param name="end"></param>
@@ -1048,7 +1039,7 @@ namespace QuantConnect
         {
             if (message == "") return;
             _errorMessages.Add(message);
-            Debug("SimulationId:(" + _simulationId + ") Error: " + message);
+            Debug("BacktestId:(" + _algorithmId + ") Error: " + message);
         }
 
         /// <summary>

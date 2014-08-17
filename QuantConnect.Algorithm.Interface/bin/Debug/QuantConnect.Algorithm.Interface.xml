@@ -63,11 +63,8 @@
         </member>
         <member name="M:QuantConnect.IAlgorithm.SetStartDate(System.Int32,System.Int32,System.Int32)">
             <summary>
-            Set the start date of the simulation period. This must be within available data.
+            Set the start date of the backtest period. This must be within available data.
             </summary>
-            <param name="year">Year to start simulation</param>
-            <param name="month">Month to start simulation</param>
-            <param name="day">Date to start simulation</param>
         </member>
         <member name="M:QuantConnect.IAlgorithm.SetStartDate(System.DateTime)">
             <summary>
@@ -77,11 +74,8 @@
         </member>
         <member name="M:QuantConnect.IAlgorithm.SetEndDate(System.Int32,System.Int32,System.Int32)">
             <summary>
-            Set the end simulation date for the algorithm. This must be within available data.
+            Set the end Backtest date for the algorithm. This must be within available data.
             </summary>
-            <param name="year">integer year to end simulation period</param>
-            <param name="month">integer month to end simulation period</param>
-            <param name="day">integer day to end simulation period</param>
         </member>
         <member name="M:QuantConnect.IAlgorithm.SetEndDate(System.DateTime)">
             <summary>
@@ -89,11 +83,11 @@
             </summary>
             <param name="end">DateTime End Date for Analysis</param>
         </member>
-        <member name="M:QuantConnect.IAlgorithm.SetSimulationId(System.String)">
+        <member name="M:QuantConnect.IAlgorithm.SetAlgorithmId(System.String)">
             <summary>
-            Set the simulation Id for this backtest or live run. This can be used to identify the order and equity records.
+            Set the algorithm Id for this backtest or live run. This can be used to identify the order and equity records.
             </summary>
-            <param name="simulationId">unique 32 character identifier for simulation</param>
+            <param name="algorithmId">unique 32 character identifier for backtest or live server</param>
         </member>
         <member name="M:QuantConnect.IAlgorithm.SetLocked">
             <summary>
@@ -114,7 +108,7 @@
         </member>
         <member name="M:QuantConnect.IAlgorithm.AddSecurity(QuantConnect.SecurityType,System.String,QuantConnect.Resolution,System.Boolean,System.Decimal,System.Boolean)">
             <summary>
-            Set a required MarketType-symbol and resolution for the simulator to prepare
+            Set a required MarketType-symbol and resolution for algorithm
             </summary>
             <param name="securityType">MarketType Enum: Equity, Commodity, FOREX or Future</param>
             <param name="symbol">Symbol Representation of the MarketType, e.g. AAPL</param>
@@ -203,17 +197,17 @@
         </member>
         <member name="P:QuantConnect.IAlgorithm.StartDate">
             <summary>
-            Get Requested Simulation Start Date
+            Get Requested Backtest Start Date
             </summary>
         </member>
         <member name="P:QuantConnect.IAlgorithm.EndDate">
             <summary>
-            Get Requested Simulation End Date
+            Get Requested Backtest End Date
             </summary>
         </member>
-        <member name="P:QuantConnect.IAlgorithm.SimulationId">
+        <member name="P:QuantConnect.IAlgorithm.AlgorithmId">
             <summary>
-            Simulation Id for the backtest
+            AlgorithmId for the backtest
             </summary>
         </member>
         <member name="P:QuantConnect.IAlgorithm.Orders">
@@ -223,7 +217,7 @@
         </member>
         <member name="P:QuantConnect.IAlgorithm.RunMode">
             <summary>
-            Run Simulation Mode for the algorithm: Automatic, Parallel or Series.
+            Run Backtest Mode for the algorithm: Automatic, Parallel or Series.
             </summary>
         </member>
         <member name="P:QuantConnect.IAlgorithm.Locked">

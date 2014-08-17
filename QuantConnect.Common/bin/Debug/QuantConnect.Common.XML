@@ -1671,6 +1671,7 @@
             <param name="id">Id of the parent order</param>
             <param name="status">Status of the order</param>
             <param name="fillPrice">Fill price information if applicable.</param>
+            <param name="fillQuantity">Fill quantity</param>
             <param name="message">Message from the exchange</param>
         </member>
         <member name="M:QuantConnect.OrderEvent.#ctor(QuantConnect.Order,System.String)">

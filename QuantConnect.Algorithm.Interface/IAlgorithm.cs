@@ -95,7 +95,7 @@ namespace QuantConnect  {
         }
 
         /// <summary>
-        /// Get Requested Simulation Start Date
+        /// Get Requested Backtest Start Date
         /// </summary>
         DateTime StartDate 
         {
@@ -103,7 +103,7 @@ namespace QuantConnect  {
         }
 
         /// <summary>
-        /// Get Requested Simulation End Date
+        /// Get Requested Backtest End Date
         /// </summary>
         DateTime EndDate 
         {
@@ -111,9 +111,9 @@ namespace QuantConnect  {
         }
 
         /// <summary>
-        /// Simulation Id for the backtest
+        /// AlgorithmId for the backtest
         /// </summary>
-        string SimulationId 
+        string AlgorithmId 
         {
             get;
         }
@@ -127,7 +127,7 @@ namespace QuantConnect  {
         }
 
         /// <summary>
-        /// Run Simulation Mode for the algorithm: Automatic, Parallel or Series.
+        /// Run Backtest Mode for the algorithm: Automatic, Parallel or Series.
         /// </summary>
         RunMode RunMode 
         {
@@ -243,11 +243,8 @@ namespace QuantConnect  {
         void SetRunMode(RunMode mode = RunMode.Automatic);
 
         /// <summary>
-        /// Set the start date of the simulation period. This must be within available data.
+        /// Set the start date of the backtest period. This must be within available data.
         /// </summary>
-        /// <param name="year">Year to start simulation</param>
-        /// <param name="month">Month to start simulation</param>
-        /// <param name="day">Date to start simulation</param>
         void SetStartDate(int year, int month, int day);
 
         /// <summary>
@@ -257,11 +254,8 @@ namespace QuantConnect  {
         void SetStartDate(DateTime start);
 
         /// <summary>
-        /// Set the end simulation date for the algorithm. This must be within available data.
+        /// Set the end Backtest date for the algorithm. This must be within available data.
         /// </summary>
-        /// <param name="year">integer year to end simulation period</param>
-        /// <param name="month">integer month to end simulation period</param>
-        /// <param name="day">integer day to end simulation period</param>
         void SetEndDate(int year, int month, int day);
 
         /// <summary>
@@ -271,10 +265,10 @@ namespace QuantConnect  {
         void SetEndDate(DateTime end);
 
         /// <summary>
-        /// Set the simulation Id for this backtest or live run. This can be used to identify the order and equity records.
+        /// Set the algorithm Id for this backtest or live run. This can be used to identify the order and equity records.
         /// </summary>
-        /// <param name="simulationId">unique 32 character identifier for simulation</param>
-        void SetSimulationId(string simulationId);
+        /// <param name="algorithmId">unique 32 character identifier for backtest or live server</param>
+        void SetAlgorithmId(string algorithmId);
 
         /// <summary>
         /// Set the algorithm as initialized and locked. No more cash or security changes.
@@ -294,7 +288,7 @@ namespace QuantConnect  {
         void AddChart(Chart chart);
 
         /// <summary>
-        /// Set a required MarketType-symbol and resolution for the simulator to prepare
+        /// Set a required MarketType-symbol and resolution for algorithm
         /// </summary>
         /// <param name="securityType">MarketType Enum: Equity, Commodity, FOREX or Future</param>
         /// <param name="symbol">Symbol Representation of the MarketType, e.g. AAPL</param>

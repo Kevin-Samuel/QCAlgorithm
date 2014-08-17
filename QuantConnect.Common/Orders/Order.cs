@@ -141,6 +141,7 @@ namespace QuantConnect {
         /// <param name="id">Id of the parent order</param>
         /// <param name="status">Status of the order</param>
         /// <param name="fillPrice">Fill price information if applicable.</param>
+        /// <param name="fillQuantity">Fill quantity</param>
         /// <param name="message">Message from the exchange</param>
         public OrderEvent(int id = 0, OrderStatus status = OrderStatus.None, decimal fillPrice = 0, int fillQuantity = 0, string message = "")
         {
