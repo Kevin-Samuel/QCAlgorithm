@@ -37,7 +37,8 @@ namespace QuantConnect.Securities {
         /******************************************************** 
         * CLASS VARIABLES
         *********************************************************/
-
+        private TimeSpan _marketOpen = TimeSpan.FromHours(0);
+        private TimeSpan _marketClose = TimeSpan.FromHours(23.999999);
 
         /******************************************************** 
         * CLASS CONSTRUCTION
@@ -52,17 +53,15 @@ namespace QuantConnect.Securities {
         /******************************************************** 
         * CLASS PROPERTIES
         *********************************************************/
-            
-
-
-        /******************************************************** 
-        * CLASS METHODS
-        *********************************************************/
         /// <summary>
         /// Override the base ExchangeOpen property with FXCM Market Hours
         /// </summary>
-        public override bool ExchangeOpen {
-            get { return DateTimeIsOpen(Time); }
+        public override bool ExchangeOpen
+        {
+            get
+            {
+                return DateTimeIsOpen(Time);
+            }
         }
 
 
@@ -83,7 +82,8 @@ namespace QuantConnect.Securities {
         /// </summary>
         /// <param name="dateToCheck">time of day</param>
         /// <returns>true if open</returns>
-        public override bool DateTimeIsOpen(DateTime dateToCheck) {
+        public override bool DateTimeIsOpen(DateTime dateToCheck)
+        {
             if (!DateIsOpen(dateToCheck))
                 return false;
 
@@ -111,6 +111,28 @@ namespace QuantConnect.Securities {
             return true;
         }
 
+
+        /// <summary>
+        /// FOREX Market Opening Time:
+        /// </summary>
+        public override TimeSpan MarketOpen
+        {
+            get { return _marketOpen; }
+            set { _marketOpen = value; }
+        }
+
+        /// <summary>
+        /// FOREX Market Closing Time:
+        /// </summary>
+        public override TimeSpan MarketClose
+        {
+            get { return _marketClose; }
+            set { _marketClose = value; }
+        }
+
+        /******************************************************** 
+        * CLASS METHODS
+        *********************************************************/
 
     } //End of ForexExchange
 

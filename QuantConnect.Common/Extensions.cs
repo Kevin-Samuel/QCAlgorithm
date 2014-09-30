@@ -177,7 +177,13 @@ namespace QuantConnect {
         /// <param name="str">String we're looking for the extension for.</param>
         /// <returns>Last 4 character string of string.</returns>
         public static string GetExtension(this string str) {
-            return str.Substring(Math.Max(0, str.Length - 4));
+            var ext = str.Substring(Math.Max(0, str.Length - 4));
+            var allowedExt = new List<string>() { ".zip", ".csv", ".json" };
+            if (!allowedExt.Contains(ext))
+            {
+                ext = ".custom";
+            }
+            return ext;
         }
 
 

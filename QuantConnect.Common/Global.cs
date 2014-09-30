@@ -47,6 +47,42 @@ namespace QuantConnect
     * GLOBAL STRUCT DEFINITIONS
     *********************************************************/
     /// <summary>
+    /// Singular holding of assets from backend live nodes:
+    /// </summary>
+    [JsonObjectAttribute]
+    public class Holding
+    {
+        /// Symbol of the Holding:
+        public string Symbol = "";
+
+        /// Average Price of our Holding
+        public decimal AveragePrice = 0;
+
+        /// Quantity of Symbol We Hold.
+        public decimal Quantity = 0;
+
+        /// Current Market Price of the Asset
+        public decimal MarketPrice = 0;
+
+        /// Create a new default holding:
+        public Holding()
+        { }
+
+        /// <summary>
+        /// Create a simple JSON holdings from a Security holding class.
+        /// </summary>
+        /// <param name="holding"></param>
+        public Holding(Securities.SecurityHolding holding)
+        {
+            this.Symbol = holding.Symbol;
+            this.Quantity = holding.Quantity;
+            this.AveragePrice = holding.AveragePrice;
+            this.MarketPrice = holding.Price;
+        }
+    }
+
+
+    /// <summary>
     /// Single Parent Chart Object for Custom Charting
     /// </summary>
     [JsonObjectAttribute]
@@ -211,7 +247,7 @@ namespace QuantConnect
         ///Constructor for datetime-value arguements:
         public ChartPoint(DateTime time, decimal value) 
         {
-            this.x = Convert.ToInt64(Time.DateTimeToUnixTimeStamp(time));
+            this.x = Convert.ToInt64(Time.DateTimeToUnixTimeStamp(time.ToUniversalTime()));
             this.y = value;
         }
 
@@ -292,9 +328,7 @@ namespace QuantConnect
         /// Professional User 
         Professional,
         /// Team Based Plan
-        Team,
-        /// Institutional User 
-        Institutional
+        Developmentsupport
     }
 
 
@@ -346,22 +380,35 @@ namespace QuantConnect
     }
 
     /// <summary>
+    /// Realtime events from 
+    /// </summary>
+    public enum RealTimeEndpoint
+    { 
+        /// Backtesting Faked RealTime Events
+        Backtesting,
+        /// Live Trading RealTime Events
+        LiveTrading
+    }
+
+    /// <summary>
     /// Destination of Algorithm Node Result, Progress Messages
     /// </summary>
-    public enum ResultHandlerEndPoint
+    public enum ResultHandlerEndpoint
     {
         /// Send Results to the Backtesting Web Application
         Backtesting,
         /// Send the Results to the Local Console
         Console,
         /// Send Results to the Live Web Application
-        LiveTrading
+        LiveTrading,
+        /// Send the results to console, as a live trading application:
+        LiveConsole
     }
 
     /// <summary>
     /// Setup Handler - Configure algorithm internal state for backtesting, console or live trading.
     /// </summary>
-    public enum SetupHandlerEndPoint
+    public enum SetupHandlerEndpoint
     {
         /// Configure algorithm+job for backtesting:
         Backtesting,
@@ -402,19 +449,19 @@ namespace QuantConnect
     }
 
     /// <summary>
-    /// Resolution of data requested:
+    /// Resolution of data requested: ALWAYS SORT SMALLEST TO LARGEST:
     /// </summary>
     public enum Resolution 
     {
-        /// Tick Resolution
+        /// Tick Resolution (1)
         Tick,
-        /// Second Resolution
+        /// Second Resolution (2)
         Second,
-        /// Minute Resolution
+        /// Minute Resolution (3)
         Minute,
-        /// Hour Resolution
+        /// Hour Resolution (4)
         Hour,
-        /// Daily Resolution
+        /// Daily Resolution (5)
         Daily
     }
 
@@ -440,18 +487,6 @@ namespace QuantConnect
         Deleted
     }
 
-
-    /// <summary>
-    /// If the backtest has been deleted
-    /// </summary>
-    public enum BacktestStatus
-    {
-        /// Active
-        Active,
-        /// Deleted/Cancelled.
-        Deleted
-    }
-
     /// <summary>
     /// Use standard HTTP Status Codes for communication between servers:
     /// </summary>
@@ -469,6 +504,28 @@ namespace QuantConnect
         MalformedRequest = 502,
         /// 503 Server Compiler Error
         CompilerError = 503
+    }
+
+
+    /// <summary>
+    /// States of a live deployment.
+    /// </summary>
+    public enum AlgorithmStatus
+    {
+        /// User initiated a quit request
+        Quit,           //0
+        /// Error compiling algorithm at start
+        DeployError,    //1
+        /// Waiting for a server
+        InQueue,        //2
+        /// Running algorithm
+        Running,        //3
+        /// Stopped algorithm or exited with runtime errors
+        Stopped,        //4
+        /// Liquidated algorithm
+        Liquidated,     //5
+        /// Algorithm has been deleted
+        Deleted         //6
     }
 
 

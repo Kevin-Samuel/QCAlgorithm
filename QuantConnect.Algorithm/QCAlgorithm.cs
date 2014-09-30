@@ -36,10 +36,12 @@ namespace QuantConnect
         private string _algorithmId = "";
         private bool _quit = false;
         private bool _processingOrder = false;
+        private bool _liveMode = false;
         private List<string> _debugMessages = new List<string>();
         private List<string> _logMessages = new List<string>();
         private List<string> _errorMessages = new List<string>();
         private Dictionary<string, Chart> _charts = new Dictionary<string, Chart>();
+        private Dictionary<string, string> _runtimeStatistics = new Dictionary<string, string>();
         public Console Console = new Console(null);
 
         //Error tracking to avoid message flooding:
@@ -86,7 +88,8 @@ namespace QuantConnect
         /// <summary>
         /// Security Object Collection
         /// </summary>
-        public SecurityManager Securities { 
+        public SecurityManager Securities
+        { 
             get; 
             set; 
         }
@@ -94,7 +97,8 @@ namespace QuantConnect
         /// <summary>
         /// Portfolio Adaptor/Wrapper: Easy access to securities holding properties:
         /// </summary>
-        public SecurityPortfolioManager Portfolio { 
+        public SecurityPortfolioManager Portfolio 
+        { 
             get; 
             set; 
         }
@@ -102,7 +106,8 @@ namespace QuantConnect
         /// <summary>
         /// Transaction Manager - Process transaction fills and order management.
         /// </summary>
-        public SecurityTransactionManager Transactions { 
+        public SecurityTransactionManager Transactions 
+        { 
             get; 
             set; 
         }
@@ -111,7 +116,8 @@ namespace QuantConnect
         /// Generic Data Manager - Required for compiling all data feeds in order,
         /// and passing them into algorithm event methods.
         /// </summary>
-        public SubscriptionManager SubscriptionManager { 
+        public SubscriptionManager SubscriptionManager 
+        { 
             get; 
             set; 
         }
@@ -218,6 +224,17 @@ namespace QuantConnect
         }
 
         /// <summary>
+        /// Algorithm is Live.
+        /// </summary>
+        public bool LiveMode
+        {
+            get
+            {
+                return _liveMode;
+            }
+        }
+
+        /// <summary>
         /// Get the debug messages from inner list
         /// </summary>
         public List<string> DebugMessages
@@ -259,6 +276,18 @@ namespace QuantConnect
             set
             {
                 _errorMessages = value;
+            }
+        }
+
+
+        /// <summary>
+        /// Access to the runtime statistics property. User provided statistics
+        /// </summary>
+        public Dictionary<string, string> RuntimeStatistics
+        {
+            get
+            {
+                return _runtimeStatistics;
             }
         }
 
@@ -317,9 +346,9 @@ namespace QuantConnect
         //}
 
         /// <summary>
-        /// Call this method at the end of the algorithm day
+        /// Call this method at the end of the algorithm day (or multiple times if trading multiple assets).
         /// </summary>
-        public virtual void OnEndOfDay() 
+        public virtual void OnEndOfDay(string symbol) 
         {
             
         }
@@ -540,6 +569,47 @@ namespace QuantConnect
         }
 
         /// <summary>
+        /// Set a runtime statistic for the algorithm,
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="value"></param>
+        public void SetRuntimeStatistic(string name, string value)
+        {
+            //If not set, add it to the dictionary:
+            if (!_runtimeStatistics.ContainsKey(name))
+            {
+                _runtimeStatistics.Add(name, value);
+            }
+
+            //Set 
+            _runtimeStatistics[name] = value;
+        }
+
+        /// <summary>
+        /// Helper wrapper for SetRuntimeStatistic to convert decimals to strings.
+        /// </summary>
+        public void SetRuntimeStatistic(string name, decimal value)
+        {
+            SetRuntimeStatistic(name, value.ToString());
+        }
+
+        /// <summary>
+        /// Helper wrapper for SetRuntimeStatistic to convert ints to strings.
+        /// </summary>
+        public void SetRuntimeStatistic(string name, int value)
+        {
+            SetRuntimeStatistic(name, value.ToString());
+        }
+
+        /// <summary>
+        /// Helper wrapper for SetRuntimeStatistic to convert ints to strings.
+        /// </summary>
+        public void SetRuntimeStatistic(string name, double value)
+        {
+            SetRuntimeStatistic(name, value.ToString());
+        }
+
+        /// <summary>
         /// Wrapper for SetStartDate(DateTime). Set the start date for backtest.
         /// Must be less than end date.
         /// </summary>
@@ -655,6 +725,18 @@ namespace QuantConnect
         }
 
         /// <summary>
+        /// Set live mode state, are we running on a live servers.
+        /// </summary>
+        /// <param name="live"></param>
+        public void SetLiveMode(bool live) 
+        {
+            if (!_locked)
+            {
+                _liveMode = live;
+            }
+        }
+
+        /// <summary>
         /// Get the chart updates: fetch the recent points added and return for dynamic plotting.
         /// </summary>
         /// <returns></returns>
@@ -701,7 +783,7 @@ namespace QuantConnect
                         switch (securityType) 
                         {
                             case SecurityType.Equity:
-                                leverage = 1;   //RegT = 2 or 4.
+                                leverage = 2;   //Cash Ac. = 1, RegT Std = 2 or PDT = 4.
                                 break;
                             case SecurityType.Forex:
                                 leverage = 50;
@@ -832,7 +914,7 @@ namespace QuantConnect
         /// <param name="type">Buy/Sell Limit or Market Order Type.</param>
         /// <param name="symbol">Symbol of the MarketType Required.</param>
         /// <param name="quantity">Number of shares to request.</param>
-        public int Order(string symbol, int quantity, OrderType type = OrderType.Market, bool asynchronous = false)
+        public int Order(string symbol, int quantity, OrderType type = OrderType.Market, bool asynchronous = false, string tag = "")
         {
             //Add an order to the transacion manager class:
             int orderId = -1;
@@ -875,7 +957,7 @@ namespace QuantConnect
             }
 
             //Add the order and create a new order Id.
-            orderId = Transactions.AddOrder(new Order(symbol, quantity, type, Time, price));
+            orderId = Transactions.AddOrder(new Order(symbol, quantity, type, Time, price, tag));
 
             //Wait for the order event to process:
             //Enqueue means send to order queue but don't wait for response:
@@ -1016,7 +1098,7 @@ namespace QuantConnect
         /// <param name="message">Message to send to debug console</param>
         public void Debug(string message)
         {
-            if (message == "" || _previousDebugMessage == message) return;
+            if (!_liveMode && (message == "" || _previousDebugMessage == message)) return;
             _debugMessages.Add(message);
             _previousDebugMessage = message;
         }

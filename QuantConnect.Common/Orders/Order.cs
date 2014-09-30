@@ -231,6 +231,11 @@ namespace QuantConnect {
         public OrderStatus Status;
 
         /// <summary>
+        /// Tag the order with some custom data
+        /// </summary>
+        public string Tag;
+
+        /// <summary>
         /// Order Direction Property based off Quantity.
         /// </summary>
         public OrderDirection Direction {
@@ -266,13 +271,14 @@ namespace QuantConnect {
         /// <summary>
         /// Order constructor:
         /// </summary>
-        public Order(string symbol, int quantity, OrderType order, DateTime time, decimal price = 0) {
+        public Order(string symbol, int quantity, OrderType order, DateTime time, decimal price = 0, string tag = "") {
             this.Time = time;
             this.Price = price;
             this.Type = order;
             this.Quantity = quantity;
             this.Symbol = symbol;
             this.Status = OrderStatus.None;
+            this.Tag = tag;
         }
     }
 

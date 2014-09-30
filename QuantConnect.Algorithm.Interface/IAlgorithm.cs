@@ -143,6 +143,14 @@ namespace QuantConnect  {
         }
 
         /// <summary>
+        /// Algorithm is running on a live server.
+        /// </summary>
+        bool LiveMode
+        {
+            get;
+        }
+
+        /// <summary>
         /// Debug messages from the strategy:
         /// </summary>
         List<string> DebugMessages
@@ -167,6 +175,14 @@ namespace QuantConnect  {
         {
             get;
             set;
+        }
+
+        /// <summary>
+        /// Customizable dynamic statistics displayed during live trading:
+        /// </summary>
+        Dictionary<string, string> RuntimeStatistics
+        {
+            get;
         }
 
         /******************************************************** 
@@ -216,7 +232,7 @@ namespace QuantConnect  {
         /// <summary>
         /// Call this method at the end of each day of data.
         /// </summary>
-        void OnEndOfDay();
+        void OnEndOfDay(string symbol);
 
         /// <summary>
         /// Call this event at the end of the algorithm running.
@@ -311,8 +327,9 @@ namespace QuantConnect  {
         /// <param name="quantity">Quantity to buy, + is long, - short.</param>
         /// <param name="type">Market, Limit or Stop Order</param>
         /// <param name="asynchronous">Don't wait for the response, just submit order and move on.</param>
+        /// <param name="tag">Custom data for this order</param>
         /// <returns>Integer Order ID.</returns>
-        int Order(string symbol, int quantity, OrderType type = OrderType.Market, bool asynchronous = false);
+        int Order(string symbol, int quantity, OrderType type = OrderType.Market, bool asynchronous = false, string tag = "");
 
         /// <summary>
         /// Liquidate your portfolio holdings:
@@ -334,6 +351,19 @@ namespace QuantConnect  {
         /// </summary>
         /// <param name="quit">When true quits the algorithm event loop for this day</param>
         void SetQuit(bool quit);
+
+        /// <summary>
+        /// Enable Algorithm Live Mode 
+        /// </summary>
+        /// <param name="live">Live state</param>
+        void SetLiveMode(bool live);
+
+        /// <summary>
+        /// Set a runtime statistic for your algorithm- these are displayed on the IDE during live runmode.
+        /// </summary>
+        /// <param name="name">Key name for the statistic</param>
+        /// <param name="value">String value for statistic</param>
+        void SetRuntimeStatistic(string name, string value);
 
         /// <summary>
         /// Get the quit flag state. 

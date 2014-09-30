@@ -196,6 +196,27 @@ namespace QuantConnect.Models {
 
 
         /// <summary>
+        /// Update the tradebar - build the bar from this pricing information:
+        /// </summary>
+        /// <param name="lastTrade">This trade price</param>
+        /// <param name="bidPrice">Current bid price (not used) </param>
+        /// <param name="askPrice">Current asking price (not used) </param>
+        /// <param name="volume">Volume of this trade</param>
+        public override void Update(decimal lastTrade, decimal bidPrice, decimal askPrice, decimal volume)
+        {
+            //Assumed not set yet. Will fail for custom time series where "price" $0 is a possibility.
+            if (Open == 0) Open = lastTrade;
+            if (lastTrade > High) High = lastTrade;
+            if (lastTrade < Low) Low = lastTrade;
+            //Volume is the total summed volume of trades in this bar:
+            Volume += Convert.ToInt32(volume);
+            //Always set the closing price;
+            Close = lastTrade;
+            Value = lastTrade;
+        }
+
+
+        /// <summary>
         /// Get Source for Custom Data File
         /// >> What source file location would you prefer for each type of usage:
         /// </summary>

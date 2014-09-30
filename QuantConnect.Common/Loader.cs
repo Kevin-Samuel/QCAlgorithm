@@ -77,8 +77,11 @@ namespace QuantConnect {
                 if (lTypes.Count == 0) {
                     return false;
                 } else {
-                    //Otherwise just load the first one matching the pattern:
+                    //Load the assembly into this AppDomain:
                     algorithmInstance = (T)assembly.CreateInstance(lTypes[0], true);
+
+                    //Load into another appDomain - 10x slower because of serialization.
+                    //algorithmInstance = (T)appDomain.CreateInstanceFromAndUnwrap(assemblyPath, lTypes[0]);
                 }
 
             } catch (ReflectionTypeLoadException err) {
@@ -165,7 +168,7 @@ namespace QuantConnect {
         /// </summary>
         /// <param name="appDomainName">Set the name if required</param>
         /// <returns>True on successful creation.</returns>
-        private void CreateAppDomain(string appDomainName = "") {
+        private AppDomain CreateAppDomain(string appDomainName = "") {
 
             //Create new domain name if not supplied:
             if (string.IsNullOrEmpty(appDomainName)) {
@@ -175,8 +178,9 @@ namespace QuantConnect {
             //Setup the new domain
             AppDomainSetup domainSetup = new AppDomainSetup();
 
-            //Create the domain:
+            //Create the domain: set to class variable; return reference.
             appDomain = AppDomain.CreateDomain(appDomainName, null, domainSetup);
+            return appDomain;
         }
 
             

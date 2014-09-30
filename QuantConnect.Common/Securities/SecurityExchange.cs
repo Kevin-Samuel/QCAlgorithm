@@ -37,7 +37,8 @@ namespace QuantConnect.Securities {
         * CLASS VARIABLES
         *********************************************************/
         private DateTime _frontier;
-
+        private TimeSpan _marketOpen = TimeSpan.FromHours(0);
+        private TimeSpan _marketClose = TimeSpan.FromHours(23.999999);
         /******************************************************** 
         * CLASS CONSTRUCTION
         *********************************************************/
@@ -59,6 +60,24 @@ namespace QuantConnect.Securities {
         {
             get;
             set;
+        }
+
+        /// <summary>
+        /// Market closing time default
+        /// </summary>
+        public virtual TimeSpan MarketOpen
+        {
+            get { return _marketOpen; }
+            set { _marketOpen = value; }
+        }
+
+        /// <summary>
+        /// Market closing time default
+        /// </summary>
+        public virtual TimeSpan MarketClose
+        {
+            get { return _marketClose; }
+            set { _marketClose = value; }
         }
 
 
@@ -140,7 +159,6 @@ namespace QuantConnect.Securities {
             this._frontier = newTime;
         }
 
-
         /// <summary>
         /// Check if the date is open.
         /// </summary>
@@ -150,7 +168,6 @@ namespace QuantConnect.Securities {
         {
             return true;
         }
-
 
         /// <summary>
         /// Set this datetime object to the open time for the exchange,

@@ -295,6 +295,10 @@ namespace QuantConnect.Securities {
         /// <returns>Security</returns>
         public Security this[string symbol] {
             get {
+                if (!_securityManager.ContainsKey(symbol))
+                {
+                    throw new Exception("This asset symbol (" + symbol + ") was not found in your security list. Please add this security or check it exists before using it with 'data.ContainsKey(\"" + symbol + "\")'");
+                } 
                 return _securityManager[symbol];
             }
             set {

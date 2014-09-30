@@ -47,6 +47,17 @@ namespace QuantConnect.Models
         /// Asking Price for the Tick - NOTE: We don't currently have quote data
         public decimal AskPrice = 0;
 
+        /// <summary>
+        /// Alias for "Value" - the last sale for this asset.
+        /// </summary>
+        public decimal LastPrice
+        {
+            get
+            {
+                return Value;
+            }
+        }
+
         // In Base Class: Last Trade Tick:
         //public decimal Price = 0;
 
@@ -111,6 +122,25 @@ namespace QuantConnect.Models
             AskPrice = ask;
         }
 
+
+        /// <summary>
+        /// Common equity tick
+        /// </summary>
+        /// <param name="time">Full date and time</param>
+        /// <param name="symbol">Underlying Asset.</param>
+        /// <param name="bid">Bid value</param>
+        /// <param name="ask">Ask Value</param>
+        /// <param name="last">Last trade price</param>
+        public Tick(DateTime time, string symbol, decimal last, decimal bid, decimal ask)
+        {
+            base.DataType = MarketDataType.Tick;
+            base.Time = time;
+            base.Symbol = symbol;
+            base.Value = last;
+            TickType = TickType.Quote;
+            BidPrice = bid;
+            AskPrice = ask;
+        }
 
         /// <summary>
         /// FXCM Loader
@@ -235,6 +265,22 @@ namespace QuantConnect.Models
             }
 
             return source;
+        }
+
+
+        /// <summary>
+        /// Update the tick pricing information:
+        /// </summary>
+        /// <param name="lastTrade">This trade price</param>
+        /// <param name="bidPrice">Current bid price</param>
+        /// <param name="askPrice">Current asking price</param>
+        /// <param name="volume">Volume of this trade</param>
+        public override void Update(decimal lastTrade, decimal bidPrice, decimal askPrice, decimal volume)
+        {
+            this.Value = lastTrade;
+            this.BidPrice = bidPrice;
+            this.AskPrice = askPrice;
+            this.Quantity = Convert.ToInt32(volume);
         }
 
 

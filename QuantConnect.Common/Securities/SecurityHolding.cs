@@ -120,6 +120,17 @@ namespace QuantConnect.Securities {
         }
 
         /// <summary>
+        /// Current market price of the asset.
+        /// </summary>
+        public virtual decimal Price
+        {
+            get
+            {
+                return _price;
+            }
+        }
+
+        /// <summary>
         /// Absolute of the Holdings: Unlevered
         /// </summary>
         public virtual decimal AbsoluteHoldingsCost 

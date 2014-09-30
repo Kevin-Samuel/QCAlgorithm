@@ -94,12 +94,15 @@ namespace QuantConnect {
         /// </summary>
         public static long DriveSpaceRemaining { 
             get {
-                string driveName = "/";
-                if (OS.IsWindows) {
-                    driveName = "D";                   
+                DriveInfo[] drives = System.IO.DriveInfo.GetDrives();
+                if (drives.Length > 0)
+                {
+                    DriveInfo d = drives[0];
+                    return d.AvailableFreeSpace / (1024 * 1024);
+                } else {
+                    //1 GB
+                    return 1024;
                 }
-                DriveInfo d = new DriveInfo(driveName);
-                return d.AvailableFreeSpace / (1024 * 1024);
             }
         }
 

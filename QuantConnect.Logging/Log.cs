@@ -85,7 +85,7 @@ namespace QuantConnect.Logging {
             try {
                 if (error != lastErrorText || overrideMessageFloodProtection)
                 {
-                    Console.WriteLine(DateTime.Now.ToString(dateFormat) + " Error:: " + error);
+                    Console.WriteLine(DateTime.Now.ToString(dateFormat) + " ERROR:: " + error);
                     lastErrorText = error; //Stop message flooding filling diskspace.
                 }
             } catch (Exception err) {

@@ -138,6 +138,19 @@ namespace QuantConnect.Models {
         /// <returns>String URL of source file.</returns>
         public abstract string GetSource(SubscriptionDataConfig config, DateTime date, DataFeedEndpoint datafeed);
 
+
+        /// <summary>
+        /// Update routine to build a bar/tick from a data update.
+        /// </summary>
+        /// <param name="lastTrade">The last trade price</param>
+        /// <param name="bidPrice">Current bid price</param>
+        /// <param name="askPrice">Current asking price</param>
+        /// <param name="volume">Volume of this trade</param>
+        public virtual void Update(decimal lastTrade, decimal bidPrice, decimal askPrice, decimal volume)
+        {
+            this.Value = lastTrade;
+        }
+
         /// <summary>
         /// Return a new instance clone of this object
         /// </summary>

@@ -33,6 +33,8 @@ namespace QuantConnect.Models {
         public string Symbol;
         /// Resolution of the asset we're requesting, second minute or tick
         public Resolution Resolution;
+        /// Timespan increment between triggers of this data:
+        public TimeSpan Increment;
         /// True if wish to send old data when time gaps in data feed.
         public bool FillDataForward;
         /// Boolean Send Data from between 4am - 8am (Equities Setting Only)
@@ -64,6 +66,25 @@ namespace QuantConnect.Models {
             this.ExtendedMarketHours = extendedHours;
             this.PriceScaleFactor = 1;
             this.MappedSymbol = symbol;
+            switch (resolution)
+            {
+                case Resolution.Tick:
+                    Increment = TimeSpan.FromSeconds(0);
+                    break;
+                case Resolution.Second:
+                    Increment = TimeSpan.FromSeconds(1);
+                    break;
+                default:
+                case Resolution.Minute:
+                    Increment = TimeSpan.FromMinutes(1);
+                    break;
+                case Resolution.Hour:
+                    Increment = TimeSpan.FromHours(1);
+                    break;
+                case Resolution.Daily:
+                    Increment = TimeSpan.FromDays(1);
+                    break;
+            }
         }
 
         /// <summary>
@@ -77,6 +98,7 @@ namespace QuantConnect.Models {
             this.Type = objectType;
             this.Security = SecurityType.Base;
             this.Resolution = Resolution.Second;
+            this.Increment = TimeSpan.FromSeconds(1);
             this.Symbol = symbol;
 
             //NOT NEEDED FOR USER DATA:*********//

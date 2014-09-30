@@ -360,7 +360,6 @@ namespace QuantConnect.Securities {
             }
         }
 
-
         /// <summary>
         /// Update the leverage parameter:
         /// </summary>

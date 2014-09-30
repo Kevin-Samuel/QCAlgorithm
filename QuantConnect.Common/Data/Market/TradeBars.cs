@@ -186,7 +186,6 @@ namespace QuantConnect.Models {
             _tradeBars.Clear();
         }
 
-
         /// <summary>
         /// TradeBar IDictionary :: Add Implementation
         /// </summary>
@@ -222,10 +221,18 @@ namespace QuantConnect.Models {
         {
             get
             {
+                if (!_tradeBars.ContainsKey(key))
+                {
+                    throw new Exception("This symbol wasn't found in the TradeBars object, likely because there was no-data at this moment in time and it wasn't possible to fillforward historical data. Please check the data exists before accessing it with data.ContainsKey(\"" + key + "\")");
+                }
                 return _tradeBars[key];
             }
             set
             {
+                if (!_tradeBars.ContainsKey(key))
+                {
+                    throw new Exception("This symbol wasn't found in the TradeBars object, likely because there was no-data at this moment in time and it wasn't possible to fillforward historical data. Please check the data exists before accessing it with data.ContainsKey(\"" + key + "\")");
+                }
                 _tradeBars[key] = value;
             }
         }

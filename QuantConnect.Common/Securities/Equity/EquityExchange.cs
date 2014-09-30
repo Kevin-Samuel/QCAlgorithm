@@ -27,7 +27,8 @@ namespace QuantConnect.Securities {
         /******************************************************** 
         * CLASS VARIABLES
         *********************************************************/
-
+        private TimeSpan _marketOpen = TimeSpan.FromHours(9.5);
+        private TimeSpan _marketClose = TimeSpan.FromHours(16);
 
         /******************************************************** 
         * CLASS CONSTRUCTION
@@ -62,6 +63,25 @@ namespace QuantConnect.Securities {
                 return 252;
             }
         }
+
+        /// <summary>
+        /// Equity Market Opening Time:
+        /// </summary>
+        public override TimeSpan MarketOpen
+        {
+            get { return _marketOpen; }
+            set { _marketOpen = value; }
+        }
+
+        /// <summary>
+        /// Equity Market Closing Time:
+        /// </summary>
+        public override TimeSpan MarketClose
+        {
+            get { return _marketClose; }
+            set { _marketClose = value; }
+        }
+
 
         /******************************************************** 
         * CLASS METHODS
