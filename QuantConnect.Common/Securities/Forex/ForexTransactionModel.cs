@@ -40,7 +40,6 @@ namespace QuantConnect.Securities {
         *********************************************************/
 
 
-
         /******************************************************** 
         * CLASS CONSTRUCTOR
         *********************************************************/
@@ -56,9 +55,6 @@ namespace QuantConnect.Securities {
         *********************************************************/
 
 
-
-
-
         /******************************************************** 
         * CLASS METHODS
         *********************************************************/
@@ -67,22 +63,27 @@ namespace QuantConnect.Securities {
         /// </summary>
         /// <param name="vehicle">Asset we're working with</param>
         /// <param name="order">Order class to check if filled.</param>
-        public virtual void Fill(Security vehicle, ref Order order) {
+        public virtual OrderEvent Fill(Security vehicle, Order order) 
+        {    
+            var fill = new OrderEvent(order);
+
             try {
                 switch (order.Type) {
                     case OrderType.Limit:
-                        LimitFill(vehicle, ref order);
+                        fill = LimitFill(vehicle, order);
                         break;
-                    case OrderType.Stop:
-                        StopFill(vehicle, ref order);
+                    case OrderType.StopMarket:
+                        fill = StopFill(vehicle, order);
                         break;
                     case OrderType.Market:
-                        MarketFill(vehicle, ref order);
+                        fill = MarketFill(vehicle, order);
                         break;
                 }
             } catch (Exception err) {
                 Log.Error("ForexTransactionModel.TransOrderDirection.Fill(): " + err.Message);
             }
+
+            return fill;
         }
 
 
@@ -131,19 +132,24 @@ namespace QuantConnect.Securities {
         /// </summary>
         /// <param name="security">Asset we're working with</param>
         /// <param name="order">Order to update</param>
-        public virtual void MarketFill(Security security, ref Order order) {
-
-            try {
+        public virtual OrderEvent MarketFill(Security security, Order order)
+        {
+            var fill = new OrderEvent(order);
+            try 
+            {
                 //Calculate the model slippage: e.g. 0.01c
                 decimal slip = GetSlippageApproximation(security, order);
 
                 switch (order.Direction)
                 {
                     case OrderDirection.Buy:
+                        //Set the order and slippage on the order, update the fill price:
                         order.Price = security.Price;
                         order.Price += slip;
                         break;
+
                     case OrderDirection.Sell:
+                        //Set the order and slippage on the order, update the fill price:
                         order.Price = security.Price;
                         order.Price -= slip;
                         break;
@@ -152,9 +158,16 @@ namespace QuantConnect.Securities {
                 //Market orders fill instantly.
                 order.Status = OrderStatus.Filled;
 
-            } catch (Exception err) {
+                //Assume 100% fill for market & modelled orders.
+                fill.FillQuantity = order.Quantity;
+                fill.FillPrice = order.Price;
+                fill.Status = order.Status;
+            }
+            catch (Exception err) 
+            {
                 Log.Error("ForexTransactionModel.TransOrderDirection.MarketFill(): " + err.Message);
             }
+            return fill;
         }
 
 
@@ -165,26 +178,48 @@ namespace QuantConnect.Securities {
         /// </summary>
         /// <param name="security">Asset we're working with</param>
         /// <param name="order">Stop Order to Check, return filled if true</param>
-        public virtual void StopFill(Security security, ref Order order) {
-            try {
+        public virtual OrderEvent StopFill(Security security, Order order)
+        {
+            var fill = new OrderEvent(order);
+            try 
+            {
                 //If its cancelled don't need anymore checks:
-                if (order.Status == OrderStatus.Canceled) return;
+                if (order.Status == OrderStatus.Canceled) return fill;
 
                 //Check if the Stop Order was filled: opposite to a limit order
-                if (order.Direction == OrderDirection.Sell) {
+                if (order.Direction == OrderDirection.Sell) 
+                {
                     //-> 1.1 Sell Stop: If Price below setpoint, Sell:
-                    if (security.Price < order.Price) {
+                    if (security.Price < order.Price) 
+                    {
+                        //Set the order and slippage on the order, update the fill price:
                         order.Status = OrderStatus.Filled;
+                        order.Price = security.Price;   //Fill at the security price, sometimes gap down skip past stop.
                     }
-                } else if (order.Direction == OrderDirection.Buy) {
+                } 
+                else if (order.Direction == OrderDirection.Buy) 
+                {
                     //-> 1.2 Buy Stop: If Price Above Setpoint, Buy:
-                    if (security.Price > order.Price) {
+                    if (security.Price > order.Price) 
+                    {
                         order.Status = OrderStatus.Filled;
+                        order.Price = security.Price;   //Fill at the security price, sometimes gap down skip past stop.
                     }
                 }
-            } catch (Exception err) {
+
+                //Set the fill properties when order filled.
+                if (order.Status == OrderStatus.Filled || order.Status == OrderStatus.PartiallyFilled)
+                {
+                    fill.FillQuantity = order.Quantity;
+                    fill.FillPrice = security.Price;
+                    fill.Status = order.Status;
+                }
+            } 
+            catch (Exception err) 
+            {
                 Log.Error("ForexTransactionModel.TransOrderDirection.StopFill(): " + err.Message);
             }
+            return fill;
         }
 
 
@@ -194,16 +229,18 @@ namespace QuantConnect.Securities {
         /// </summary>
         /// <param name="security">Asset we're working with</param>
         /// <param name="order">Limit order in market</param>
-        public virtual void LimitFill(Security security, ref Order order) {
+        public virtual OrderEvent LimitFill(Security security, Order order)
+        {
 
             //Initialise;
             decimal marketDataMinPrice = 0;
             decimal marketDataMaxPrice = 0;
+            var fill = new OrderEvent(order);
 
-            try {
+            try 
+            {
                 //If its cancelled don't need anymore checks:
-                if (order.Status == OrderStatus.Canceled) return;
-
+                if (order.Status == OrderStatus.Canceled) return fill;
                 //Depending on the resolution, return different data types:
                 BaseData marketData = security.GetLastData();
 
@@ -211,27 +248,45 @@ namespace QuantConnect.Securities {
                 {
                     marketDataMinPrice = ((TradeBar)marketData).Low;
                     marketDataMaxPrice = ((TradeBar)marketData).High;
-                } else {
+                } 
+                else 
+                {
                     marketDataMinPrice = marketData.Value;
                     marketDataMaxPrice = marketData.Value;
                 }
 
                 //-> Valid Live/Model Order: 
-                if (order.Direction == OrderDirection.Buy) {
+                if (order.Direction == OrderDirection.Buy) 
+                {
                     //Buy limit seeks lowest price
-                    if (marketDataMinPrice < order.Price) {
+                    if (marketDataMinPrice < order.Price) 
+                    {
                         order.Status = OrderStatus.Filled;
                     }
 
-                } else if (order.Direction == OrderDirection.Sell) {
+                } 
+                else if (order.Direction == OrderDirection.Sell) 
+                {
                     //Sell limit seeks highest price possible
-                    if (marketDataMaxPrice > order.Price) {
+                    if (marketDataMaxPrice > order.Price) 
+                    {
                         order.Status = OrderStatus.Filled;
                     }
                 }
-            } catch (Exception err) {
+
+                //Fill price
+                if (order.Status == OrderStatus.Filled || order.Status == OrderStatus.PartiallyFilled)
+                {
+                    fill.FillQuantity = order.Quantity;
+                    fill.FillPrice = order.Price;
+                    fill.Status = order.Status;
+                }
+            } 
+            catch (Exception err)
+            {
                 Log.Error("ForexTransactionModel.TransOrderDirection.LimitFill(): " + err.Message);
             }
+            return fill;
         }
 
 
@@ -243,7 +298,7 @@ namespace QuantConnect.Securities {
         /// <param name="price"></param>
         public virtual decimal GetOrderFee(decimal quantity, decimal price)
         {
-            //Modelled order fee to 
+            //Modelled order fee to 0; Assume spread is the fee for most FX brokerages.
             return 0;
         }
 

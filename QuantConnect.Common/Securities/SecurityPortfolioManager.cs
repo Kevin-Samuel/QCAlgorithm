@@ -414,11 +414,11 @@ namespace QuantConnect.Securities {
         /// <summary>
         /// Calculate the new average price (if buying), and new quantity/profit if selling.
         /// </summary>
-        public virtual void ProcessFill(Order order) 
+        public virtual void ProcessFill(Order ord, OrderEvent fill) 
         {
             //Get the required information from the vehicle this order will affect
             decimal feeThisOrder = 0;
-            string symbol = order.Symbol;
+            string symbol = fill.Symbol;
             Security vehicle = Securities[symbol];
             bool isLong = vehicle.Holdings.IsLong;
             bool isShort = vehicle.Holdings.IsShort;
@@ -431,54 +431,52 @@ namespace QuantConnect.Securities {
 
             try
             {
-                //Add the transOrderDirection to the company Cache (plotting):
-                Securities[symbol].Cache.AddOrder(order);
                 //Update the Vehicle approximate total sales volume.
-                vehicle.Holdings.AddNewSale(order.Price * Convert.ToDecimal(order.AbsoluteQuantity));
+                vehicle.Holdings.AddNewSale(fill.FillPrice * Convert.ToDecimal(fill.AbsoluteFillQuantity));
 
                 //Get the Fee for this Order - Update the Portfolio Cash Balance: Remove Transacion Fees.
-                feeThisOrder = Math.Abs(Securities[symbol].Model.GetOrderFee(order.AbsoluteQuantity, order.Price));
+                feeThisOrder = Math.Abs(Securities[symbol].Model.GetOrderFee(fill.AbsoluteFillQuantity, fill.FillPrice));
                 vehicle.Holdings.AddNewFee(feeThisOrder);
                 _cash -= feeThisOrder;
 
                 
                 //Calculate & Update the Last Trade Profit
-                if (isLong && order.Direction == OrderDirection.Sell) 
+                if (isLong && fill.Direction == OrderDirection.Sell) 
                 {
                     //Closing up a long position
-                    if (quantityHoldings >= order.AbsoluteQuantity) 
+                    if (quantityHoldings >= fill.AbsoluteFillQuantity) 
                     {
                         //Closing up towards Zero.
-                        _lastTradeProfit = (order.Price - averageHoldingsPrice) * order.AbsoluteQuantity;
+                        _lastTradeProfit = (fill.FillPrice - averageHoldingsPrice) * fill.AbsoluteFillQuantity;
                         
                         //New cash += profitLoss + costOfAsset/leverage.
-                        _cash += _lastTradeProfit + ( (averageHoldingsPrice * order.AbsoluteQuantity) / leverage );
+                        _cash += _lastTradeProfit + ((averageHoldingsPrice * fill.AbsoluteFillQuantity) / leverage);
                     } 
                     else 
                     {
                         //Closing up to Neg/Short Position (selling more than we have) - Only calc profit on the stock we have to sell.
-                        _lastTradeProfit = (order.Price - averageHoldingsPrice) * quantityHoldings;
+                        _lastTradeProfit = (fill.FillPrice - averageHoldingsPrice) * quantityHoldings;
 
                         //New cash += profitLoss + costOfAsset/leverage.
                         _cash += _lastTradeProfit + ((averageHoldingsPrice * quantityHoldings) / leverage);
                     }
                     closedPosition = true;
                 }
-                else if (isShort && order.Direction == OrderDirection.Buy)
+                else if (isShort && fill.Direction == OrderDirection.Buy)
                 {
                     //Closing up a short position.
-                    if (absoluteHoldingsQuantity >= order.Quantity) 
+                    if (absoluteHoldingsQuantity >= fill.FillQuantity) 
                     {
                         //Reducing the stock we have, and enough stock on hand to process order.
-                        _lastTradeProfit = (averageHoldingsPrice - order.Price) * order.AbsoluteQuantity;
+                        _lastTradeProfit = (averageHoldingsPrice - fill.FillPrice) * fill.AbsoluteFillQuantity;
 
                         //New cash += profitLoss + costOfAsset/leverage.
-                        _cash += _lastTradeProfit + ((averageHoldingsPrice * order.AbsoluteQuantity) / leverage);
+                        _cash += _lastTradeProfit + ((averageHoldingsPrice * fill.AbsoluteFillQuantity) / leverage);
                     }
                     else 
                     {
                         //Increasing stock holdings, short to positive through zero, but only calc profit on stock we Buy.
-                        _lastTradeProfit = (averageHoldingsPrice - order.Price) * absoluteHoldingsQuantity;
+                        _lastTradeProfit = (averageHoldingsPrice - fill.FillPrice) * absoluteHoldingsQuantity;
 
                         //New cash += profitLoss + costOfAsset/leverage.
                         _cash += _lastTradeProfit + ((averageHoldingsPrice * absoluteHoldingsQuantity) / leverage);
@@ -502,31 +500,31 @@ namespace QuantConnect.Securities {
                 if (quantityHoldings == 0) 
                 {
                     //First transaction just subtract order from cash and set our holdings:
-                    averageHoldingsPrice = order.Price;
-                    quantityHoldings = order.Quantity;
-                    _cash -= (order.Price * Convert.ToDecimal(order.AbsoluteQuantity)) / leverage;
+                    averageHoldingsPrice = fill.FillPrice;
+                    quantityHoldings = fill.FillQuantity;
+                    _cash -= (fill.FillPrice * Convert.ToDecimal(fill.AbsoluteFillQuantity)) / leverage;
                 }
                 else if (isLong) 
                 {
                     //If we're currently LONG on the stock.
-                    switch (order.Direction) 
+                    switch (fill.Direction) 
                     {
                         case OrderDirection.Buy:
                             //Update the Holding Average Price: Total Value / Total Quantity:
-                            averageHoldingsPrice = ((averageHoldingsPrice * quantityHoldings) + (order.Quantity * order.Price)) / (quantityHoldings + (decimal)order.Quantity);
+                            averageHoldingsPrice = ((averageHoldingsPrice * quantityHoldings) + (fill.FillQuantity * fill.FillPrice)) / (quantityHoldings + (decimal)fill.FillQuantity);
                             //Add the new quantity:
-                            quantityHoldings += order.Quantity;
+                            quantityHoldings += fill.FillQuantity;
                             //Subtract this order from cash:
-                            _cash -= (order.Price * Convert.ToDecimal(order.AbsoluteQuantity)) / leverage;
+                            _cash -= (fill.FillPrice * Convert.ToDecimal(fill.AbsoluteFillQuantity)) / leverage;
                             break;
 
                         case OrderDirection.Sell:
-                            quantityHoldings += order.Quantity; //+ a short = a subtraction
+                            quantityHoldings += fill.FillQuantity; //+ a short = a subtraction
                             if (quantityHoldings < 0) 
                             {
                                 //If we've now passed through zero from selling stock: new avg price:
-                                averageHoldingsPrice = order.Price;
-                                _cash -= (order.Price * Math.Abs(quantityHoldings)) / leverage;
+                                averageHoldingsPrice = fill.FillPrice;
+                                _cash -= (fill.FillPrice * Math.Abs(quantityHoldings)) / leverage;
                             }
                             else if (quantityHoldings == 0) 
                             {
@@ -538,16 +536,16 @@ namespace QuantConnect.Securities {
                 else if (isShort) 
                 {
                     //We're currently SHORTING the stock: What is the new position now?
-                    switch (order.Direction) 
+                    switch (fill.Direction) 
                     {
                         case OrderDirection.Buy:
                             //Buying when we're shorting moves to close position:
-                            quantityHoldings += order.Quantity;
+                            quantityHoldings += fill.FillQuantity;
                             if (quantityHoldings > 0) 
                             {
                                 //If we were short but passed through zero, new average price is what we paid. The short position was closed.
-                                averageHoldingsPrice = order.Price;
-                                _cash -= (order.Price * Math.Abs(quantityHoldings)) / leverage;
+                                averageHoldingsPrice = fill.FillPrice;
+                                _cash -= (fill.FillPrice * Math.Abs(quantityHoldings)) / leverage;
                             }
                             else if (quantityHoldings == 0) 
                             {
@@ -559,16 +557,16 @@ namespace QuantConnect.Securities {
                             //We are increasing a Short position:
                             //E.g.  -100 @ $5, adding -100 @ $10: Avg: $7.5
                             //      dAvg = (-500 + -1000) / -200 = 7.5
-                            averageHoldingsPrice = ((averageHoldingsPrice * quantityHoldings) + (Convert.ToDecimal(order.Quantity) * order.Price)) / (quantityHoldings + (decimal)order.Quantity);
-                            quantityHoldings += order.Quantity;
-                            _cash -= (order.Price * Convert.ToDecimal(order.AbsoluteQuantity)) / leverage;
+                            averageHoldingsPrice = ((averageHoldingsPrice * quantityHoldings) + (Convert.ToDecimal(fill.FillQuantity) * fill.FillPrice)) / (quantityHoldings + (decimal)fill.FillQuantity);
+                            quantityHoldings += fill.FillQuantity;
+                            _cash -= (fill.FillPrice * Convert.ToDecimal(fill.AbsoluteFillQuantity)) / leverage;
                             break;
                     }
                 }
             } 
             catch( Exception err )
             {
-                Log.Error("SecurityPortfolioManager.ProcessFill(): " + err.Message);
+                Log.Error("SecurityPortfolioManager.ProcessFill(orderEvent): " + err.Message);
             }
             
             //Set the results back to the vehicle.

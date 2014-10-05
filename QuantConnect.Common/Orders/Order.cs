@@ -30,9 +30,26 @@ namespace QuantConnect {
         Limit,
 
         /// <summary>
-        /// Stop Order Type
+        /// Stop Market Order Type - Fill at market price when break target price
         /// </summary>
-        Stop
+        StopMarket
+    }
+
+
+    /// <summary>
+    /// Order Duration in Market
+    /// </summary>
+    public enum OrderDuration
+    { 
+        /// <summary>
+        /// Order good until its filled.
+        /// </summary>
+        GTC,
+
+        /// <summary>
+        /// Order valid for today only: -- CURRENTLY ONLY GTC ORDER DURATION TYPE IN BACKTESTS.
+        /// </summary>
+        //Day
     }
 
 
@@ -104,70 +121,6 @@ namespace QuantConnect {
         Invalid
     }
 
-
-    /// <summary>
-    /// Order Event - Messaging class signifying a change in an order state. 
-    /// </summary>
-    public struct OrderEvent {
-
-        /// <summary>
-        /// Id of the order this event comes from.
-        /// </summary>
-        public int Id;
-
-        /// <summary>
-        /// Status message of the order.
-        /// </summary>
-        public OrderStatus Status;
-
-        /// <summary>
-        /// Fill price information about the order
-        /// </summary>
-        public decimal FillPrice;
-
-        /// <summary>
-        /// Number of shares of the order that was filled in this event.
-        /// </summary>
-        public int FillQuantity;
-
-        /// <summary>
-        /// Any message from the exchange.
-        /// </summary>
-        public string Message;
-
-        /// <summary>
-        /// Order Constructor.
-        /// </summary>
-        /// <param name="id">Id of the parent order</param>
-        /// <param name="status">Status of the order</param>
-        /// <param name="fillPrice">Fill price information if applicable.</param>
-        /// <param name="fillQuantity">Fill quantity</param>
-        /// <param name="message">Message from the exchange</param>
-        public OrderEvent(int id = 0, OrderStatus status = OrderStatus.None, decimal fillPrice = 0, int fillQuantity = 0, string message = "")
-        {
-            this.Id = id;
-            this.Status = status;
-            this.FillPrice = fillPrice;
-            this.Message = message;
-            this.FillQuantity = fillQuantity;
-        }
-
-        /// <summary>
-        /// Helper Constructor using Order to Initialize.
-        /// </summary>
-        /// <param name="order">Order for this order status</param>
-        /// <param name="message">Message from exchange or QC.</param>
-        public OrderEvent(Order order, string message) 
-        {
-            this.Id = order.Id;
-            this.Status = order.Status;
-            this.FillPrice = order.Price;
-            this.Message = message;
-            this.FillQuantity = order.Quantity;
-        }
-    }
-
-
     /// <summary>
     /// Indexed Order Codes:
     /// </summary>
@@ -201,6 +154,11 @@ namespace QuantConnect {
         public int Id;
 
         /// <summary>
+        /// Brokerage Id for this order.
+        /// </summary>
+        public long BrokerId;
+
+        /// <summary>
         /// Symbol of the Asset
         /// </summary>
         public string Symbol;
@@ -231,9 +189,14 @@ namespace QuantConnect {
         public OrderStatus Status;
 
         /// <summary>
+        /// Order duration - GTC or Day. Day not supported in backtests.
+        /// </summary>
+        public OrderDuration Duration = OrderDuration.GTC;
+
+        /// <summary>
         /// Tag the order with some custom data
         /// </summary>
-        public string Tag;
+        public string Tag = "";
 
         /// <summary>
         /// Order Direction Property based off Quantity.
@@ -279,6 +242,8 @@ namespace QuantConnect {
             this.Symbol = symbol;
             this.Status = OrderStatus.None;
             this.Tag = tag;
+            this.Duration = OrderDuration.GTC;
+            this.BrokerId = 0;
         }
     }
 

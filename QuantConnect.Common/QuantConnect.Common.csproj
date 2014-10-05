@@ -107,6 +107,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Orders\OrderEvent.cs" />
     <Compile Include="Queues.cs" />
     <Compile Include="Data\BaseData.cs" />
     <Compile Include="Data\IBaseData.cs" />
@@ -124,18 +125,18 @@
     <Compile Include="Math\Math.cs" />
     <Compile Include="Math\Math.StandardDeviation.cs" />
     <Compile Include="Orders\Order.cs" />
+    <Compile Include="Securities\Equity\EquityCache.cs" />
     <Compile Include="Securities\Equity\EquityDataFilter.cs" />
+    <Compile Include="Securities\Forex\ForexCache.cs" />
     <Compile Include="Securities\Forex\ForexDataFilter.cs" />
     <Compile Include="Securities\Interfaces\ISecurityDataFilter.cs" />
     <Compile Include="Securities\SecurityDataFilter.cs" />
     <Compile Include="Securities\SecurityTransactionModel.cs" />
     <Compile Include="Securities\Equity\Equity.cs" />
-    <Compile Include="Securities\Equity\EquityCache.cs" />
     <Compile Include="Securities\Equity\EquityExchange.cs" />
     <Compile Include="Securities\Equity\EquityHolding.cs" />
     <Compile Include="Securities\Equity\EquityTransactionModel.cs" />
     <Compile Include="Securities\Forex\Forex.cs" />
-    <Compile Include="Securities\Forex\ForexCache.cs" />
     <Compile Include="Securities\Forex\ForexExchange.cs" />
     <Compile Include="Securities\Forex\ForexHolding.cs" />
     <Compile Include="Securities\Forex\ForexTransactionModel.cs" />

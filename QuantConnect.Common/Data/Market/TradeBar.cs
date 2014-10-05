@@ -159,6 +159,12 @@ namespace QuantConnect.Models {
             //Initialize:
             TradeBar _tradeBar = new TradeBar();
 
+            //Handle end of file:
+            if (line == null)
+            {
+                return null;
+            }
+
             //Select the URL source of the data depending on where the system is trading.
             switch (datafeed)
             {

@@ -36,7 +36,7 @@ namespace QuantConnect.Securities {
         /// </summary>
         /// <param name="asset">Asset we're trading this order</param>
         /// <param name="order">Order class to check if filled.</param>
-        void Fill(Security asset, ref Order order);
+        OrderEvent Fill(Security asset, Order order);
 
 
         /// <summary>
@@ -50,7 +50,7 @@ namespace QuantConnect.Securities {
         /// </summary>
         /// <param name="asset">Asset we're trading this order</param>
         /// <param name="order">Order to update</param>
-        void MarketFill(Security asset, ref Order order);
+        OrderEvent MarketFill(Security asset, Order order);
 
 
         /// <summary>
@@ -58,7 +58,7 @@ namespace QuantConnect.Securities {
         /// </summary>
         /// <param name="asset">Asset we're trading this order</param>
         /// <param name="order">Stop Order to Check, return filled if true</param>
-        void StopFill(Security asset, ref Order order);
+        OrderEvent StopFill(Security asset, Order order);
 
 
 
@@ -67,7 +67,7 @@ namespace QuantConnect.Securities {
         /// </summary>
         /// <param name="asset">Stock Object to use to help model limit fill</param>
         /// <param name="order">Order to fill. Alter the values directly if filled.</param>
-        void LimitFill(Security asset, ref Order order);
+        OrderEvent LimitFill(Security asset, Order order);
 
 
 

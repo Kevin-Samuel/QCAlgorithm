@@ -4,6 +4,91 @@
         <name>QuantConnect.Common</name>
     </assembly>
     <members>
+        <member name="T:QuantConnect.OrderEvent">
+            <summary>
+            Order Event - Messaging class signifying a change in an order state. 
+            </summary>
+        </member>
+        <member name="F:QuantConnect.OrderEvent.OrderId">
+            <summary>
+            Id of the order this event comes from.
+            </summary>
+        </member>
+        <member name="F:QuantConnect.OrderEvent.Symbol">
+            <summary>
+            Easy access to the order symbol associated with this event.
+            </summary>
+        </member>
+        <member name="F:QuantConnect.OrderEvent.Status">
+            <summary>
+            Status message of the order.
+            </summary>
+        </member>
+        <member name="F:QuantConnect.OrderEvent.FillPrice">
+            <summary>
+            Fill price information about the order
+            </summary>
+        </member>
+        <member name="F:QuantConnect.OrderEvent.FillQuantity">
+            <summary>
+            Number of shares of the order that was filled in this event.
+            </summary>
+        </member>
+        <member name="F:QuantConnect.OrderEvent.Message">
+            <summary>
+            Any message from the exchange.
+            </summary>
+        </member>
+        <member name="M:QuantConnect.OrderEvent.#ctor(System.Int32,System.String,QuantConnect.OrderStatus,System.Decimal,System.Int32,System.String)">
+            <summary>
+            Order Constructor.
+            </summary>
+            <param name="id">Id of the parent order</param>
+            <param name="symbol">Asset Symbol</param>
+            <param name="status">Status of the order</param>
+            <param name="fillPrice">Fill price information if applicable.</param>
+            <param name="fillQuantity">Fill quantity</param>
+            <param name="message">Message from the exchange</param>
+        </member>
+        <member name="M:QuantConnect.OrderEvent.#ctor(QuantConnect.Order,System.String)">
+            <summary>
+            Helper Constructor using Order to Initialize.
+            </summary>
+            <param name="order">Order for this order status</param>
+            <param name="message">Message from exchange or QC.</param>
+        </member>
+        <member name="P:QuantConnect.OrderEvent.AbsoluteFillQuantity">
+            <summary>
+            Public Property Absolute Getter of Quantity -Filled
+            </summary>
+        </member>
+        <member name="P:QuantConnect.OrderEvent.Direction">
+            <summary>
+            Order direction.
+            </summary>
+        </member>
+        <member name="T:QuantConnect.LimitedQueue`1">
+            <summary>
+            Limited Length Queue:
+            http://stackoverflow.com/questions/1292/limit-size-of-queuet-in-net
+            </summary>
+            <typeparam name="T"></typeparam>
+        </member>
+        <member name="M:QuantConnect.LimitedQueue`1.#ctor(System.Int32)">
+            <summary>
+            Create a new fixed length queue:
+            </summary>
+        </member>
+        <member name="M:QuantConnect.LimitedQueue`1.Enqueue(`0)">
+            <summary>
+            Enqueue a new item int the generic fixed length queue:
+            </summary>
+        </member>
+        <member name="P:QuantConnect.LimitedQueue`1.Limit">
+            <summary>
+            Max Length 
+            </summary>
+        </member>
         <member name="T:QuantConnect.Models.BaseData">
             <summary>
             Base Data Class: Type, Timestamp, Key -- Base Features.
@@ -84,6 +169,15 @@
             <param name="date">Date of this source file</param>
             <returns>String URL of source file.</returns>
         </member>
+        <member name="M:QuantConnect.Models.BaseData.Update(System.Decimal,System.Decimal,System.Decimal,System.Decimal)">
+            <summary>
+            Update routine to build a bar/tick from a data update.
+            </summary>
+            <param name="lastTrade">The last trade price</param>
+            <param name="bidPrice">Current bid price</param>
+            <param name="askPrice">Current asking price</param>
+            <param name="volume">Volume of this trade</param>
+        </member>
         <member name="M:QuantConnect.Models.BaseData.Clone">
             <summary>
             Return a new instance clone of this object
@@ -131,6 +225,9 @@
         </member>
         <member name="F:QuantConnect.Models.SubscriptionDataConfig.Resolution">
             Resolution of the asset we're requesting, second minute or tick
+        </member>
+        <member name="F:QuantConnect.Models.SubscriptionDataConfig.Increment">
+            Timespan increment between triggers of this data:
         </member>
         <member name="F:QuantConnect.Models.SubscriptionDataConfig.FillDataForward">
             True if wish to send old data when time gaps in data feed.
@@ -221,6 +318,16 @@
             <param name="bid">Bid value</param>
             <param name="ask">Ask Value</param>
         </member>
+        <member name="M:QuantConnect.Models.Tick.#ctor(System.DateTime,System.String,System.Decimal,System.Decimal,System.Decimal)">
+            <summary>
+            Common equity tick
+            </summary>
+            <param name="time">Full date and time</param>
+            <param name="symbol">Underlying Asset.</param>
+            <param name="bid">Bid value</param>
+            <param name="ask">Ask Value</param>
+            <param name="last">Last trade price</param>
+        </member>
         <member name="M:QuantConnect.Models.Tick.#ctor(System.String,System.String)">
             <summary>
             FXCM Loader
@@ -255,11 +362,25 @@
             <param name="datafeed">Source of the datafeed</param>
             <returns>String source location of the file</returns>
         </member>
+        <member name="M:QuantConnect.Models.Tick.Update(System.Decimal,System.Decimal,System.Decimal,System.Decimal)">
+            <summary>
+            Update the tick pricing information:
+            </summary>
+            <param name="lastTrade">This trade price</param>
+            <param name="bidPrice">Current bid price</param>
+            <param name="askPrice">Current asking price</param>
+            <param name="volume">Volume of this trade</param>
+        </member>
         <member name="M:QuantConnect.Models.Tick.Clone">
             <summary>
             Clone Implementation for Tick Class:
             </summary>
             <returns></returns>
+        </member>
+        <member name="P:QuantConnect.Models.Tick.LastPrice">
+            <summary>
+            Alias for "Value" - the last sale for this asset.
+            </summary>
         </member>
         <member name="T:QuantConnect.Models.TradeBar">
             <summary>
@@ -328,6 +449,15 @@
             Implement the Clone Method for the TradeBar:
             </summary>
             <returns></returns>
+        </member>
+        <member name="M:QuantConnect.Models.TradeBar.Update(System.Decimal,System.Decimal,System.Decimal,System.Decimal)">
+            <summary>
+            Update the tradebar - build the bar from this pricing information:
+            </summary>
+            <param name="lastTrade">This trade price</param>
+            <param name="bidPrice">Current bid price (not used) </param>
+            <param name="askPrice">Current asking price (not used) </param>
+            <param name="volume">Volume of this trade</param>
         </member>
         <member name="M:QuantConnect.Models.TradeBar.GetSource(QuantConnect.Models.SubscriptionDataConfig,System.DateTime,QuantConnect.DataFeedEndpoint)">
             <summary>
@@ -738,6 +868,32 @@
         <member name="F:QuantConnect.DateFormat.JsonFormat">
             JSON Format Date Representation
         </member>
+        <member name="T:QuantConnect.Holding">
+            <summary>
+            Singular holding of assets from backend live nodes:
+            </summary>
+        </member>
+        <member name="F:QuantConnect.Holding.Symbol">
+            Symbol of the Holding:
+        </member>
+        <member name="F:QuantConnect.Holding.AveragePrice">
+            Average Price of our Holding
+        </member>
+        <member name="F:QuantConnect.Holding.Quantity">
+            Quantity of Symbol We Hold.
+        </member>
+        <member name="F:QuantConnect.Holding.MarketPrice">
+            Current Market Price of the Asset
+        </member>
+        <member name="M:QuantConnect.Holding.#ctor">
+            Create a new default holding:
+        </member>
+        <member name="M:QuantConnect.Holding.#ctor(QuantConnect.Securities.SecurityHolding)">
+            <summary>
+            Create a simple JSON holdings from a Security holding class.
+            </summary>
+            <param name="holding"></param>
+        </member>
         <member name="T:QuantConnect.Chart">
             <summary>
             Single Parent Chart Object for Custom Charting
@@ -902,11 +1058,8 @@
         <member name="F:QuantConnect.UserPlan.Professional">
             Professional User 
         </member>
-        <member name="F:QuantConnect.UserPlan.Team">
+        <member name="F:QuantConnect.UserPlan.Developmentsupport">
             Team Based Plan
-        </member>
-        <member name="F:QuantConnect.UserPlan.Institutional">
-            Institutional User 
         </member>
         <member name="T:QuantConnect.SecurityType">
             <summary>
@@ -962,35 +1115,49 @@
         <member name="F:QuantConnect.DataFeedEndpoint.Tradier">
             Tradier Supplied Free Data Feed 
         </member>
-        <member name="T:QuantConnect.ResultHandlerEndPoint">
+        <member name="T:QuantConnect.RealTimeEndpoint">
+            <summary>
+            Realtime events from 
+            </summary>
+        </member>
+        <member name="F:QuantConnect.RealTimeEndpoint.Backtesting">
+            Backtesting Faked RealTime Events
+        </member>
+        <member name="F:QuantConnect.RealTimeEndpoint.LiveTrading">
+            Live Trading RealTime Events
+        </member>
+        <member name="T:QuantConnect.ResultHandlerEndpoint">
             <summary>
             Destination of Algorithm Node Result, Progress Messages
             </summary>
         </member>
-        <member name="F:QuantConnect.ResultHandlerEndPoint.Backtesting">
+        <member name="F:QuantConnect.ResultHandlerEndpoint.Backtesting">
             Send Results to the Backtesting Web Application
         </member>
-        <member name="F:QuantConnect.ResultHandlerEndPoint.Console">
+        <member name="F:QuantConnect.ResultHandlerEndpoint.Console">
             Send the Results to the Local Console
         </member>
-        <member name="F:QuantConnect.ResultHandlerEndPoint.LiveTrading">
+        <member name="F:QuantConnect.ResultHandlerEndpoint.LiveTrading">
             Send Results to the Live Web Application
         </member>
-        <member name="T:QuantConnect.SetupHandlerEndPoint">
+        <member name="F:QuantConnect.ResultHandlerEndpoint.LiveConsole">
+            Send the results to console, as a live trading application:
+        </member>
+        <member name="T:QuantConnect.SetupHandlerEndpoint">
             <summary>
             Setup Handler - Configure algorithm internal state for backtesting, console or live trading.
             </summary>
         </member>
-        <member name="F:QuantConnect.SetupHandlerEndPoint.Backtesting">
+        <member name="F:QuantConnect.SetupHandlerEndpoint.Backtesting">
             Configure algorithm+job for backtesting:
         </member>
-        <member name="F:QuantConnect.SetupHandlerEndPoint.Console">
+        <member name="F:QuantConnect.SetupHandlerEndpoint.Console">
             Configure algorithm+job for the console:
         </member>
-        <member name="F:QuantConnect.SetupHandlerEndPoint.PaperTrading">
+        <member name="F:QuantConnect.SetupHandlerEndpoint.PaperTrading">
             Paper trading algorithm+job internal state configuration
         </member>
-        <member name="F:QuantConnect.SetupHandlerEndPoint.Tradier">
+        <member name="F:QuantConnect.SetupHandlerEndpoint.Tradier">
             Tradier Setup Handler
         </member>
         <member name="T:QuantConnect.TransactionHandlerEndpoint">
@@ -1026,23 +1193,23 @@
         </member>
         <member name="T:QuantConnect.Resolution">
             <summary>
-            Resolution of data requested:
+            Resolution of data requested: ALWAYS SORT SMALLEST TO LARGEST:
             </summary>
         </member>
         <member name="F:QuantConnect.Resolution.Tick">
-            Tick Resolution
+            Tick Resolution (1)
         </member>
         <member name="F:QuantConnect.Resolution.Second">
-            Second Resolution
+            Second Resolution (2)
         </member>
         <member name="F:QuantConnect.Resolution.Minute">
-            Minute Resolution
+            Minute Resolution (3)
         </member>
         <member name="F:QuantConnect.Resolution.Hour">
-            Hour Resolution
+            Hour Resolution (4)
         </member>
         <member name="F:QuantConnect.Resolution.Daily">
-            Daily Resolution
+            Daily Resolution (5)
         </member>
         <member name="T:QuantConnect.State">
             <summary>
@@ -1066,17 +1233,6 @@
         <member name="F:QuantConnect.FileStatus.Deleted">
             File Deleted.
         </member>
-        <member name="T:QuantConnect.BacktestStatus">
-            <summary>
-            If the backtest has been deleted
-            </summary>
-        </member>
-        <member name="F:QuantConnect.BacktestStatus.Active">
-            Active
-        </member>
-        <member name="F:QuantConnect.BacktestStatus.Deleted">
-            Deleted/Cancelled.
-        </member>
         <member name="T:QuantConnect.ResponseCode">
             <summary>
             Use standard HTTP Status Codes for communication between servers:
@@ -1099,6 +1255,32 @@
         </member>
         <member name="F:QuantConnect.ResponseCode.CompilerError">
             503 Server Compiler Error
+        </member>
+        <member name="T:QuantConnect.AlgorithmStatus">
+            <summary>
+            States of a live deployment.
+            </summary>
+        </member>
+        <member name="F:QuantConnect.AlgorithmStatus.Quit">
+            User initiated a quit request
+        </member>
+        <member name="F:QuantConnect.AlgorithmStatus.DeployError">
+            Error compiling algorithm at start
+        </member>
+        <member name="F:QuantConnect.AlgorithmStatus.InQueue">
+            Waiting for a server
+        </member>
+        <member name="F:QuantConnect.AlgorithmStatus.Running">
+            Running algorithm
+        </member>
+        <member name="F:QuantConnect.AlgorithmStatus.Stopped">
+            Stopped algorithm or exited with runtime errors
+        </member>
+        <member name="F:QuantConnect.AlgorithmStatus.Liquidated">
+            Liquidated algorithm
+        </member>
+        <member name="F:QuantConnect.AlgorithmStatus.Deleted">
+            Algorithm has been deleted
         </member>
         <member name="T:QuantConnect.Period">
             <summary>
@@ -1564,9 +1746,19 @@
             Limit Order Type
             </summary>
         </member>
-        <member name="F:QuantConnect.OrderType.Stop">
+        <member name="F:QuantConnect.OrderType.StopMarket">
             <summary>
-            Stop Order Type
+            Stop Market Order Type - Fill at market price when break target price
+            </summary>
+        </member>
+        <member name="T:QuantConnect.OrderDuration">
+            <summary>
+            Order Duration in Market
+            </summary>
+        </member>
+        <member name="F:QuantConnect.OrderDuration.GTC">
+            <summary>
+            Order good until its filled.
             </summary>
         </member>
         <member name="T:QuantConnect.OrderDirection">
@@ -1634,53 +1826,6 @@
             Order invalidated before it hit the market (e.g. insufficient capital)..
             </summary>
         </member>
-        <member name="T:QuantConnect.OrderEvent">
-            <summary>
-            Order Event - Messaging class signifying a change in an order state. 
-            </summary>
-        </member>
-        <member name="F:QuantConnect.OrderEvent.Id">
-            <summary>
-            Id of the order this event comes from.
-            </summary>
-        </member>
-        <member name="F:QuantConnect.OrderEvent.Status">
-            <summary>
-            Status message of the order.
-            </summary>
-        </member>
-        <member name="F:QuantConnect.OrderEvent.FillPrice">
-            <summary>
-            Fill price information about the order
-            </summary>
-        </member>
-        <member name="F:QuantConnect.OrderEvent.FillQuantity">
-            <summary>
-            Number of shares of the order that was filled in this event.
-            </summary>
-        </member>
-        <member name="F:QuantConnect.OrderEvent.Message">
-            <summary>
-            Any message from the exchange.
-            </summary>
-        </member>
-        <member name="M:QuantConnect.OrderEvent.#ctor(System.Int32,QuantConnect.OrderStatus,System.Decimal,System.Int32,System.String)">
-            <summary>
-            Order Constructor.
-            </summary>
-            <param name="id">Id of the parent order</param>
-            <param name="status">Status of the order</param>
-            <param name="fillPrice">Fill price information if applicable.</param>
-            <param name="fillQuantity">Fill quantity</param>
-            <param name="message">Message from the exchange</param>
-        </member>
-        <member name="M:QuantConnect.OrderEvent.#ctor(QuantConnect.Order,System.String)">
-            <summary>
-            Helper Constructor using Order to Initialize.
-            </summary>
-            <param name="order">Order for this order status</param>
-            <param name="message">Message from exchange or QC.</param>
-        </member>
         <member name="T:QuantConnect.OrderErrors">
             <summary>
             Indexed Order Codes:
@@ -1699,6 +1844,11 @@
         <member name="F:QuantConnect.Order.Id">
             <summary>
             Order ID.
+            </summary>
+        </member>
+        <member name="F:QuantConnect.Order.BrokerId">
+            <summary>
+            Brokerage Id for this order.
             </summary>
         </member>
         <member name="F:QuantConnect.Order.Symbol">
@@ -1731,7 +1881,17 @@
             Status of the Order
             </summary>
         </member>
-        <member name="M:QuantConnect.Order.#ctor(System.String,System.Int32,QuantConnect.OrderType,System.DateTime,System.Decimal)">
+        <member name="F:QuantConnect.Order.Duration">
+            <summary>
+            Order duration - GTC or Day. Day not supported in backtests.
+            </summary>
+        </member>
+        <member name="F:QuantConnect.Order.Tag">
+            <summary>
+            Tag the order with some custom data
+            </summary>
+        </member>
+        <member name="M:QuantConnect.Order.#ctor(System.String,System.Int32,QuantConnect.OrderType,System.DateTime,System.Decimal,System.String)">
             <summary>
             Order constructor:
             </summary>
@@ -1749,6 +1909,47 @@
         <member name="P:QuantConnect.Order.Value">
             <summary>
             Value of the Order:
+            </summary>
+        </member>
+        <member name="T:QuantConnect.Securities.EquityCache">
+            <summary>
+            Common Caching Spot For Market Data and Averaging. 
+            </summary>
+        </member>
+        <member name="T:QuantConnect.Securities.SecurityCache">
+            <summary>
+            Common Caching Spot For Market Data and Averaging. 
+            </summary>
+        </member>
+        <member name="F:QuantConnect.Securities.SecurityCache._lastData">
+            <summary>
+            Last data for this security.
+            </summary>
+        </member>
+        <member name="M:QuantConnect.Securities.SecurityCache.#ctor">
+            <summary>
+            Start a new Cache for the set Index Code
+            </summary>
+        </member>
+        <member name="M:QuantConnect.Securities.SecurityCache.AddData(QuantConnect.Models.BaseData)">
+            <summary>
+            Add a list of new MarketData samples to the cache
+            </summary>
+        </member>
+        <member name="M:QuantConnect.Securities.SecurityCache.GetData">
+            <summary>
+            Get Last Data Packet Recieved for this Vehicle.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:QuantConnect.Securities.SecurityCache.Reset">
+            <summary>
+            Reset as many of the Cache's as possible.
+            </summary>
+        </member>
+        <member name="M:QuantConnect.Securities.EquityCache.#ctor">
+            <summary>
+            Start a new Cache for the set Index Code
             </summary>
         </member>
         <member name="T:QuantConnect.Securities.EquityDataFilter">
@@ -1822,6 +2023,16 @@
             <param name="value"></param>
             <returns></returns>
         </member>
+        <member name="T:QuantConnect.Securities.ForexCache">
+            <summary>
+            FX Specific Caching ontop of the SecurityCache obj. Common Caching Spot For Market Data and Averaging. 
+            </summary>
+        </member>
+        <member name="M:QuantConnect.Securities.ForexCache.#ctor">
+            <summary>
+            Start a new Cache for the set Index Code
+            </summary>
+        </member>
         <member name="T:QuantConnect.Securities.ForexDataFilter">
             <summary>
             Packet by Packet Data Filtering Mechanism for Dynamically Detecting Bad Ticks.
@@ -1849,7 +2060,7 @@
             Security Transaction Model
             </summary>
         </member>
-        <member name="M:QuantConnect.Securities.ISecurityTransactionModel.Fill(QuantConnect.Securities.Security,QuantConnect.Order@)">
+        <member name="M:QuantConnect.Securities.ISecurityTransactionModel.Fill(QuantConnect.Securities.Security,QuantConnect.Order)">
             <summary>
             Perform neccessary check to see if the model has been filled, appoximate the best we can.
             </summary>
@@ -1861,21 +2072,21 @@
             Get the Slippage approximation for this order:
             </summary>
         </member>
-        <member name="M:QuantConnect.Securities.ISecurityTransactionModel.MarketFill(QuantConnect.Securities.Security,QuantConnect.Order@)">
+        <member name="M:QuantConnect.Securities.ISecurityTransactionModel.MarketFill(QuantConnect.Securities.Security,QuantConnect.Order)">
             <summary>
             Model the slippage on a market order: fixed percentage of order price
             </summary>
             <param name="asset">Asset we're trading this order</param>
             <param name="order">Order to update</param>
         </member>
-        <member name="M:QuantConnect.Securities.ISecurityTransactionModel.StopFill(QuantConnect.Securities.Security,QuantConnect.Order@)">
+        <member name="M:QuantConnect.Securities.ISecurityTransactionModel.StopFill(QuantConnect.Securities.Security,QuantConnect.Order)">
             <summary>
             Check if the model has stopped out our position yet:
             </summary>
             <param name="asset">Asset we're trading this order</param>
             <param name="order">Stop Order to Check, return filled if true</param>
         </member>
-        <member name="M:QuantConnect.Securities.ISecurityTransactionModel.LimitFill(QuantConnect.Securities.Security,QuantConnect.Order@)">
+        <member name="M:QuantConnect.Securities.ISecurityTransactionModel.LimitFill(QuantConnect.Securities.Security,QuantConnect.Order)">
             <summary>
             Model for a limit fill.
             </summary>
@@ -1895,7 +2106,7 @@
             Initialise the Algorithm Transaction Class
             </summary>
         </member>
-        <member name="M:QuantConnect.Securities.SecurityTransactionModel.Fill(QuantConnect.Securities.Security,QuantConnect.Order@)">
+        <member name="M:QuantConnect.Securities.SecurityTransactionModel.Fill(QuantConnect.Securities.Security,QuantConnect.Order)">
             <summary>
             Perform neccessary check to see if the model has been filled, appoximate the best we can.
             </summary>
@@ -1907,21 +2118,21 @@
             Get the Slippage approximation for this order:
             </summary>
         </member>
-        <member name="M:QuantConnect.Securities.SecurityTransactionModel.MarketFill(QuantConnect.Securities.Security,QuantConnect.Order@)">
+        <member name="M:QuantConnect.Securities.SecurityTransactionModel.MarketFill(QuantConnect.Securities.Security,QuantConnect.Order)">
             <summary>
             Default market order model. Fill at last price
             </summary>
             <param name="security">Asset we're working with</param>
             <param name="order">Order to update</param>
         </member>
-        <member name="M:QuantConnect.Securities.SecurityTransactionModel.StopFill(QuantConnect.Securities.Security,QuantConnect.Order@)">
+        <member name="M:QuantConnect.Securities.SecurityTransactionModel.StopFill(QuantConnect.Securities.Security,QuantConnect.Order)">
             <summary>
             Check if the model has stopped out our position yet:
             </summary>
             <param name="security">Asset we're working with</param>
             <param name="order">Stop Order to Check, return filled if true</param>
         </member>
-        <member name="M:QuantConnect.Securities.SecurityTransactionModel.LimitFill(QuantConnect.Securities.Security,QuantConnect.Order@)">
+        <member name="M:QuantConnect.Securities.SecurityTransactionModel.LimitFill(QuantConnect.Securities.Security,QuantConnect.Order)">
             <summary>
             Check if the price MarketDataed to our limit price yet:
             </summary>
@@ -2097,57 +2308,6 @@
             Equity Security Transaction and Fill Models
             </summary>
         </member>
-        <member name="T:QuantConnect.Securities.EquityCache">
-            <summary>
-            Common Caching Spot For Market Data and Averaging. 
-            </summary>
-        </member>
-        <member name="T:QuantConnect.Securities.SecurityCache">
-            <summary>
-            Common Caching Spot For Market Data and Averaging. 
-            </summary>
-        </member>
-        <member name="F:QuantConnect.Securities.SecurityCache.OrderCache">
-            <summary>
-            Cache for the orders processed
-            </summary>
-        </member>
-        <member name="F:QuantConnect.Securities.SecurityCache._lastData">
-            <summary>
-            Last data for this security.
-            </summary>
-        </member>
-        <member name="M:QuantConnect.Securities.SecurityCache.#ctor">
-            <summary>
-            Start a new Cache for the set Index Code
-            </summary>
-        </member>
-        <member name="M:QuantConnect.Securities.SecurityCache.AddData(QuantConnect.Models.BaseData)">
-            <summary>
-            Add a list of new MarketData samples to the cache
-            </summary>
-        </member>
-        <member name="M:QuantConnect.Securities.SecurityCache.GetData">
-            <summary>
-            Get Last Data Packet Recieved for this Vehicle.
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="M:QuantConnect.Securities.SecurityCache.AddOrder(QuantConnect.Order)">
-            <summary>
-            Add a TransOrderDirection
-            </summary>
-        </member>
-        <member name="M:QuantConnect.Securities.SecurityCache.Reset">
-            <summary>
-            Reset as many of the Cache's as possible.
-            </summary>
-        </member>
-        <member name="M:QuantConnect.Securities.EquityCache.#ctor">
-            <summary>
-            Start a new Cache for the set Index Code
-            </summary>
-        </member>
         <member name="T:QuantConnect.Securities.EquityExchange">
             <summary>
             Exchange Class - Information and Helper Tools for Exchange Situation
@@ -2214,6 +2374,16 @@
             Timezone for the exchange
             </summary>
         </member>
+        <member name="P:QuantConnect.Securities.SecurityExchange.MarketOpen">
+            <summary>
+            Market closing time default
+            </summary>
+        </member>
+        <member name="P:QuantConnect.Securities.SecurityExchange.MarketClose">
+            <summary>
+            Market closing time default
+            </summary>
+        </member>
         <member name="P:QuantConnect.Securities.SecurityExchange.TradingDaysPerYear">
             <summary>
             Number of trading days per year for this security, used for performance statistics.
@@ -2277,6 +2447,16 @@
         <member name="P:QuantConnect.Securities.EquityExchange.TradingDaysPerYear">
             <summary>
             Number of trading days per year for this security, used for performance statistics.
+            </summary>
+        </member>
+        <member name="P:QuantConnect.Securities.EquityExchange.MarketOpen">
+            <summary>
+            Equity Market Opening Time:
+            </summary>
+        </member>
+        <member name="P:QuantConnect.Securities.EquityExchange.MarketClose">
+            <summary>
+            Equity Market Closing Time:
             </summary>
         </member>
         <member name="T:QuantConnect.Securities.EquityHolding">
@@ -2358,6 +2538,11 @@
         <member name="P:QuantConnect.Securities.SecurityHolding.HoldingsCost">
             <summary>
             Return the acquisition cost of the companies total holdings.
+            </summary>
+        </member>
+        <member name="P:QuantConnect.Securities.SecurityHolding.Price">
+            <summary>
+            Current market price of the asset.
             </summary>
         </member>
         <member name="P:QuantConnect.Securities.SecurityHolding.AbsoluteHoldingsCost">
@@ -2445,7 +2630,7 @@
             Initialise the Algorithm Transaction Class
             </summary>
         </member>
-        <member name="M:QuantConnect.Securities.EquityTransactionModel.Fill(QuantConnect.Securities.Security,QuantConnect.Order@)">
+        <member name="M:QuantConnect.Securities.EquityTransactionModel.Fill(QuantConnect.Securities.Security,QuantConnect.Order)">
             <summary>
             Perform neccessary check to see if the model has been filled, appoximate the best we can.
             </summary>
@@ -2457,21 +2642,21 @@
             Get the Slippage approximation for this order:
             </summary>
         </member>
-        <member name="M:QuantConnect.Securities.EquityTransactionModel.MarketFill(QuantConnect.Securities.Security,QuantConnect.Order@)">
+        <member name="M:QuantConnect.Securities.EquityTransactionModel.MarketFill(QuantConnect.Securities.Security,QuantConnect.Order)">
             <summary>
             Model the slippage on a market order: fixed percentage of order price
             </summary>
             <param name="security">Asset we're working with</param>
             <param name="order">Order to update</param>
         </member>
-        <member name="M:QuantConnect.Securities.EquityTransactionModel.StopFill(QuantConnect.Securities.Security,QuantConnect.Order@)">
+        <member name="M:QuantConnect.Securities.EquityTransactionModel.StopFill(QuantConnect.Securities.Security,QuantConnect.Order)">
             <summary>
             Check if the model has stopped out our position yet:
             </summary>
             <param name="security">Asset we're working with</param>
             <param name="order">Stop Order to Check, return filled if true</param>
         </member>
-        <member name="M:QuantConnect.Securities.EquityTransactionModel.LimitFill(QuantConnect.Securities.Security,QuantConnect.Order@)">
+        <member name="M:QuantConnect.Securities.EquityTransactionModel.LimitFill(QuantConnect.Securities.Security,QuantConnect.Order)">
             <summary>
             Check if the price MarketDataed to our limit price yet:
             </summary>
@@ -2515,16 +2700,6 @@
             Forex Security Transaction and Fill Models
             </summary>
         </member>
-        <member name="T:QuantConnect.Securities.ForexCache">
-            <summary>
-            FX Specific Caching ontop of the SecurityCache obj. Common Caching Spot For Market Data and Averaging. 
-            </summary>
-        </member>
-        <member name="M:QuantConnect.Securities.ForexCache.#ctor">
-            <summary>
-            Start a new Cache for the set Index Code
-            </summary>
-        </member>
         <member name="T:QuantConnect.Securities.ForexExchange">
             <summary>
             Forex Exchange Class - Information and Helper Tools for Exchange Situation
@@ -2559,6 +2734,16 @@
             Number of trading days per year for this security, used for performance statistics.
             </summary>
         </member>
+        <member name="P:QuantConnect.Securities.ForexExchange.MarketOpen">
+            <summary>
+            FOREX Market Opening Time:
+            </summary>
+        </member>
+        <member name="P:QuantConnect.Securities.ForexExchange.MarketClose">
+            <summary>
+            FOREX Market Closing Time:
+            </summary>
+        </member>
         <member name="T:QuantConnect.Securities.ForexHolding">
             <summary>
             FOREX Holdings Override: Any Properties specifically for FOREX Holdings Cases:
@@ -2579,7 +2764,7 @@
             Initialise the Algorithm Transaction Class
             </summary>
         </member>
-        <member name="M:QuantConnect.Securities.ForexTransactionModel.Fill(QuantConnect.Securities.Security,QuantConnect.Order@)">
+        <member name="M:QuantConnect.Securities.ForexTransactionModel.Fill(QuantConnect.Securities.Security,QuantConnect.Order)">
             <summary>
             Perform neccessary check to see if the model has been filled, appoximate the best we can.
             </summary>
@@ -2591,21 +2776,21 @@
             Get the Slippage approximation for this order:
             </summary>
         </member>
-        <member name="M:QuantConnect.Securities.ForexTransactionModel.MarketFill(QuantConnect.Securities.Security,QuantConnect.Order@)">
+        <member name="M:QuantConnect.Securities.ForexTransactionModel.MarketFill(QuantConnect.Securities.Security,QuantConnect.Order)">
             <summary>
             Model the slippage on a market order: fixed percentage of order price
             </summary>
             <param name="security">Asset we're working with</param>
             <param name="order">Order to update</param>
         </member>
-        <member name="M:QuantConnect.Securities.ForexTransactionModel.StopFill(QuantConnect.Securities.Security,QuantConnect.Order@)">
+        <member name="M:QuantConnect.Securities.ForexTransactionModel.StopFill(QuantConnect.Securities.Security,QuantConnect.Order)">
             <summary>
             Check if the model has stopped out our position yet:
             </summary>
             <param name="security">Asset we're working with</param>
             <param name="order">Stop Order to Check, return filled if true</param>
         </member>
-        <member name="M:QuantConnect.Securities.ForexTransactionModel.LimitFill(QuantConnect.Securities.Security,QuantConnect.Order@)">
+        <member name="M:QuantConnect.Securities.ForexTransactionModel.LimitFill(QuantConnect.Securities.Security,QuantConnect.Order)">
             <summary>
             Check if the price MarketDataed to our limit price yet:
             </summary>
@@ -2872,7 +3057,7 @@
             A Security affect on buying power = holdings / leverage.
             </summary>
         </member>
-        <member name="M:QuantConnect.Securities.SecurityPortfolioManager.ProcessFill(QuantConnect.Order)">
+        <member name="M:QuantConnect.Securities.SecurityPortfolioManager.ProcessFill(QuantConnect.Order,QuantConnect.OrderEvent)">
             <summary>
             Calculate the new average price (if buying), and new quantity/profit if selling.
             </summary>
@@ -3019,6 +3204,12 @@
             </summary>
             <param name="order">Order to check</param>
             <returns>decimal cash required to purchase order</returns>
+        </member>
+        <member name="M:QuantConnect.Securities.SecurityTransactionManager.GetIncrementOrderId">
+            <summary>
+            Get a new order id, and increment the internal counter:
+            </summary>
+            <returns>int order id.</returns>
         </member>
         <member name="P:QuantConnect.Securities.SecurityTransactionManager.Orders">
             <summary>
@@ -3197,6 +3388,49 @@
             Static S-P500 Benchmark
             </summary>
         </member>
+        <member name="T:QuantConnect.RealTimeSynchronizedTimer">
+            <summary>
+            Real time event handler in C#
+            </summary>
+        </member>
+        <member name="M:QuantConnect.RealTimeSynchronizedTimer.#ctor">
+            <summary>
+            Constructor for Real Time Event Driver:
+            </summary>
+        </member>
+        <member name="M:QuantConnect.RealTimeSynchronizedTimer.#ctor(System.TimeSpan,System.Action)">
+            <summary>
+            Trigger an event callback after precisely milliseconds-lapsed. 
+            This is expensive, it creates a new thread and closely monitors the loop.
+            </summary>
+            <param name="period">delay period between event callbacks</param>
+            <param name="callback">Callback event</param>
+        </member>
+        <member name="M:QuantConnect.RealTimeSynchronizedTimer.Start">
+            <summary>
+            Start the Synchronized Real Time Timer - fire events at start of each second or minute 
+            </summary>
+        </member>
+        <member name="M:QuantConnect.RealTimeSynchronizedTimer.Scanner">
+            <summary>
+            Scan the stopwatch for the desired millisecond delay:
+            </summary>
+        </member>
+        <member name="M:QuantConnect.RealTimeSynchronizedTimer.Pause">
+            <summary>
+            Hang the real time event:
+            </summary>
+        </member>
+        <member name="M:QuantConnect.RealTimeSynchronizedTimer.Resume">
+            <summary>
+            AntiPause
+            </summary>
+        </member>
+        <member name="M:QuantConnect.RealTimeSynchronizedTimer.Stop">
+            <summary>
+            Stop the real time timer:
+            </summary>
+        </member>
         <member name="T:QuantConnect.Time">
             <summary>
             Basic time helper classes.
@@ -3277,6 +3511,11 @@
             <param name="key">name of this loop</param>
             <param name="timeout">seconds delay for loop</param>
             <returns>true if time out</returns>
+        </member>
+        <member name="T:QuantConnect.Time.DateTimeWithZone">
+            <summary>
+            Live Charting Sensitive to timezone:
+            </summary>
         </member>
     </members>
 </doc>

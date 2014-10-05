@@ -31,7 +31,7 @@ namespace QuantConnect.Securities {
         private SecurityManager Securities;
         private ConcurrentDictionary<int, Order> _orders = new ConcurrentDictionary<int, Order>();
         private ConcurrentQueue<Order> _orderQueue = new ConcurrentQueue<Order>();
-        private ConcurrentDictionary<int, ConcurrentBag<OrderEvent>> _orderEvents = new ConcurrentDictionary<int, ConcurrentBag<OrderEvent>>();
+        private ConcurrentDictionary<int, List<OrderEvent>> _orderEvents = new ConcurrentDictionary<int, List<OrderEvent>>();
         private Dictionary<DateTime, decimal> _transactionRecord = new Dictionary<DateTime, decimal>();
         private int _orderId = 1;
         private decimal _minimumOrderSize = 0;
@@ -59,7 +59,7 @@ namespace QuantConnect.Securities {
             this._orderQueue = new ConcurrentQueue<Order>();
 
             // Internal order events storage.
-            this._orderEvents = new ConcurrentDictionary<int, ConcurrentBag<OrderEvent>>();
+            this._orderEvents = new ConcurrentDictionary<int, List<OrderEvent>>();
 
             //Interal storage for transaction records:
             this._transactionRecord = new Dictionary<DateTime, decimal>();
@@ -104,7 +104,7 @@ namespace QuantConnect.Securities {
         /// <summary>
         /// New event from a partially-processed/pending order
         /// </summary>
-        public ConcurrentDictionary<int, ConcurrentBag<OrderEvent>> OrderEvents
+        public ConcurrentDictionary<int, List<OrderEvent>> OrderEvents
         {
             get
             {
@@ -290,6 +290,15 @@ namespace QuantConnect.Securities {
             }
             //Prevent all orders if leverage is 0.
             return decimal.MaxValue;
+        }
+
+        /// <summary>
+        /// Get a new order id, and increment the internal counter:
+        /// </summary>
+        /// <returns>int order id.</returns>
+        public int GetIncrementOrderId()
+        {
+            return _orderId++;
         }
 
 

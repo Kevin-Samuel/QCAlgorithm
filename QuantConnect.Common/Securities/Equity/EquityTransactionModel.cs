@@ -34,12 +34,9 @@ namespace QuantConnect.Securities {
         * CLASS PRIVATE VARIABLES
         *********************************************************/
 
-
         /******************************************************** 
         * CLASS PUBLIC VARIABLES
         *********************************************************/
-
-
 
         /******************************************************** 
         * CLASS CONSTRUCTOR
@@ -56,9 +53,6 @@ namespace QuantConnect.Securities {
         *********************************************************/
 
 
-
-
-
         /******************************************************** 
         * CLASS METHODS
         *********************************************************/
@@ -67,22 +61,27 @@ namespace QuantConnect.Securities {
         /// </summary>
         /// <param name="vehicle">Asset we're working with</param>
         /// <param name="order">Order class to check if filled.</param>
-        public virtual void Fill(Security vehicle, ref Order order) {
+        public virtual OrderEvent Fill(Security vehicle, Order order)
+        {
+            var fill = new OrderEvent(order);
+
             try {
                 switch (order.Type) {
                     case OrderType.Limit:
-                        LimitFill(vehicle, ref order);
+                        fill = LimitFill(vehicle, order);
                         break;
-                    case OrderType.Stop:
-                        StopFill(vehicle, ref order);
+                    case OrderType.StopMarket:
+                        fill = StopFill(vehicle, order);
                         break;
                     case OrderType.Market:
-                        MarketFill(vehicle, ref order);
+                        fill = MarketFill(vehicle, order);
                         break;
                 }
             } catch (Exception err) {
                 Log.Error("Equity.TransOrderDirection.Fill(): " + err.Message);
             }
+
+            return fill;
         }
 
 
@@ -101,9 +100,11 @@ namespace QuantConnect.Securities {
         /// </summary>
         /// <param name="security">Asset we're working with</param>
         /// <param name="order">Order to update</param>
-        public virtual void MarketFill(Security security, ref Order order) {
-
-            try {
+        public virtual OrderEvent MarketFill(Security security, Order order)
+        {
+            var fill = new OrderEvent(order);
+            try 
+            {
                 //Calculate the model slippage: e.g. 0.01c
                 decimal slip = GetSlippageApproximation(security, order);
 
@@ -121,13 +122,18 @@ namespace QuantConnect.Securities {
 
                 //Market orders fill instantly.
                 order.Status = OrderStatus.Filled;
+                order.Price = Math.Round(order.Price, 3);
 
-                //Round off:
-                order.Price = Math.Round(order.Price, 2);
-
-            } catch (Exception err) {
+                //Fill Order:
+                fill.Status = order.Status;
+                fill.FillQuantity = order.Quantity;
+                fill.FillPrice = order.Price;
+            } 
+            catch (Exception err) 
+            {
                 Log.Error("Equity.TransOrderDirection.MarketFill(): " + err.Message);
             }
+            return fill;
         }
 
 
@@ -138,10 +144,13 @@ namespace QuantConnect.Securities {
         /// </summary>
         /// <param name="security">Asset we're working with</param>
         /// <param name="order">Stop Order to Check, return filled if true</param>
-        public virtual void StopFill(Security security, ref Order order) {
-            try {
+        public virtual OrderEvent StopFill(Security security, Order order)
+        {
+            var fill = new OrderEvent(order);
+            try 
+            {
                 //If its cancelled don't need anymore checks:
-                if (order.Status == OrderStatus.Canceled) return;
+                if (order.Status == OrderStatus.Canceled) return fill;
 
                 //Calculate the model slippage: e.g. 0.01c
                 decimal slip = GetSlippageApproximation(security, order);
@@ -151,28 +160,36 @@ namespace QuantConnect.Securities {
                 {
                     case OrderDirection.Sell:
                         //-> 1.1 Sell Stop: If Price below setpoint, Sell:
-                        if (security.Price < order.Price) {
+                        if (security.Price < order.Price) 
+                        {
                             order.Status = OrderStatus.Filled;
-                            order.Price = security.Price;
+                            order.Price = Math.Round(security.Price, 3);
                             order.Price -= slip;
                         }
                         break;
                     case OrderDirection.Buy:
                         //-> 1.2 Buy Stop: If Price Above Setpoint, Buy:
-                        if (security.Price > order.Price) {
+                        if (security.Price > order.Price) 
+                        {
                             order.Status = OrderStatus.Filled;
-                            order.Price = security.Price;
+                            order.Price = Math.Round(security.Price, 3);
                             order.Price += slip;
                         }
                         break;
                 }
 
-                //Round off:
-                order.Price = Math.Round(order.Price, 2);
-
-            } catch (Exception err) {
+                if (order.Status == OrderStatus.Filled || order.Status == OrderStatus.PartiallyFilled)
+                {
+                    fill.FillQuantity = order.Quantity;
+                    fill.FillPrice = order.Price;
+                    fill.Status = order.Status;
+                }
+            } 
+            catch (Exception err) 
+            {
                 Log.Error("Equity.TransOrderDirection.StopFill(): " + err.Message);
             }
+            return fill;
         }
 
 
@@ -182,15 +199,17 @@ namespace QuantConnect.Securities {
         /// </summary>
         /// <param name="security">Asset we're working with</param>
         /// <param name="order">Limit order in market</param>
-        public virtual void LimitFill(Security security, ref Order order) {
+        public virtual OrderEvent LimitFill(Security security, Order order)
+        {
 
             //Initialise;
             decimal marketDataMinPrice = 0;
             decimal marketDataMaxPrice = 0;
+            var fill = new OrderEvent(order);
 
             try {
                 //If its cancelled don't need anymore checks:
-                if (order.Status == OrderStatus.Canceled) return;
+                if (fill.Status == OrderStatus.Canceled) return fill;
 
                 //Calculate the model slippage: e.g. 0.01c
                 decimal slip = GetSlippageApproximation(security, order);
@@ -202,7 +221,9 @@ namespace QuantConnect.Securities {
                 {
                     marketDataMinPrice = ((TradeBar)marketData).Low;
                     marketDataMaxPrice = ((TradeBar)marketData).High;
-                } else {
+                } 
+                else 
+                {
                     marketDataMinPrice = marketData.Value;
                     marketDataMaxPrice = marketData.Value;
                 }
@@ -212,28 +233,38 @@ namespace QuantConnect.Securities {
                 {
                     case OrderDirection.Buy:
                         //Buy limit seeks lowest price
-                        if (marketDataMinPrice < order.Price) {
+                        if (marketDataMinPrice < order.Price) 
+                        {
                             order.Status = OrderStatus.Filled;
-                            order.Price = security.Price;
+                            order.Price = Math.Round(security.Price, 3);
                             order.Price += slip;
                         }
                         break;
                     case OrderDirection.Sell:
                         //Sell limit seeks highest price possible
-                        if (marketDataMaxPrice > order.Price) {
+                        if (marketDataMaxPrice > order.Price) 
+                        {
                             order.Status = OrderStatus.Filled;
-                            order.Price = security.Price;
+                            order.Price = Math.Round(security.Price, 3);
                             order.Price -= slip;
                         }
                         break;
                 }
 
-                //Round off:
-                order.Price = Math.Round(order.Price, 2);
-
-            } catch (Exception err) {
+                //Set fill:
+                if (order.Status == OrderStatus.Filled || order.Status == OrderStatus.PartiallyFilled)
+                {
+                    //Assuming 100% fill in models:
+                    fill.FillQuantity = order.Quantity;
+                    fill.FillPrice = order.Price;
+                    fill.Status = order.Status;
+                }
+            } 
+            catch (Exception err) 
+            {
                 Log.Error("Equity.TransOrderDirection.LimitFill(): " + err.Message);
             }
+            return fill;
         }
 
 
@@ -243,23 +274,30 @@ namespace QuantConnect.Securities {
         /// </summary>
         /// <param name="quantity"></param>
         /// <param name="price"></param>
-        public virtual decimal GetOrderFee(decimal quantity, decimal price) {
+        public virtual decimal GetOrderFee(decimal quantity, decimal price) 
+        {
             decimal tradeFee = 0;
             quantity = Math.Abs(quantity);
             decimal tradeValue = (price * quantity);
 
             //Per share fees
-            if (quantity < 500) {
+            if (quantity < 500) 
+            {
                 tradeFee = quantity * 0.013m;
-            } else {
+            } 
+            else
+            {
                 tradeFee = quantity * 0.008m;
             }
 
             //Maximum Per Order: 0.5%
             //Minimum per order. $1.0
-            if (tradeFee < 1) {
+            if (tradeFee < 1) 
+            {
                 tradeFee = 1;
-            } else if (tradeFee > (0.005m * tradeValue)) {
+            } 
+            else if (tradeFee > (0.005m * tradeValue)) 
+            {
                 tradeFee = 0.005m * tradeValue;
             }
 

@@ -223,7 +223,7 @@ namespace QuantConnect.Models {
             {
                 if (!_tradeBars.ContainsKey(key))
                 {
-                    throw new Exception("This symbol wasn't found in the TradeBars object, likely because there was no-data at this moment in time and it wasn't possible to fillforward historical data. Please check the data exists before accessing it with data.ContainsKey(\"" + key + "\")");
+                    throw new Exception("'" + key + "' wasn't found in the TradeBars object, likely because there was no-data at this moment in time and it wasn't possible to fillforward historical data. Please check the data exists before accessing it with data.ContainsKey(\"" + key + "\")");
                 }
                 return _tradeBars[key];
             }
@@ -231,7 +231,7 @@ namespace QuantConnect.Models {
             {
                 if (!_tradeBars.ContainsKey(key))
                 {
-                    throw new Exception("This symbol wasn't found in the TradeBars object, likely because there was no-data at this moment in time and it wasn't possible to fillforward historical data. Please check the data exists before accessing it with data.ContainsKey(\"" + key + "\")");
+                    throw new Exception("'" + key + "' wasn't found in the TradeBars object, likely because there was no-data at this moment in time and it wasn't possible to fillforward historical data. Please check the data exists before accessing it with data.ContainsKey(\"" + key + "\")");
                 }
                 _tradeBars[key] = value;
             }

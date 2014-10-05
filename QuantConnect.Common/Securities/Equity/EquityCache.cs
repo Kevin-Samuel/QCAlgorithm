@@ -1,4 +1,4 @@
-/*
+﻿/*
 * QUANTCONNECT.COM: Equity Cache.cs
 * Equity Caching Class - Store online method calculations here, historical data points etc.
 */
@@ -24,7 +24,8 @@ using QuantConnect;
 using QuantConnect.Logging;
 using QuantConnect.Models;
 
-namespace QuantConnect.Securities {
+namespace QuantConnect.Securities
+{
 
     /******************************************************** 
     * CLASS DEFINITIONS
@@ -33,7 +34,8 @@ namespace QuantConnect.Securities {
     /// <summary>
     /// Common Caching Spot For Market Data and Averaging. 
     /// </summary>
-    public class EquityCache : SecurityCache {
+    public class EquityCache : SecurityCache
+    {
         /******************************************************** 
         * CLASS VARIABLES
         *********************************************************/
@@ -45,7 +47,8 @@ namespace QuantConnect.Securities {
         /// Start a new Cache for the set Index Code
         /// </summary>
         public EquityCache() :
-            base() {
+            base()
+        {
             //Nothing to do:
         }
 

@@ -1,4 +1,4 @@
-/*
+﻿/*
 * QUANTCONNECT.COM: FOREX Security
 * FOREX Cache Class - Base caching class for FX Objects. Store historical ticks, chart points etc
 */
@@ -23,7 +23,8 @@ using QuantConnect;
 using QuantConnect.Logging;
 using QuantConnect.Models;
 
-namespace QuantConnect.Securities {
+namespace QuantConnect.Securities
+{
 
     /******************************************************** 
     * CLASS DEFINITIONS
@@ -32,7 +33,8 @@ namespace QuantConnect.Securities {
     /// <summary>
     /// FX Specific Caching ontop of the SecurityCache obj. Common Caching Spot For Market Data and Averaging. 
     /// </summary>
-    public class ForexCache : SecurityCache {
+    public class ForexCache : SecurityCache
+    {
         /******************************************************** 
         * CLASS VARIABLES
         *********************************************************/
@@ -44,8 +46,9 @@ namespace QuantConnect.Securities {
         /// <summary>
         /// Start a new Cache for the set Index Code
         /// </summary>
-        public ForexCache( ) :
-            base() {
+        public ForexCache() :
+            base()
+        {
             //Nothing to do:
         }
 

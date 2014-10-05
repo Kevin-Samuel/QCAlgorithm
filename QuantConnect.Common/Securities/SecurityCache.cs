@@ -34,12 +34,7 @@ namespace QuantConnect.Securities {
     public class SecurityCache {
         /******************************************************** 
         * CLASS VARIABLES
-        *********************************************************/
-        /// <summary>
-        /// Cache for the orders processed
-        /// </summary>
-        public List<Order> OrderCache;                //Orders Cache
-       
+        *********************************************************/       
         /// <summary>
         /// Last data for this security.
         /// </summary>
@@ -52,8 +47,7 @@ namespace QuantConnect.Securities {
         /// Start a new Cache for the set Index Code
         /// </summary>
         public SecurityCache() {
-            //ORDER CACHES:
-            OrderCache = new List<Order>();           
+        
         }
 
 
@@ -84,24 +78,11 @@ namespace QuantConnect.Securities {
 
 
         /// <summary>
-        /// Add a TransOrderDirection
-        /// </summary>
-        public virtual void AddOrder(Order order) {
-            lock (OrderCache) {
-                OrderCache.Add(order);
-            }
-        }
-
-
-
-        /// <summary>
         /// Reset as many of the Cache's as possible.
         /// </summary>
         public virtual void Reset() {
             //Data Cache
             _lastData = null; //Tick or TradeBar
-            //Order Cache:
-            OrderCache = new List<Order>();
         }
 
 

@@ -45,13 +45,27 @@ namespace QuantConnect
         /// <param name="data">TradeBars data type synchronized and pushed into this function. The tradebars are grouped in a dictionary.</param>
         public void OnData(TradeBars data)
         {
-            int x = 0;
-            int y = 10;
-            int z = y / x;
+            //int x = 0;
+            //int y = 10;
+            //int z = y / x;
 
-            if (!Portfolio.Invested)
+            //if (!Portfolio.Invested)
+            //{
+            //    SetHoldings("SPY", 1);
+            //}
+
+            if (!Portfolio.HoldStock && data.ContainsKey("SPY"))
             {
-                SetHoldings("SPY", 1);
+                Order("SPY", (int)Math.Floor(Portfolio.Cash / data["SPY"].Close));
+                Debug("Debug Purchased MSFT: " + Portfolio.Cash);
+            }
+
+            if (Time.TimeOfDay.TotalSeconds % 10 == 0)
+            {
+                int i = Transactions.GetIncrementOrderId();
+                var order = new Order("BTC", 10, OrderType.Market, Time, data["BTC"].Price, "Tag: Test");
+                order.Status = OrderStatus.Filled;
+                Transactions.Orders.AddOrUpdate<int, Order>(i, order);
             }
         }
 

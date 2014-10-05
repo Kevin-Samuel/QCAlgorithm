@@ -14,13 +14,12 @@ using System.Text;
 
 using QuantConnect.Logging;
 
-namespace QuantConnect.Securities {
-
+namespace QuantConnect.Securities 
+{
     /******************************************************** 
     * QUANTCONNECT PROJECT LIBRARIES
     *********************************************************/
     using QuantConnect.Models;
-
 
     /******************************************************** 
     * CLASS DEFINITIONS
@@ -28,8 +27,8 @@ namespace QuantConnect.Securities {
     /// <summary>
     /// Default Transaction Model for User Defined Securities:
     /// </summary>
-    public class SecurityTransactionModel : ISecurityTransactionModel {
-
+    public class SecurityTransactionModel : ISecurityTransactionModel 
+    {
         /******************************************************** 
         * CLASS PRIVATE VARIABLES
         *********************************************************/
@@ -46,8 +45,9 @@ namespace QuantConnect.Securities {
         /// <summary>
         /// Initialise the Algorithm Transaction Class
         /// </summary>
-        public SecurityTransactionModel() {
-
+        public SecurityTransactionModel() 
+        { 
+        
         }
 
         /******************************************************** 
@@ -63,33 +63,40 @@ namespace QuantConnect.Securities {
         /// </summary>
         /// <param name="vehicle">Asset we're working with</param>
         /// <param name="order">Order class to check if filled.</param>
-        public virtual void Fill(Security vehicle, ref Order order) {
-            try {
-                switch (order.Type) {
+        public virtual OrderEvent Fill(Security vehicle, Order order)
+        {
+            //Default order event to return.
+            var fill = new OrderEvent(order);
+
+            try 
+            {
+                switch (order.Type) 
+                {
                     case OrderType.Limit:
-                        LimitFill(vehicle, ref order);
+                        fill = LimitFill(vehicle, order);
                         break;
-                    case OrderType.Stop:
-                        StopFill(vehicle, ref order);
+                    case OrderType.StopMarket:
+                        fill = StopFill(vehicle, order);
                         break;
                     case OrderType.Market:
-                        MarketFill(vehicle, ref order);
+                        fill = MarketFill(vehicle, order);
                         break;
                 }
             } catch (Exception err) {
                 Log.Error("SecurityTransactionModel.TransOrderDirection.Fill(): " + err.Message);
             }
-        }
 
+            return fill;
+        }
 
 
         /// <summary>
         /// Get the Slippage approximation for this order:
         /// </summary>
-        public virtual decimal GetSlippageApproximation(Security security, Order order) {
+        public virtual decimal GetSlippageApproximation(Security security, Order order) 
+        {
             return 0;
         }
-
 
 
         /// <summary>
@@ -97,13 +104,25 @@ namespace QuantConnect.Securities {
         /// </summary>
         /// <param name="security">Asset we're working with</param>
         /// <param name="order">Order to update</param>
-        public virtual void MarketFill(Security security, ref Order order) {
+        public virtual OrderEvent MarketFill(Security security, Order order)
+        {
+            //Default order event to return.
+            var fill = new OrderEvent(order);
             try {
+                
+                //Set the order price 
                 order.Price = security.Price;
                 order.Status = OrderStatus.Filled;
+
+                //Set the order event fill: - Assuming 100% fill
+                fill.FillPrice = security.Price;
+                fill.FillQuantity = order.Quantity;
+                fill.Status = order.Status;
+
             } catch (Exception err) {
                 Log.Error("SecurityTransactionModel.TransOrderDirection.MarketFill(): " + err.Message);
             }
+            return fill;
         }
 
 
@@ -114,33 +133,50 @@ namespace QuantConnect.Securities {
         /// </summary>
         /// <param name="security">Asset we're working with</param>
         /// <param name="order">Stop Order to Check, return filled if true</param>
-        public virtual void StopFill(Security security, ref Order order) {
-            try {
+        public virtual OrderEvent StopFill(Security security, Order order)
+        {
+            //Default order event to return.
+            var fill = new OrderEvent(order);
+
+            try 
+            {
                 //If its cancelled don't need anymore checks:
-                if (order.Status == OrderStatus.Canceled) return;
+                if (fill.Status == OrderStatus.Canceled) return fill;
 
                 //Check if the Stop Order was filled: opposite to a limit order
                 switch (order.Direction)
                 {
                     case OrderDirection.Sell:
                         //-> 1.1 Sell Stop: If Price below setpoint, Sell:
-                        if (security.Price < order.Price) {
+                        if (security.Price < order.Price) 
+                        {
                             order.Status = OrderStatus.Filled;
                             order.Price = security.Price;
                         }
                         break;
                     case OrderDirection.Buy:
                         //-> 1.2 Buy Stop: If Price Above Setpoint, Buy:
-                        if (security.Price > order.Price) {
+                        if (security.Price > order.Price) 
+                        {
                             order.Status = OrderStatus.Filled;
                             order.Price = security.Price;
                         }
                         break;
                 }
 
-            } catch (Exception err) {
+                if (order.Status == OrderStatus.Filled || order.Status == OrderStatus.PartiallyFilled)
+                {
+                    fill.FillQuantity = order.Quantity;
+                    fill.FillPrice = security.Price;        //Stop price as security price because can gap past stop price.
+                    fill.Status = order.Status;
+                }
+            } 
+            catch (Exception err) 
+            {
                 Log.Error("SecurityTransactionModel.TransOrderDirection.StopFill(): " + err.Message);
             }
+
+            return fill;
         }
 
 
@@ -150,15 +186,17 @@ namespace QuantConnect.Securities {
         /// </summary>
         /// <param name="security">Asset we're working with</param>
         /// <param name="order">Limit order in market</param>
-        public virtual void LimitFill(Security security, ref Order order) {
+        public virtual OrderEvent LimitFill(Security security, Order order)
+        {
 
             //Initialise;
             decimal marketDataMinPrice = 0;
             decimal marketDataMaxPrice = 0;
+            var fill = new OrderEvent(order);
 
             try {
                 //If its cancelled don't need anymore checks:
-                if (order.Status == OrderStatus.Canceled) return;
+                if (fill.Status == OrderStatus.Canceled) return fill;
 
                 //Depending on the resolution, return different data types:
                 BaseData marketData = security.GetLastData();
@@ -177,23 +215,35 @@ namespace QuantConnect.Securities {
                 {
                     case OrderDirection.Buy:
                         //Buy limit seeks lowest price
-                        if (marketDataMinPrice < order.Price) {
+                        if (marketDataMinPrice < order.Price) 
+                        {   
+                            //Set order fill:
                             order.Status = OrderStatus.Filled;
                             order.Price = security.Price;
                         }
                         break;
                     case OrderDirection.Sell:
                         //Sell limit seeks highest price possible
-                        if (marketDataMaxPrice > order.Price) {
+                        if (marketDataMaxPrice > order.Price) 
+                        {
                             order.Status = OrderStatus.Filled;
                             order.Price = security.Price;
                         }
                         break;
                 }
 
-            } catch (Exception err) {
+                if (order.Status == OrderStatus.Filled || order.Status == OrderStatus.PartiallyFilled)
+                {
+                    fill.FillQuantity = order.Quantity;
+                    fill.FillPrice = security.Price;
+                    fill.Status = order.Status;
+                }
+            } 
+            catch (Exception err) 
+            {
                 Log.Error("SecurityTransactionModel.TransOrderDirection.LimitFill(): " + err.Message);
             }
+            return fill;
         }
 
 
@@ -201,7 +251,8 @@ namespace QuantConnect.Securities {
         /// <summary>
         /// Default Security Transaction Model - No Fees.
         /// </summary>
-        public virtual decimal GetOrderFee(decimal quantity, decimal price) {
+        public virtual decimal GetOrderFee(decimal quantity, decimal price)
+        {
             return 0;
         }
 
