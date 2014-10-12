@@ -525,7 +525,9 @@ namespace QuantConnect
         /// Liquidated algorithm
         Liquidated,     //5
         /// Algorithm has been deleted
-        Deleted         //6
+        Deleted,        //6
+        /// Algorithm completed running
+        Completed       //7
     }
 
 

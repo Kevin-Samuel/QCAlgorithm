@@ -1282,6 +1282,9 @@
         <member name="F:QuantConnect.AlgorithmStatus.Deleted">
             Algorithm has been deleted
         </member>
+        <member name="F:QuantConnect.AlgorithmStatus.Completed">
+            Algorithm completed running
+        </member>
         <member name="T:QuantConnect.Period">
             <summary>
             enum Period - Enum of all the analysis periods, AS integers. Reference "Period" Array to access the values
