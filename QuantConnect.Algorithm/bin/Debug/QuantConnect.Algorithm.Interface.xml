@@ -32,6 +32,11 @@
             </summary>
             <param name="message">String message</param>
         </member>
+        <member name="M:QuantConnect.IAlgorithm.OnEndOfDay">
+            <summary>
+            Call this method at the end of each day of data.
+            </summary>
+        </member>
         <member name="M:QuantConnect.IAlgorithm.OnEndOfDay(System.String)">
             <summary>
             Call this method at the end of each day of data.

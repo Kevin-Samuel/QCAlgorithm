@@ -414,7 +414,7 @@ namespace QuantConnect.Securities {
         /// <summary>
         /// Calculate the new average price (if buying), and new quantity/profit if selling.
         /// </summary>
-        public virtual void ProcessFill(Order ord, OrderEvent fill) 
+        public virtual void ProcessFill(OrderEvent fill) 
         {
             //Get the required information from the vehicle this order will affect
             decimal feeThisOrder = 0;

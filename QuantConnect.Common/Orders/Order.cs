@@ -154,9 +154,14 @@ namespace QuantConnect {
         public int Id;
 
         /// <summary>
+        /// Order id to process before processing this order.
+        /// </summary>
+        public int ContingentId;
+
+        /// <summary>
         /// Brokerage Id for this order.
         /// </summary>
-        public long BrokerId;
+        public List<long> BrokerId;
 
         /// <summary>
         /// Symbol of the Asset
@@ -243,7 +248,8 @@ namespace QuantConnect {
             this.Status = OrderStatus.None;
             this.Tag = tag;
             this.Duration = OrderDuration.GTC;
-            this.BrokerId = 0;
+            this.BrokerId = new List<long>();
+            this.ContingentId = 0;
         }
     }
 

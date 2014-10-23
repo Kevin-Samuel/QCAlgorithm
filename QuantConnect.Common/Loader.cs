@@ -55,7 +55,8 @@ namespace QuantConnect {
             errorMessage = "";
 
             //First most basic check:
-            if (!File.Exists(assemblyPath)) {
+            if (!File.Exists(assemblyPath)) 
+            {
                 return false;
             }
 
@@ -66,36 +67,48 @@ namespace QuantConnect {
 
                 //Load the assembly:
                 Assembly assembly = Assembly.LoadFrom(assemblyPath);
-
-                //Get all the classes in library
-                Type[] aTypes = assembly.GetTypes();
+                if (assembly == null)
+                {
+                    Log.Error("Loader.CreateInstance(): Assembly is null");
+                    return false;
+                }
 
                 //Get the list of extention classes in the library: 
-                List<string> lTypes = GetExtendedTypeNames(assembly, baseTypeName);
+                List<string> types = GetExtendedTypeNames(assembly, baseTypeName);
+                Log.Trace("Loader.CreateInstance(): Assembly types: " + string.Join(",", types));
 
                 //No extensions, nothing to load.
-                if (lTypes.Count == 0) {
+                if (types.Count == 0)
+                {
+                    Log.Error("Loader.CreateInstance(): Types array empty, no algorithm type found.");
                     return false;
-                } else {
+                } 
+                else
+                {
                     //Load the assembly into this AppDomain:
-                    algorithmInstance = (T)assembly.CreateInstance(lTypes[0], true);
-
+                    algorithmInstance = (T)assembly.CreateInstance(types[0], true);
                     //Load into another appDomain - 10x slower because of serialization.
                     //algorithmInstance = (T)appDomain.CreateInstanceFromAndUnwrap(assemblyPath, lTypes[0]);
                 }
-
-            } catch (ReflectionTypeLoadException err) {
-                Log.Error("QC.Loader.CreateInstance(): " + err.Message);
-                errorMessage = err.InnerException.Message;
-            } catch (Exception err) {
-                Log.Error("QC.Loader.CreateInstance(): " + err.Message);
-                errorMessage = err.InnerException.Message;
+            }
+            catch (ReflectionTypeLoadException err) 
+            {
+                Log.Error("QC.Loader.CreateInstance(1): " + err.LoaderExceptions[0].ToString());
+                if (err.InnerException != null) errorMessage = err.InnerException.Message;
+            } 
+            catch (Exception err)
+            {
+                Log.Error("QC.Loader.CreateInstance(2): " + err.Message);
+                if (err.InnerException != null) errorMessage = err.InnerException.Message;
             }
 
             //Successful load.
-            if (algorithmInstance != null) {
+            if (algorithmInstance != null) 
+            {
                 return true;
-            } else {
+            } 
+            else 
+            {
                 return false;
             }
         }
@@ -143,9 +156,36 @@ namespace QuantConnect {
         /// <param name="baseClassName">Class to instantiate in the library</param>
         /// <returns>String list of types available.</returns>
         public static List<string> GetExtendedTypeNames(Assembly assembly, string baseClassName) {
-            return (from t in assembly.GetTypes()
-                    where t.BaseType.Name == baseClassName && t.Name != baseClassName && t.GetConstructor(Type.EmptyTypes) != null
-                    select t.FullName).ToList();
+            var typeNames = new List<string>();
+            try
+            {
+                Type[] types;
+                try
+                {
+                    types = assembly.GetTypes();
+                }
+                catch (ReflectionTypeLoadException e)
+                {
+                    types = e.Types;
+                }
+
+
+                if (types != null && types.Length > 0)
+                {
+                    typeNames = (from t in types
+                                 where t.IsClass && t.BaseType.Name == baseClassName && t.Name != baseClassName && t.GetConstructor(Type.EmptyTypes) != null
+                                 select t.FullName).ToList();
+                }
+                else
+                {
+                    Log.Error("API.GetExtendedTypeNames(): No types found in assembly.");
+                }
+            }
+            catch (Exception err)
+            {
+                Log.Error("API.GetExtendedTypeNames(): " + err.Message + " Inner: " + err.InnerException );
+            }
+            return typeNames;
         }
 
 

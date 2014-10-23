@@ -1849,6 +1849,11 @@
             Order ID.
             </summary>
         </member>
+        <member name="F:QuantConnect.Order.ContingentId">
+            <summary>
+            Order id to process before processing this order.
+            </summary>
+        </member>
         <member name="F:QuantConnect.Order.BrokerId">
             <summary>
             Brokerage Id for this order.
@@ -3060,7 +3065,7 @@
             A Security affect on buying power = holdings / leverage.
             </summary>
         </member>
-        <member name="M:QuantConnect.Securities.SecurityPortfolioManager.ProcessFill(QuantConnect.Order,QuantConnect.OrderEvent)">
+        <member name="M:QuantConnect.Securities.SecurityPortfolioManager.ProcessFill(QuantConnect.OrderEvent)">
             <summary>
             Calculate the new average price (if buying), and new quantity/profit if selling.
             </summary>

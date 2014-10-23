@@ -232,6 +232,11 @@ namespace QuantConnect  {
         /// <summary>
         /// Call this method at the end of each day of data.
         /// </summary>
+        void OnEndOfDay();
+
+        /// <summary>
+        /// Call this method at the end of each day of data.
+        /// </summary>
         void OnEndOfDay(string symbol);
 
         /// <summary>

@@ -348,6 +348,14 @@ namespace QuantConnect
         /// <summary>
         /// Call this method at the end of the algorithm day (or multiple times if trading multiple assets).
         /// </summary>
+        public virtual void OnEndOfDay()
+        {
+
+        }
+
+        /// <summary>
+        /// Call this method at the end of the algorithm day (or multiple times if trading multiple assets).
+        /// </summary>
         public virtual void OnEndOfDay(string symbol) 
         {
             
