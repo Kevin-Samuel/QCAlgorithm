@@ -17,50 +17,56 @@
         </member>
         <member name="M:QuantConnect.QCAlgorithm.Initialize">
             <summary>
-            Initialise the data and resolution requiredv 
+            Initialise the data and resolution required
             </summary>
+            <remarks>AutoComplete: Initialize</remarks>
         </member>
         <member name="M:QuantConnect.QCAlgorithm.OnTradeBar(System.Collections.Generic.Dictionary{System.String,QuantConnect.Models.TradeBar})">
             <summary>
-            DEPRECATED - v1.0 TRADEBAR EVENT HANDLER
-            New data routine: handle new data packets. Algorithm starts here..
+            Event - DEPRECATED - v1.0 TRADEBAR EVENT HANDLER. Handle new data packets.
             </summary>
             <param name="data">Dictionary of MarketData Objects</param>
+            <remarks>AutoComplete: OnTradeBar</remarks>
         </member>
         <member name="M:QuantConnect.QCAlgorithm.OnTick(System.Collections.Generic.Dictionary{System.String,System.Collections.Generic.List{QuantConnect.Models.Tick}})">
             <summary>
-            DEPRECATED - v1.0 TICK EVENT HANDLER
-            Handle a new incoming Tick Packet:
+            Event - DEPRECATED - v1.0 TICK EVENT HANDLER. Handle a new incoming Tick Packet:
             </summary>
             <param name="data">Ticks arriving at the same moment come in a list. Because the "tick" data is actually list ordered within a second, you can get lots of ticks at once.</param>
+            <remarks>AutoComplete: OnTick</remarks>
         </member>
         <member name="M:QuantConnect.QCAlgorithm.OnEndOfDay">
             <summary>
-            Call this method at the end of the algorithm day (or multiple times if trading multiple assets).
+            Event - Call this method at the end of the algorithm day (or multiple times if trading multiple assets).
             </summary>
+            <remarks>AutoComplete: OnEndOfDay()</remarks>
         </member>
         <member name="M:QuantConnect.QCAlgorithm.OnEndOfDay(System.String)">
             <summary>
-            Call this method at the end of the algorithm day (or multiple times if trading multiple assets).
+            Event - Call this method at the end of the algorithm day (or multiple times if trading multiple assets).
             </summary>
             <param name="symbol">End of day for this symbol string</param>
+            <remarks>AutoComplete: OnEndOfDay</remarks>
         </member>
         <member name="M:QuantConnect.QCAlgorithm.OnEndOfAlgorithm">
             <summary>
-            Call this at the end of the algorithm running.
+            Event - Call this at the end of the algorithm running.
             </summary>
+            <remarks>AutoComplete: OnEndOfAlgorithm</remarks>
         </member>
         <member name="M:QuantConnect.QCAlgorithm.OnOrderEvent(QuantConnect.OrderEvent)">
             <summary>
-            Order event - fill, update, cancel, etc. When an order is update the events is passed in here:
+            Event - Order - Fill, update, cancel, etc. When an order is update the events is passed in here:
             </summary>
             <param name="orderEvent">Details of the order</param>
+            <remarks>AutoComplete: OnOrderEvent</remarks>
         </member>
         <member name="M:QuantConnect.QCAlgorithm.AddChart(QuantConnect.Chart)">
             <summary>
             Add a Chart object to algorithm collection
             </summary>
             <param name="chart">Chart object to add to collection.</param>
+            <remarks>AutoComplete: AddChart(Chart chart)</remarks>
         </member>
         <member name="M:QuantConnect.QCAlgorithm.Plot(System.String,System.Decimal)">
             <summary>
@@ -68,51 +74,61 @@
             </summary>
             <param name="series">Name of the plot series</param>
             <param name="value">Value to plot</param>
+            <remarks>AutoComplete: Plot(string series, decimal value)</remarks>
         </member>
         <member name="M:QuantConnect.QCAlgorithm.Record(System.String,System.Int32)">
             <summary>
             Plot a chart using string series name, with int value. Alias of Plot();
             </summary>
+            <remarks>AutoComplete: Record(string series, int value)</remarks>
         </member>
         <member name="M:QuantConnect.QCAlgorithm.Record(System.String,System.Double)">
             <summary>
             Plot a chart using string series name, with double value. Alias of Plot();
             </summary>
+            <remarks>AutoComplete: Record(string series, double value)</remarks>
         </member>
         <member name="M:QuantConnect.QCAlgorithm.Record(System.String,System.Decimal)">
             <summary>
             Plot a chart using string series name, with decimal value. Alias of Plot();
             </summary>
+            <remarks>AutoComplete: Record(string series, decimal value)</remarks>
         </member>
         <member name="M:QuantConnect.QCAlgorithm.Plot(System.String,System.Double)">
             <summary>
             Plot a chart using string series name, with double value.
             </summary>
+            <remarks>AutoComplete: Plot(string series, double value)</remarks>
         </member>
         <member name="M:QuantConnect.QCAlgorithm.Plot(System.String,System.Int32)">
             <summary>
             Plot a chart using string series name, with int value.
             </summary>
+            <remarks>AutoComplete: Plot(string series, int value)</remarks>
         </member>
         <member name="M:QuantConnect.QCAlgorithm.Plot(System.String,System.Single)">
              <summary>
             Plot a chart using string series name, with float value.
              </summary>
+             <remarks>AutoComplete: Plot(string series, float value)</remarks>
         </member>
         <member name="M:QuantConnect.QCAlgorithm.Plot(System.String,System.String,System.Double)">
             <summary>
             Plot a chart to string chart name, using string series name, with double value.
             </summary>
+            <remarks>AutoComplete: Plot(string series, double value)</remarks>
         </member>
         <member name="M:QuantConnect.QCAlgorithm.Plot(System.String,System.String,System.Int32)">
             <summary>
             Plot a chart to string chart name, using string series name, with int value
             </summary>
+            <remarks>AutoComplete: Plot(string chart, string series, int value)</remarks>
         </member>
         <member name="M:QuantConnect.QCAlgorithm.Plot(System.String,System.String,System.Single)">
             <summary>
             Plot a chart to string chart name, using string series name, with float value
             </summary>
+            <remarks>AutoComplete: Plot(string chart, string series, float value)</remarks>
         </member>
         <member name="M:QuantConnect.QCAlgorithm.Plot(System.String,System.String,System.Decimal)">
             <summary>
@@ -121,12 +137,14 @@
             <param name="chart">Chart name</param>
             <param name="series">Series name</param>
             <param name="value">Value of the point</param>
+            <remarks>AutoComplete: Plot(string chart, string series, decimal value)</remarks>
         </member>
         <member name="M:QuantConnect.QCAlgorithm.SetDateTime(System.DateTime)">
             <summary>
             QC.Engine Use Only: Set the current datetime frontier: the most forward looking tick so far. This is used by backend to advance time. Do not modify
             </summary>
             <param name="frontier">Current datetime.</param>
+            <remarks>AutoComplete: SetDateTime(DateTime start)</remarks>
         </member>
         <member name="M:QuantConnect.QCAlgorithm.SetRunMode(QuantConnect.RunMode)">
             <summary>
@@ -134,24 +152,28 @@
             Automatic will analyse the selected data, and if you selected only minute data we'll select series for you.
             </summary>
             <param name="mode">Enum RunMode with options Series, Parallel or Automatic. Automatic scans your requested symbols and resolutions and makes a decision on the fastest analysis</param>
+            <remarks>AutoComplete: SetRunMode(RunMode mode)</remarks>
         </member>
         <member name="M:QuantConnect.QCAlgorithm.SetCash(System.Double)">
             <summary>
             Set Initial Cash for the Strategy. Alias of SetCash(decimal)
             </summary>
             <param name="startingCash">Double starting cash</param>
+            <remarks>AutoComplete: SetCash(double startingCash)</remarks>
         </member>
         <member name="M:QuantConnect.QCAlgorithm.SetCash(System.Int32)">
             <summary>
             Alias of SetCash(decimal)
             </summary>
             <param name="startingCash">Int starting cash</param>
+            <remarks>AutoComplete: SetCash(int startingCash)</remarks>
         </member>
         <member name="M:QuantConnect.QCAlgorithm.SetCash(System.Decimal)">
             <summary>
             Set the requested balance to launch this algorithm
             </summary>
             <param name="startingCash">Minimum required cash</param>
+            <remarks>AutoComplete: SetCash(decimal startingCash)</remarks>
         </member>
         <member name="M:QuantConnect.QCAlgorithm.SetRuntimeStatistic(System.String,System.String)">
             <summary>
@@ -159,6 +181,7 @@
             </summary>
             <param name="name">Name of your runtime statistic</param>
             <param name="value">String value of your runtime statistic</param>
+            <remarks>AutoComplete: SetRuntimeStatistic(string name, string value)</remarks>
         </member>
         <member name="M:QuantConnect.QCAlgorithm.SetRuntimeStatistic(System.String,System.Decimal)">
             <summary>
@@ -166,6 +189,7 @@
             </summary>
             <param name="name">Name of your runtime statistic</param>
             <param name="value">Decimal value of your runtime statistic</param>
+            <remarks>AutoComplete: SetRuntimeStatistic(string name, decimal value)</remarks>
         </member>
         <member name="M:QuantConnect.QCAlgorithm.SetRuntimeStatistic(System.String,System.Int32)">
             <summary>
@@ -173,6 +197,7 @@
             </summary>
             <param name="name">Name of your runtime statistic</param>
             <param name="value">Int value of your runtime statistic</param>
+            <remarks>AutoComplete: SetRuntimeStatistic(string name, int value)</remarks>
         </member>
         <member name="M:QuantConnect.QCAlgorithm.SetRuntimeStatistic(System.String,System.Double)">
             <summary>
@@ -180,6 +205,7 @@
             </summary>
             <param name="name">Name of your runtime statistic</param>
             <param name="value">Double value of your runtime statistic</param>
+            <remarks>AutoComplete: SetRuntimeStatistic(string name, double value)</remarks>
         </member>
         <member name="M:QuantConnect.QCAlgorithm.SetStartDate(System.Int32,System.Int32,System.Int32)">
             <summary>
@@ -189,6 +215,7 @@
             <param name="day">Int starting date 1-30</param>
             <param name="month">Int month starting date</param>
             <param name="year">Int year starting date</param>
+            <remarks>AutoComplete: SetStartDate(int year, int month, int day)</remarks>
         </member>
         <member name="M:QuantConnect.QCAlgorithm.SetEndDate(System.Int32,System.Int32,System.Int32)">
             <summary>
@@ -197,12 +224,14 @@
             <param name="day">Int end date 1-30</param>
             <param name="month">Int month end date</param>
             <param name="year">Int year end date</param>
+            <remarks>AutoComplete: SetEndDate(int year, int month, int day)</remarks>
         </member>
         <member name="M:QuantConnect.QCAlgorithm.SetAlgorithmId(System.String)">
             <summary>
             QC.Engine Use Only: Set the algorithm id (backtestId or deployId).
             </summary>
             <param name="algorithmId">String Algorithm Id</param>
+            <remarks>AutoComplete: SetAlgorithmId(string algorithmId)</remarks>
         </member>
         <member name="M:QuantConnect.QCAlgorithm.SetStartDate(System.DateTime)">
             <summary>
@@ -210,29 +239,34 @@
             Must be less than end date and within data available
             </summary>
             <param name="start">Datetime start date</param>
+            <remarks>AutoComplete: SetStartDate(DateTime start)</remarks>
         </member>
         <member name="M:QuantConnect.QCAlgorithm.SetEndDate(System.DateTime)">
             <summary>
             Set the end date for a backtest. Must be greater than the start date
             </summary>
             <param name="end">End datetime</param>
+            <remarks>AutoComplete: SetEndDate(DateTime end)</remarks>
         </member>
         <member name="M:QuantConnect.QCAlgorithm.SetLocked">
             <summary>
             QC.Engine Use Only: Lock the algorithm initialization to avoid messing with cash and data streams.
             </summary>
+            <remarks>AutoComplete: SetLocked()</remarks>
         </member>
         <member name="M:QuantConnect.QCAlgorithm.SetLiveMode(System.Boolean)">
             <summary>
             QC.Engine Use Only: Set live mode state, are we running on a live servers.
             </summary>
             <param name="live">Bool Live mode flag</param>
+            <remarks>AutoComplete: SetLiveMode(bool live)</remarks>
         </member>
         <member name="M:QuantConnect.QCAlgorithm.GetChartUpdates">
             <summary>
             QC.Engine Use Only: Get the chart updates: fetch the recent points added and return for dynamic plotting.
             </summary>
             <returns>List of chart updates since the last request</returns>
+            <remarks>AutoComplete: GetChartUpdates()</remarks>
         </member>
         <member name="M:QuantConnect.QCAlgorithm.AddSecurity(QuantConnect.SecurityType,System.String,QuantConnect.Resolution,System.Boolean,System.Boolean)">
             <summary>
@@ -242,6 +276,8 @@
             <param name="symbol">Symbol Reference for the MarketType</param>
             <param name="resolution">Resolution of the Data Required</param>
             <param name="fillDataForward">When no data available on a tradebar, return the last data that was generated</param>
+            <param name="extendedMarketHours">Show the after market data as well</param>
+            <remarks>AutoComplete: AddSecurity(SecurityType securityType, string symbol, Resolution resolution = Resolution.Minute, bool fillDataForward = true, bool extendedMarketHours = false)</remarks>
         </member>
         <member name="M:QuantConnect.QCAlgorithm.AddSecurity(QuantConnect.SecurityType,System.String,QuantConnect.Resolution,System.Boolean,System.Decimal,System.Boolean)">
             <summary>
@@ -252,6 +288,8 @@
             <param name="resolution">Resolution of the Data Required</param>
             <param name="fillDataForward">When no data available on a tradebar, return the last data that was generated</param>
             <param name="leverage">Custom leverage per security</param>
+            <param name="extendedMarketHours">Extended market hours</param>
+            <remarks>AutoComplete: AddSecurity(SecurityType securityType, string symbol, Resolution resolution, bool fillDataForward, decimal leverage, bool extendedMarketHours)</remarks>
         </member>
         <!-- Badly formed XML comment ignored for member "M:QuantConnect.QCAlgorithm.AddData``1(System.String,QuantConnect.Resolution)" -->
         <member name="M:QuantConnect.QCAlgorithm.Buy(System.String,System.Int32)">
@@ -260,6 +298,7 @@
             </summary>
             <param name="symbol">string Symbol of the asset to trade</param>
             <param name="quantity">int Quantity of the asset to trade</param>
+            <remarks>AutoComplete: Buy(string symbol, int quantity)</remarks>
         </member>
         <member name="M:QuantConnect.QCAlgorithm.Buy(System.String,System.Double)">
             <summary>
@@ -267,6 +306,7 @@
             </summary>
             <param name="symbol">string Symbol of the asset to trade</param>
             <param name="quantity">double Quantity of the asset to trade</param>
+            <remarks>AutoComplete: Buy(string symbol, double quantity)</remarks>
         </member>
         <member name="M:QuantConnect.QCAlgorithm.Buy(System.String,System.Decimal)">
             <summary>
@@ -274,6 +314,7 @@
             </summary>
             <param name="symbol">string Symbol of the asset to trade</param>
             <param name="quantity">decimal Quantity of the asset to trade</param>
+            <remarks>AutoComplete: Buy(string symbol, decimal quantity)</remarks>
         </member>
         <member name="M:QuantConnect.QCAlgorithm.Buy(System.String,System.Single)">
             <summary>
@@ -281,6 +322,7 @@
             </summary>
             <param name="symbol">string Symbol of the asset to trade</param>
             <param name="quantity">float Quantity of the asset to trade</param>
+            <remarks>AutoComplete: Buy(string symbol, float quantity)</remarks>
         </member>
         <member name="M:QuantConnect.QCAlgorithm.Sell(System.String,System.Int32)">
             <summary>
@@ -288,31 +330,37 @@
             </summary>
             <param name="symbol">string Symbol of the asset to trade</param>
             <param name="quantity">int Quantity of the asset to trade</param>
+            <remarks>AutoComplete: Sell(string symbol, int quantity)</remarks>
         </member>
         <member name="M:QuantConnect.QCAlgorithm.Sell(System.String,System.Double)">
             <summary>
             Sell stock (alias of Order)
             </summary>
+            <remarks>AutoComplete: Sell(string symbol, double quantity)</remarks>
         </member>
         <member name="M:QuantConnect.QCAlgorithm.Sell(System.String,System.Single)">
             <summary>
             Sell stock (alias of Order)
             </summary>
+            <remarks>AutoComplete: Sell(string symbol, float quantity)</remarks>
         </member>
         <member name="M:QuantConnect.QCAlgorithm.Sell(System.String,System.Decimal)">
             <summary>
             Sell stock (alias of Order)
             </summary>
+            <remarks>AutoComplete: Sell(string symbol, decimal quantity)</remarks>
         </member>
         <member name="M:QuantConnect.QCAlgorithm.Order(System.String,System.Double,QuantConnect.OrderType)">
             <summary>
             Issue an order/trade for asset: Alias wrapper for Order(string, int);
             </summary>
+            <remarks>AutoComplete: Order(string symbol, double quantity, OrderType type = OrderType.Market) </remarks>
         </member>
         <member name="M:QuantConnect.QCAlgorithm.Order(System.String,System.Decimal,QuantConnect.OrderType)">
             <summary>
             Issue an order/trade for asset: Alias wrapper for Order(string, int);
             </summary>
+            <remarks>AutoComplete: Order(string symbol, decimal quantity, OrderType type = OrderType.Market)</remarks>
         </member>
         <member name="M:QuantConnect.QCAlgorithm.Order(System.String,System.Int32,QuantConnect.OrderType,System.Boolean,System.String)">
             <summary>
@@ -323,6 +371,7 @@
             <param name="quantity">Number of shares to request.</param>
             <param name="asynchronous">Send the order asynchrously (false). Otherwise we'll block until it fills</param>
             <param name="tag">Place a custom order property or tag (e.g. indicator data).</param>
+            <remarks>AutoComplete: Order(string symbol, int quantity, OrderType type = OrderType.Market, bool asynchronous = false, string tag = "")</remarks>
         </member>
         <member name="M:QuantConnect.QCAlgorithm.Liquidate(System.String)">
             <summary>
@@ -330,6 +379,7 @@
             </summary>
             <param name="symbolToLiquidate">Symbols we wish to liquidate</param>
             <returns>Array of order ids for liquidated symbols</returns>
+            <remarks>Liquidate(string symbolToLiquidate = "")</remarks>
         </member>
         <member name="M:QuantConnect.QCAlgorithm.SetHoldings(System.String,System.Double,System.Boolean)">
             <summary>
@@ -338,6 +388,7 @@
             <param name="symbol">string symbol we wish to hold</param>
             <param name="percentage">double percentage of holdings desired</param>
             <param name="liquidateExistingHoldings">liquidate existing holdings if neccessary to hold this stock</param>
+            <remarks>SetHoldings(string symbol, double percentage, bool liquidateExistingHoldings = false)</remarks>
         </member>
         <member name="M:QuantConnect.QCAlgorithm.SetHoldings(System.String,System.Single,System.Boolean)">
             <summary>
@@ -346,14 +397,16 @@
             <param name="symbol">string symbol we wish to hold</param>
             <param name="percentage">float percentage of holdings desired</param>
             <param name="liquidateExistingHoldings">bool liquidate existing holdings if neccessary to hold this stock</param>
+            <remarks>SetHoldings(string symbol, float percentage, bool liquidateExistingHoldings = false)</remarks>
         </member>
         <member name="M:QuantConnect.QCAlgorithm.SetHoldings(System.String,System.Int32,System.Boolean)">
             <summary>
             Alias for SetHoldings to avoid the M-decimal errors.
             </summary>
             <param name="symbol">string symbol we wish to hold</param>
-            <param name="percentage">double percentage of holdings desired</param>
-            <param name="liquidateExistingHoldings">liquidate existing holdings if neccessary to hold this stock</param>
+            <param name="percentage">float percentage of holdings desired</param>
+            <param name="liquidateExistingHoldings">bool liquidate existing holdings if neccessary to hold this stock</param>
+            <remarks>SetHoldings(string symbol, int percentage, bool liquidateExistingHoldings = false)</remarks>
         </member>
         <member name="M:QuantConnect.QCAlgorithm.SetHoldings(System.String,System.Decimal,System.Boolean)">
             <summary>
@@ -363,135 +416,139 @@
             <param name="symbol">   string Symbol indexer</param>
             <param name="percentage">decimal fraction of portfolio to set stock</param>
             <param name="liquidateExistingHoldings">bool flag to clean all existing holdings before setting new faction.</param>
+            <remarks>SetHoldings(string symbol, decimal percentage, bool liquidateExistingHoldings = false)</remarks>
         </member>
         <member name="M:QuantConnect.QCAlgorithm.Debug(System.String)">
             <summary>
             Send a debug message to the console:
             </summary>
             <param name="message">Message to send to debug console</param>
+            <remarks>Debug(string message)</remarks>
         </member>
         <member name="M:QuantConnect.QCAlgorithm.Log(System.String)">
             <summary>
             Added another method for logging if user guessed.
             </summary>
             <param name="message">String message to log.</param>
+            <remarks>Log(string message)</remarks>
         </member>
         <member name="M:QuantConnect.QCAlgorithm.Error(System.String)">
             <summary>
             Send Error Message to the Console.
             </summary>
             <param name="message">Message to display in errors grid</param>
+            <remarks>Error(string message)</remarks>
         </member>
         <member name="M:QuantConnect.QCAlgorithm.Quit(System.String)">
             <summary>
             Terminate the algorithm on exiting the current event processor.
             </summary>
             <param name="message">Exit message</param>
+            <remarks>Quit(string message)</remarks>
         </member>
         <member name="M:QuantConnect.QCAlgorithm.SetQuit(System.Boolean)">
             <summary>
             QC.Engine Use Only: Set the Quit Flag
             </summary>
             <param name="quit">Boolean quit state</param>
+            <remarks>SetQuit(bool quitState)</remarks>
         </member>
         <member name="M:QuantConnect.QCAlgorithm.GetQuit">
             <summary>
             QC.Engine Use Only: Get the quit flag state.
             </summary>
-            <remarks>AutoComplete: GetQuit</remarks>
+            <remarks>AutoComplete: GetQuit()</remarks>
             <returns>Boolean true if set to quit event loop.</returns>
         </member>
         <member name="P:QuantConnect.QCAlgorithm.Securities">
             <summary>
             Security Object Collection
             </summary>
+            <remarks>AutoComplete: Securities</remarks>
         </member>
         <member name="P:QuantConnect.QCAlgorithm.Portfolio">
             <summary>
             Portfolio Adaptor/Wrapper: Easy access to securities holding properties:
             </summary>
+            <remarks>AutoComplete: Portfolio["symbol"]</remarks>
         </member>
         <member name="P:QuantConnect.QCAlgorithm.Transactions">
             <summary>
             Transaction Manager - Process transaction fills and order management.
             </summary>
+            <remarks>AutoComplete: Transactions</remarks>
         </member>
         <member name="P:QuantConnect.QCAlgorithm.SubscriptionManager">
             <summary>
             Generic Data Manager - Required for compiling all data feeds in order,
             and passing them into algorithm event methods.
             </summary>
+            <remarks>AutoComplete: SubscriptionManager</remarks>
         </member>
         <member name="P:QuantConnect.QCAlgorithm.Name">
             <summary>
             Set a public name for the algorithm.
             </summary>
+            <remarks>AutoComplete: Name</remarks>
         </member>
         <member name="P:QuantConnect.QCAlgorithm.ProcessingOrder">
             <summary>
             Wait semaphore to signal the algoritm is currently processing a synchronous order.
             </summary>
+            <remarks>AutoComplete: ProcessingOrder</remarks>
         </member>
         <member name="P:QuantConnect.QCAlgorithm.Time">
             <summary>
-            Get the current date/time.
+            Get the current algorithm date/time.
             </summary>
+            <remarks>AutoComplete: Time</remarks>
         </member>
         <member name="P:QuantConnect.QCAlgorithm.StartDate">
             <summary>
             Get requested algorithm start date set with SetStartDate()
             </summary>
+            <remarks>AutoComplete: StartDate</remarks>
         </member>
         <member name="P:QuantConnect.QCAlgorithm.EndDate">
             <summary>
             Get requested algorithm end date set with SetEndDate()
             </summary>
+            <remarks>AutoComplete: EndDate</remarks>
         </member>
         <member name="P:QuantConnect.QCAlgorithm.AlgorithmId">
             <summary>
-            Algorithm Id for this Backtest
+            Algorithm Id for this Backtest / Live Run
             </summary>
+            <remarks>AutoComplete: AlgorithmId</remarks>
         </member>
-        <member name="P:QuantConnect.QCAlgorithm.Orders">
-            <summary>
-            Accessor for Filled Orders:
-            </summary>
-        </member>
+        <!-- Badly formed XML comment ignored for member "P:QuantConnect.QCAlgorithm.Orders" -->
         <member name="P:QuantConnect.QCAlgorithm.RunMode">
             <summary>
             [DEPRECATED] Server setup RunMode for the Algorithm: Automatic, Parallel or Series.
             </summary>
+            <remarks>AutoComplete: RunMode</remarks>
         </member>
         <member name="P:QuantConnect.QCAlgorithm.Locked">
             <summary>
-            Check if the algorithm is locked from any further init changes.
+            bool Check if the algorithm is locked from any further init changes.
             </summary>
+            <remarks>AutoComplete: Locked</remarks>
         </member>
         <member name="P:QuantConnect.QCAlgorithm.LiveMode">
             <summary>
-            Algorithm is Live.
+            Bool Algorithm is Live.
             </summary>
+            <remarks>AutoComplete: LiveMode</remarks>
         </member>
-        <member name="P:QuantConnect.QCAlgorithm.DebugMessages">
-            <summary>
-            Get the debug messages from inner list
-            </summary>
-        </member>
-        <member name="P:QuantConnect.QCAlgorithm.LogMessages">
-            <summary>
-            Downloadable large scale messaging systems
-            </summary>
-        </member>
+        <!-- Badly formed XML comment ignored for member "P:QuantConnect.QCAlgorithm.DebugMessages" -->
+        <!-- Badly formed XML comment ignored for member "P:QuantConnect.QCAlgorithm.LogMessages" -->
         <member name="P:QuantConnect.QCAlgorithm.ErrorMessages">
             <summary>
             Catchable Error List.
             </summary>
+            <remarks>AutoComplete: ErrorMessages</remarks>
         </member>
-        <member name="P:QuantConnect.QCAlgorithm.RuntimeStatistics">
-            <summary>
-            Access to the runtime statistics property. User provided statistics
-            </summary>
-        </member>
+        <!-- Badly formed XML comment ignored for member "P:QuantConnect.QCAlgorithm.RuntimeStatistics" -->
         <member name="M:QuantConnect.ExchangeDataFilter.Filter(QuantConnect.Securities.Security,QuantConnect.Models.BaseData)">
             <summary>
             Filter out a tick from this vehicle, with this new data:
