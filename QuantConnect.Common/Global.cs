@@ -193,16 +193,16 @@ namespace QuantConnect
         /// </summary>
         /// <param name="time">Time of the chart point</param>
         /// <param name="value">Value of the chart point</param>
-        public void AddPoint(DateTime time, decimal value) 
+        public void AddPoint(DateTime time, decimal value, bool liveMode = false) 
         {
             //Round off the chart values to significant figures:
             double v = ((double)value).RoundToSignificantDigits(5);
 
-            if (Values.Count < 4000)
+            if (Values.Count < 4000 || liveMode)
             {
                 Values.Add(new ChartPoint(time, value));
             } else { 
-                //Cannot add more than 4000 points per chart
+                //Cannot add more than 4000 points per chart unless live mode.
             }
         }
 

@@ -961,7 +961,7 @@
             <param name="name">Name of the chart series</param>
             <param name="type">Type of the chart series</param>
         </member>
-        <member name="M:QuantConnect.Series.AddPoint(System.DateTime,System.Decimal)">
+        <member name="M:QuantConnect.Series.AddPoint(System.DateTime,System.Decimal,System.Boolean)">
             <summary>
             Add a new point to this series:
             </summary>

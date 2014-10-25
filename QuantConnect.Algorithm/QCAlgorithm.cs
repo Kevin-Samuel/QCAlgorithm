@@ -307,7 +307,7 @@ namespace QuantConnect
         /// DEPRECATED - v1.0 TRADEBAR EVENT HANDLER
         /// New data routine: handle new data packets. Algorithm starts here..
         /// </summary>
-        /// <param name="symbols">Dictionary of MarketData Objects</param>
+        /// <param name="data">Dictionary of MarketData Objects</param>
         public virtual void OnTradeBar(Dictionary<string, TradeBar> data)
         {
             //Algorithm Implementation
@@ -318,7 +318,7 @@ namespace QuantConnect
         /// DEPRECATED - v1.0 TICK EVENT HANDLER
         /// Handle a new incoming Tick Packet:
         /// </summary>
-        /// <param name="ticks">Ticks arriving at the same moment come in a list. Because the "tick" data is actually list ordered within a second, you can get lots of ticks at once.</param>
+        /// <param name="data">Ticks arriving at the same moment come in a list. Because the "tick" data is actually list ordered within a second, you can get lots of ticks at once.</param>
         public virtual void OnTick(Dictionary<string, List<Tick>> data)
         {
             //Algorithm Implementation
@@ -356,6 +356,7 @@ namespace QuantConnect
         /// <summary>
         /// Call this method at the end of the algorithm day (or multiple times if trading multiple assets).
         /// </summary>
+        /// <param name="symbol">End of day for this symbol string</param>
         public virtual void OnEndOfDay(string symbol) 
         {
             
@@ -379,10 +380,9 @@ namespace QuantConnect
         }
 
         /// <summary>
-        /// Add this chart to our collection
+        /// Add a Chart object to algorithm collection
         /// </summary>
-        /// <param name="name">string name of our chart</param>
-        /// <param name="chart">chart object</param>
+        /// <param name="chart">Chart object to add to collection.</param>
         public void AddChart(Chart chart)
         {
             if (!_charts.ContainsKey(chart.Name))
@@ -392,7 +392,7 @@ namespace QuantConnect
         }
 
         /// <summary>
-        /// Plot using a default chart name.
+        /// Plot a chart using string series name, with value.
         /// </summary>
         /// <param name="series">Name of the plot series</param>
         /// <param name="value">Value to plot</param>
@@ -404,7 +404,7 @@ namespace QuantConnect
 
 
         /// <summary>
-        /// Alias of Plot();
+        /// Plot a chart using string series name, with int value. Alias of Plot();
         /// </summary>
         public void Record(string series, int value)
         {
@@ -412,7 +412,7 @@ namespace QuantConnect
         }
 
         /// <summary>
-        /// Alias of Plot();
+        /// Plot a chart using string series name, with double value. Alias of Plot();
         /// </summary>
         public void Record(string series, double value)
         {
@@ -420,7 +420,7 @@ namespace QuantConnect
         }
 
         /// <summary>
-        /// Alias of Plot();
+        /// Plot a chart using string series name, with decimal value. Alias of Plot();
         /// </summary>
         public void Record(string series, decimal value)
         {
@@ -429,14 +429,14 @@ namespace QuantConnect
         }
 
         /// <summary>
-        /// Wrapper for Plot String-Decimal
+        /// Plot a chart using string series name, with double value.
         /// </summary>
         public void Plot(string series, double value) {
             this.Plot(series, (decimal)value);
         }
 
         /// <summary>
-        /// Wrapper for Plot String-Decimal
+        /// Plot a chart using string series name, with int value.
         /// </summary>
         public void Plot(string series, int value)
         {
@@ -444,7 +444,7 @@ namespace QuantConnect
         }
 
         /// <summary>
-        /// Wrapper for Plot String-Decimal
+        ///Plot a chart using string series name, with float value.
         /// </summary>
         public void Plot(string series, float value)
         {
@@ -452,7 +452,7 @@ namespace QuantConnect
         }
 
         /// <summary>
-        /// Alias of Plot-Chart-Series-Value
+        /// Plot a chart to string chart name, using string series name, with double value.
         /// </summary>
         public void Plot(string chart, string series, double value)
         {
@@ -460,7 +460,7 @@ namespace QuantConnect
         }
 
         /// <summary>
-        /// Alias of Plot-Chart-Series-Value
+        /// Plot a chart to string chart name, using string series name, with int value
         /// </summary>
         public void Plot(string chart, string series, int value)
         {
@@ -468,7 +468,7 @@ namespace QuantConnect
         }
 
         /// <summary>
-        /// Alias of Plot-Chart-Series-Value
+        /// Plot a chart to string chart name, using string series name, with float value
         /// </summary>
         public void Plot(string chart, string series, float value)
         {
@@ -476,7 +476,7 @@ namespace QuantConnect
         }
 
         /// <summary>
-        /// Plot a value to a chart. If chart does not exist, create it:
+        /// Plot a value to a chart of string-chart name, with string series name, and decimal value. If chart does not exist, create it.
         /// </summary>
         /// <param name="chart">Chart name</param>
         /// <param name="series">Series name</param>
@@ -510,9 +510,9 @@ namespace QuantConnect
                 _charts[chart].AddSeries(new Series(series));
             }
 
-            if (_charts[chart].Series[series].Values.Count < 4000)
+            if (_charts[chart].Series[series].Values.Count < 4000 || _liveMode)
             {
-                _charts[chart].Series[series].AddPoint(Time, value);
+                _charts[chart].Series[series].AddPoint(Time, value, _liveMode);
             }
             else 
             {
@@ -521,7 +521,7 @@ namespace QuantConnect
         }
 
         /// <summary>
-        /// Set the current datetime frontier: the most forward looking tick so far. This is used by backend to advance time. Do not modify
+        /// QC.Engine Use Only: Set the current datetime frontier: the most forward looking tick so far. This is used by backend to advance time. Do not modify
         /// </summary>
         /// <param name="frontier">Current datetime.</param>
         public void SetDateTime(DateTime frontier) 
@@ -538,7 +538,7 @@ namespace QuantConnect
         {
             if (mode == QuantConnect.RunMode.Parallel)
             {
-                Debug("Algorithm.SetRunMode(): RunMode-Parallel Type has been deprecated. Please use series analysis instead");
+                Debug("Algorithm.SetRunMode(): RunMode-Parallel Type has been deprecated. Series analysis selected instead");
                 mode = QuantConnect.RunMode.Series;
             }
             return;
@@ -546,8 +546,9 @@ namespace QuantConnect
 
 
         /// <summary>
-        /// Alias of SetCash(decimal)
+        /// Set Initial Cash for the Strategy. Alias of SetCash(decimal)
         /// </summary>
+        /// <param name="startingCash">Double starting cash</param>
         public void SetCash(double startingCash) {
             this.SetCash((decimal)startingCash);
         }
@@ -555,6 +556,7 @@ namespace QuantConnect
         /// <summary>
         /// Alias of SetCash(decimal)
         /// </summary>
+        /// <param name="startingCash">Int starting cash</param>
         public void SetCash(int startingCash)
         {
             this.SetCash((decimal)startingCash);
@@ -579,8 +581,8 @@ namespace QuantConnect
         /// <summary>
         /// Set a runtime statistic for the algorithm,
         /// </summary>
-        /// <param name="name"></param>
-        /// <param name="value"></param>
+        /// <param name="name">Name of your runtime statistic</param>
+        /// <param name="value">String value of your runtime statistic</param>
         public void SetRuntimeStatistic(string name, string value)
         {
             //If not set, add it to the dictionary:
@@ -596,6 +598,8 @@ namespace QuantConnect
         /// <summary>
         /// Helper wrapper for SetRuntimeStatistic to convert decimals to strings.
         /// </summary>
+        /// <param name="name">Name of your runtime statistic</param>
+        /// <param name="value">Decimal value of your runtime statistic</param>
         public void SetRuntimeStatistic(string name, decimal value)
         {
             SetRuntimeStatistic(name, value.ToString());
@@ -604,6 +608,8 @@ namespace QuantConnect
         /// <summary>
         /// Helper wrapper for SetRuntimeStatistic to convert ints to strings.
         /// </summary>
+        /// <param name="name">Name of your runtime statistic</param>
+        /// <param name="value">Int value of your runtime statistic</param>
         public void SetRuntimeStatistic(string name, int value)
         {
             SetRuntimeStatistic(name, value.ToString());
@@ -612,6 +618,8 @@ namespace QuantConnect
         /// <summary>
         /// Helper wrapper for SetRuntimeStatistic to convert ints to strings.
         /// </summary>
+        /// <param name="name">Name of your runtime statistic</param>
+        /// <param name="value">Double value of your runtime statistic</param>
         public void SetRuntimeStatistic(string name, double value)
         {
             SetRuntimeStatistic(name, value.ToString());
@@ -621,6 +629,9 @@ namespace QuantConnect
         /// Wrapper for SetStartDate(DateTime). Set the start date for backtest.
         /// Must be less than end date.
         /// </summary>
+        /// <param name="day">Int starting date 1-30</param>
+        /// <param name="month">Int month starting date</param>
+        /// <param name="year">Int year starting date</param>
         public void SetStartDate(int year, int month, int day) 
         {
             try 
@@ -636,6 +647,9 @@ namespace QuantConnect
         /// <summary>
         /// Wrapper for SetEndDate(datetime). Set the end backtest date. 
         /// </summary>
+        /// <param name="day">Int end date 1-30</param>
+        /// <param name="month">Int month end date</param>
+        /// <param name="year">Int year end date</param>
         public void SetEndDate(int year, int month, int day) 
         {
             try 
@@ -649,8 +663,9 @@ namespace QuantConnect
         }
 
         /// <summary>
-        /// Set the algorithm id (backtestId or deployId).
+        /// QC.Engine Use Only: Set the algorithm id (backtestId or deployId).
         /// </summary>
+        /// <param name="algorithmId">String Algorithm Id</param>
         public void SetAlgorithmId(string algorithmId)
         {
             _algorithmId = algorithmId;
@@ -691,10 +706,9 @@ namespace QuantConnect
         }
 
         /// <summary>
-        /// Set the end date for a backtest. 
-        /// Must be greater than the start date
+        /// Set the end date for a backtest. Must be greater than the start date
         /// </summary>
-        /// <param name="end"></param>
+        /// <param name="end">End datetime</param>
         public void SetEndDate(DateTime end) 
         { 
             //Validate:
@@ -725,7 +739,7 @@ namespace QuantConnect
         }
 
         /// <summary>
-        /// Lock the algorithm initialization to avoid messing with cash and data streams.
+        /// QC.Engine Use Only: Lock the algorithm initialization to avoid messing with cash and data streams.
         /// </summary>
         public void SetLocked() 
         {
@@ -733,9 +747,9 @@ namespace QuantConnect
         }
 
         /// <summary>
-        /// Set live mode state, are we running on a live servers.
+        /// QC.Engine Use Only: Set live mode state, are we running on a live servers.
         /// </summary>
-        /// <param name="live"></param>
+        /// <param name="live">Bool Live mode flag</param>
         public void SetLiveMode(bool live) 
         {
             if (!_locked)
@@ -745,9 +759,9 @@ namespace QuantConnect
         }
 
         /// <summary>
-        /// Get the chart updates: fetch the recent points added and return for dynamic plotting.
+        /// QC.Engine Use Only: Get the chart updates: fetch the recent points added and return for dynamic plotting.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>List of chart updates since the last request</returns>
         public List<Chart> GetChartUpdates() 
         {
             List<Chart> _updates = new List<Chart>();
@@ -758,8 +772,7 @@ namespace QuantConnect
         }
 
         /// <summary>
-        /// Add specified data to required list. QC will funnel this data to the handle data routine.
-        /// This is a backwards compatibility wrapper function.
+        /// Add specified data to required list. QC will funnel this data to the handle data routine. This is a backwards compatibility wrapper function.
         /// </summary>
         /// <param name="securityType">MarketType Type: Equity, Commodity, Future or FOREX</param>
         /// <param name="symbol">Symbol Reference for the MarketType</param>
@@ -817,10 +830,10 @@ namespace QuantConnect
 
 
         /// <summary>
-        /// Add a new user defined data source, requiring only the minimum config options:
+        /// AddData<typeparam name="T"> a new user defined data source, requiring only the minimum config options:
         /// </summary>
-        /// <param name="type">typeof(Type) data</param>
         /// <param name="symbol">Key/Symbol for data</param>
+        /// <param name="resolution">Resolution of the data</param>
         public void AddData<T>(string symbol, Resolution resolution = Resolution.Second) 
         {
             if (!_locked)
@@ -838,46 +851,56 @@ namespace QuantConnect
 
 
         /// <summary>
-        /// Alias of Order
+        /// Buy Stock (Alias of Order)
         /// </summary>
+        /// <param name="symbol">string Symbol of the asset to trade</param>
+        /// <param name="quantity">int Quantity of the asset to trade</param>
         public int Buy(string symbol, int quantity) {
             return Order(symbol, quantity);
         }
 
         /// <summary>
-        /// Alias of Order
+        /// Buy Stock (Alias of Order)
         /// </summary>
+        /// <param name="symbol">string Symbol of the asset to trade</param>
+        /// <param name="quantity">double Quantity of the asset to trade</param>
         public int Buy(string symbol, double quantity)
         {
             return Order(symbol, quantity);
         }
 
         /// <summary>
-        /// Alias of Order
+        /// Buy Stock (Alias of Order)
         /// </summary>
+        /// <param name="symbol">string Symbol of the asset to trade</param>
+        /// <param name="quantity">decimal Quantity of the asset to trade</param>
         public int Buy(string symbol, decimal quantity)
         {
             return Order(symbol, quantity);
         }
 
         /// <summary>
-        /// Alias of Order
+        /// Buy Stock (Alias of Order)
         /// </summary>
+        /// <param name="symbol">string Symbol of the asset to trade</param>
+        /// <param name="quantity">float Quantity of the asset to trade</param>
         public int Buy(string symbol, float quantity)
         {
             return Order(symbol, quantity);
         }
 
         /// <summary>
-        /// Alias of Order
+        /// Sell stock (alias of Order)
         /// </summary>
+        /// <param name="symbol">string Symbol of the asset to trade</param>
+        /// <param name="quantity">int Quantity of the asset to trade</param>
         public int Sell(string symbol, int quantity) 
         {
             return Order(symbol, quantity);
         }
 
         /// <summary>
-        /// Alias of Order
+        /// Sell stock (alias of Order)
         /// </summary>
         public int Sell(string symbol, double quantity)
         {
@@ -885,7 +908,7 @@ namespace QuantConnect
         }
 
         /// <summary>
-        /// Alias of Order
+        /// Sell stock (alias of Order)
         /// </summary>
         public int Sell(string symbol, float quantity)
         {
@@ -893,7 +916,7 @@ namespace QuantConnect
         }
 
         /// <summary>
-        /// Alias of Order
+        /// Sell stock (alias of Order)
         /// </summary>
         public int Sell(string symbol, decimal quantity)
         {
@@ -901,7 +924,7 @@ namespace QuantConnect
         }
 
         /// <summary>
-        /// Alias wrapper for Order(string, int);
+        /// Issue an order/trade for asset: Alias wrapper for Order(string, int);
         /// </summary>
         public int Order(string symbol, double quantity, OrderType type = OrderType.Market) 
         {
@@ -909,7 +932,7 @@ namespace QuantConnect
         }
 
         /// <summary>
-        /// Alias wrapper for Order(string, int);
+        /// Issue an order/trade for asset: Alias wrapper for Order(string, int);
         /// </summary>
         public int Order(string symbol, decimal quantity, OrderType type = OrderType.Market)
         {
@@ -922,6 +945,8 @@ namespace QuantConnect
         /// <param name="type">Buy/Sell Limit or Market Order Type.</param>
         /// <param name="symbol">Symbol of the MarketType Required.</param>
         /// <param name="quantity">Number of shares to request.</param>
+        /// <param name="asynchronous">Send the order asynchrously (false). Otherwise we'll block until it fills</param>
+        /// <param name="tag">Place a custom order property or tag (e.g. indicator data).</param>
         public int Order(string symbol, int quantity, OrderType type = OrderType.Market, bool asynchronous = false, string tag = "")
         {
             //Add an order to the transacion manager class:
@@ -988,6 +1013,7 @@ namespace QuantConnect
         /// <summary>
         /// Liquidate all holdings. Called at the end of day for tick-strategies.
         /// </summary>
+        /// <param name="symbolToLiquidate">Symbols we wish to liquidate</param>
         /// <returns>Array of order ids for liquidated symbols</returns>
         public List<int> Liquidate(string symbolToLiquidate = "")
         {
@@ -1022,6 +1048,9 @@ namespace QuantConnect
         /// <summary>
         /// Alias for SetHoldings to avoid the M-decimal errors.
         /// </summary>
+        /// <param name="symbol">string symbol we wish to hold</param>
+        /// <param name="percentage">double percentage of holdings desired</param>
+        /// <param name="liquidateExistingHoldings">liquidate existing holdings if neccessary to hold this stock</param>
         public void SetHoldings(string symbol, double percentage, bool liquidateExistingHoldings = false)
         {
             SetHoldings(symbol, (decimal)percentage, liquidateExistingHoldings);
@@ -1030,6 +1059,9 @@ namespace QuantConnect
         /// <summary>
         /// Alias for SetHoldings to avoid the M-decimal errors.
         /// </summary>
+        /// <param name="symbol">string symbol we wish to hold</param>
+        /// <param name="percentage">float percentage of holdings desired</param>
+        /// <param name="liquidateExistingHoldings">bool liquidate existing holdings if neccessary to hold this stock</param>
         public void SetHoldings(string symbol, float percentage, bool liquidateExistingHoldings = false)
         {
             SetHoldings(symbol, (decimal)percentage, liquidateExistingHoldings);
@@ -1038,6 +1070,9 @@ namespace QuantConnect
         /// <summary>
         /// Alias for SetHoldings to avoid the M-decimal errors.
         /// </summary>
+        /// <param name="symbol">string symbol we wish to hold</param>
+        /// <param name="percentage">double percentage of holdings desired</param>
+        /// <param name="liquidateExistingHoldings">liquidate existing holdings if neccessary to hold this stock</param>
         public void SetHoldings(string symbol, int percentage, bool liquidateExistingHoldings = false)
         {
             SetHoldings(symbol, (decimal)percentage, liquidateExistingHoldings);
@@ -1050,7 +1085,6 @@ namespace QuantConnect
         /// <param name="symbol">   string Symbol indexer</param>
         /// <param name="percentage">decimal fraction of portfolio to set stock</param>
         /// <param name="liquidateExistingHoldings">bool flag to clean all existing holdings before setting new faction.</param>
-        /// <returns>void</returns>
         public void SetHoldings(string symbol, decimal percentage, bool liquidateExistingHoldings = false)
         {
             //Error checks:
@@ -1114,7 +1148,7 @@ namespace QuantConnect
         /// <summary>
         /// Added another method for logging if user guessed.
         /// </summary>
-        /// <param name="message"></param>
+        /// <param name="message">String message to log.</param>
         public void Log(string message) 
         {
             if (message == "") return;
@@ -1133,9 +1167,7 @@ namespace QuantConnect
         }
 
         /// <summary>
-        /// Terminate the algorithm on exiting the current event processor. 
-        /// If have holdings at the end of the algorithm/day they will be liquidated at market prices.
-        /// If running a series analysis this command skips the current day (and doesn't liquidate).
+        /// Terminate the algorithm on exiting the current event processor.
         /// </summary>
         /// <param name="message">Exit message</param>
         public void Quit(string message = "") 
@@ -1145,15 +1177,16 @@ namespace QuantConnect
         }
 
         /// <summary>
-        /// Check if the Quit Flag is Set:
+        /// QC.Engine Use Only: Set the Quit Flag
         /// </summary>
+        /// <param name="quit">Boolean quit state</param>
         public void SetQuit(bool quit) 
         {
             _quit = quit;
         }
 
         /// <summary>
-        /// Get the quit flag state.
+        /// QC.Engine Use Only: Get the quit flag state.
         /// </summary>
         /// <returns>Boolean true if set to quit event loop.</returns>
         public bool GetQuit() 
