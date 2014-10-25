@@ -54,7 +54,7 @@ namespace QuantConnect
         /// <summary>
         /// Initialise the Algorithm Test
         /// </summary>
-        /// <![CDATA[autocomplete:{ "caption": "QCAlgorithm()", "value":"QCAlgorithm()", "meta":"constructor" } ]]>
+        /// <![CDATA[{ "caption": "QCAlgorithm()", "value":"QCAlgorithm()", "meta":"constructor" } ]]>
         public QCAlgorithm()
         {
             //Initialise the Algorithm Helper Classes:
@@ -89,7 +89,7 @@ namespace QuantConnect
         /// <summary>
         /// Security Object Collection
         /// </summary>
-        /// <![CDATA[autocomplete:{ "caption": "Securities", "value":"Securities", "meta":"property[class]" } ]]>
+        /// <![CDATA[{ "caption": "Securities", "value":"Securities", "meta":"property[class]" } ]]>
         public SecurityManager Securities
         { 
             get; 
@@ -99,7 +99,7 @@ namespace QuantConnect
         /// <summary>
         /// Portfolio Adaptor/Wrapper: Easy access to securities holding properties:
         /// </summary>
-        /// <![CDATA[autocomplete:{ "caption": "Portfolio", "value":"Portfolio[\"symbol\"]", "meta":"property[class]" } ]]>
+        /// <![CDATA[{ "caption": "Portfolio", "value":"Portfolio[\"symbol\"]", "meta":"property[class]" } ]]>
         public SecurityPortfolioManager Portfolio 
         { 
             get; 
@@ -109,8 +109,8 @@ namespace QuantConnect
         /// <summary>
         /// Transaction Manager - Process transaction fills and order management.
         /// </summary>
-        /// <remarks>AutoComplete: Transactions</remarks>
-        /// <![CDATA[autocomplete:{ "caption": "Transactions", "value":"Transactions", "meta":"property[class]" } ]]>
+        /// <remarks> Transactions</remarks>
+        /// <![CDATA[{ "caption": "Transactions", "value":"Transactions", "meta":"property[class]" } ]]>
         public SecurityTransactionManager Transactions 
         { 
             get; 
@@ -121,7 +121,7 @@ namespace QuantConnect
         /// Generic Data Manager - Required for compiling all data feeds in order,
         /// and passing them into algorithm event methods.
         /// </summary>
-        /// <![CDATA[autocomplete:{ "caption": "SubscriptionManager", "value":"SubscriptionManager", "meta":"property[class]" } ]]>
+        /// <![CDATA[{ "caption": "SubscriptionManager", "value":"SubscriptionManager", "meta":"property[class]" } ]]>
         public SubscriptionManager SubscriptionManager 
         { 
             get; 
@@ -131,8 +131,8 @@ namespace QuantConnect
         /// <summary>
         /// Set a public name for the algorithm.
         /// </summary>
-        /// <remarks>AutoComplete: Name</remarks>
-        /// <![CDATA[autocomplete:{ "caption": "Name", "value":"Name", "meta":"property[string]" } ]]>
+        /// <remarks> Name</remarks>
+        /// <![CDATA[{ "caption": "Name", "value":"Name", "meta":"property[string]" } ]]>
         public string Name 
         {
             get;
@@ -142,7 +142,7 @@ namespace QuantConnect
         /// <summary>
         /// Wait semaphore to signal the algoritm is currently processing a synchronous order.
         /// </summary>
-        /// <![CDATA[autocomplete:{ "caption": "ProcessingOrder", "value":"SubscriptionManager", "meta":"property[bool]" } ]]>
+        /// <![CDATA[{ "caption": "ProcessingOrder", "value":"SubscriptionManager", "meta":"property[bool]" } ]]>
         public bool ProcessingOrder
         {
             get
@@ -158,7 +158,7 @@ namespace QuantConnect
         /// <summary>
         /// Get the current algorithm date/time.
         /// </summary>
-        /// <![CDATA[autocomplete:{ "caption": "Time", "value":"Time", "meta":"property[DateTime]" } ]]>
+        /// <![CDATA[{ "caption": "Time", "value":"Time", "meta":"property[DateTime]" } ]]>
         public DateTime Time 
         {
             get 
@@ -170,7 +170,7 @@ namespace QuantConnect
         /// <summary>
         /// Get requested algorithm start date set with SetStartDate()
         /// </summary>
-        /// <![CDATA[autocomplete:{ "caption": "StartDate", "value":"StartDate", "meta":"property[DateTime]" } ]]>
+        /// <![CDATA[{ "caption": "StartDate", "value":"StartDate", "meta":"property[DateTime]" } ]]>
         public DateTime StartDate 
         {
             get 
@@ -182,7 +182,7 @@ namespace QuantConnect
         /// <summary>
         /// Get requested algorithm end date set with SetEndDate()
         /// </summary>
-        /// <![CDATA[autocomplete:{ "caption": "EndDate", "value":"EndDate", "meta":"property[DateTime]" } ]]>
+        /// <![CDATA[{ "caption": "EndDate", "value":"EndDate", "meta":"property[DateTime]" } ]]>
         public DateTime EndDate 
         {
             get 
@@ -194,8 +194,8 @@ namespace QuantConnect
         /// <summary>
         /// Algorithm Id for this Backtest / Live Run
         /// </summary>
-        /// <remarks>AutoComplete: AlgorithmId</remarks>
-        /// <![CDATA[autocomplete:{ "caption": "ProcessingOrder", "value":"SubscriptionManager", "meta":"property[bool]" } ]]>
+        /// <remarks> AlgorithmId</remarks>
+        /// <![CDATA[{ "caption": "ProcessingOrder", "value":"SubscriptionManager", "meta":"property[bool]" } ]]>
         public string AlgorithmId 
         {
             get 
@@ -207,7 +207,7 @@ namespace QuantConnect
         /// <summary>
         /// Accessor for Filled Orders dictionary<int, Order>
         /// </summary>
-        /// <![CDATA[autocomplete:{ "caption": "Orders", "value":"Orders", "meta":"property[dictionary]" } ]]>
+        /// <![CDATA[{ "caption": "Orders", "value":"Orders", "meta":"property[dictionary]" } ]]>
         public ConcurrentDictionary<int, Order> Orders 
         {
             get 
@@ -219,7 +219,7 @@ namespace QuantConnect
         /// <summary>
         /// [DEPRECATED] Server setup RunMode for the Algorithm: Automatic, Parallel or Series.
         /// </summary>
-        /// <![CDATA[autocomplete:{ "caption": "RunMode", "value":"RunMode", "meta":"property[enum]" } ]]>
+        /// <![CDATA[{ "caption": "RunMode", "value":"RunMode", "meta":"property[enum]" } ]]>
         public RunMode RunMode 
         {
             get 
@@ -231,7 +231,7 @@ namespace QuantConnect
         /// <summary>
         /// bool Check if the algorithm is locked from any further init changes.
         /// </summary>
-        /// <![CDATA[autocomplete:{ "caption": "Locked", "value":"Locked", "meta":"property[bool]" } ]]>
+        /// <![CDATA[{ "caption": "Locked", "value":"Locked", "meta":"property[bool]" } ]]>
         public bool Locked 
         {
             get 
@@ -243,8 +243,8 @@ namespace QuantConnect
         /// <summary>
         /// Bool Algorithm is Live.
         /// </summary>
-        /// <remarks>AutoComplete: LiveMode</remarks>
-        /// <![CDATA[autocomplete:{ "caption": "LiveMode", "value":"LiveMode", "meta":"property[bool]" } ]]>
+        /// <remarks> LiveMode</remarks>
+        /// <![CDATA[{ "caption": "LiveMode", "value":"LiveMode", "meta":"property[bool]" } ]]>
         public bool LiveMode
         {
             get
@@ -256,7 +256,7 @@ namespace QuantConnect
         /// <summary>
         /// List<string> Get the debug messages from inner list
         /// </summary>
-        /// <![CDATA[autocomplete:{ "caption": "DebugMessages", "value":"DebugMessage", "meta":"property[list]" } ]]>
+        /// <![CDATA[{ "caption": "DebugMessages", "value":"DebugMessage", "meta":"property[list]" } ]]>
         public List<string> DebugMessages
         {
             get 
@@ -272,7 +272,7 @@ namespace QuantConnect
         /// <summary>
         /// List<string> Downloadable large scale messaging systems
         /// </summary>
-        /// <![CDATA[autocomplete:{ "caption": "LogMessages", "value":"LogMessages", "meta":"property[list]" } ]]>
+        /// <![CDATA[{ "caption": "LogMessages", "value":"LogMessages", "meta":"property[list]" } ]]>
         public List<string> LogMessages 
         {
             get 
@@ -288,7 +288,7 @@ namespace QuantConnect
         /// <summary>
         /// Catchable Error List.
         /// </summary>
-        /// <![CDATA[autocomplete:{ "caption": "ErrorMessages", "value":"ErrorMessage", "meta":"property[list]" } ]]>
+        /// <![CDATA[{ "caption": "ErrorMessages", "value":"ErrorMessage", "meta":"property[list]" } ]]>
         public List<string> ErrorMessages
         {
             get
@@ -305,8 +305,8 @@ namespace QuantConnect
         /// <summary>
         /// Access to the runtime statistics property. User provided statistics. Dictionary<string, string>
         /// </summary>
-        /// <remarks>AutoComplete: RuntimeStatistics</remarks>
-        /// <![CDATA[autocomplete:{ "caption": "RuntimeStatistics", "value":"RuntimeStatistics", "meta":"property[dictionary]" } ]]>
+        /// <remarks> RuntimeStatistics</remarks>
+        /// <![CDATA[{ "caption": "RuntimeStatistics", "value":"RuntimeStatistics", "meta":"property[dictionary]" } ]]>
         public Dictionary<string, string> RuntimeStatistics
         {
             get
@@ -321,8 +321,8 @@ namespace QuantConnect
         /// <summary>
         /// Initialise the data and resolution required. All algorithms must initialize.
         /// </summary>
-        /// <remarks>AutoComplete: Initialize</remarks>
-        /// <![CDATA[autocomplete:{ "caption": "Initialize()", "value":"public override void Initialize() {  } ", "meta":"method" } ]]>
+        /// <remarks> Initialize</remarks>
+        /// <![CDATA[{ "caption": "Initialize()", "value":"public override void Initialize() {  } ", "meta":"method" } ]]>
         public virtual void Initialize() 
         {
             //Setup Required Data
@@ -333,7 +333,7 @@ namespace QuantConnect
         /// Event - DEPRECATED - v1.0 TRADEBAR EVENT HANDLER. Handle new data packets.
         /// </summary>
         /// <param name="data">Dictionary of MarketData Objects</param>
-        /// <![CDATA[autocomplete:{ "caption": "OnTradeBar()", "value":"public override void OnTradeBar(Dictionary<string, TradeBar> data)", "meta":"event" } ]]>
+        /// <![CDATA[{ "caption": "OnTradeBar()", "value":"public override void OnTradeBar(Dictionary<string, TradeBar> data)", "meta":"event" } ]]>
         public virtual void OnTradeBar(Dictionary<string, TradeBar> data)
         {
             //Algorithm Implementation
@@ -344,7 +344,7 @@ namespace QuantConnect
         /// Event - DEPRECATED - v1.0 TICK EVENT HANDLER. Handle a new incoming Tick Packet:
         /// </summary>
         /// <param name="data">Ticks arriving at the same moment come in a list. Because the "tick" data is actually list ordered within a second, you can get lots of ticks at once.</param>
-        /// <![CDATA[autocomplete:{ "caption": "OnTick()", "value":"public override void OnTick(Dictionary<string, List<Tick>> data) {  }", "meta":"event" } ]]>
+        /// <![CDATA[{ "caption": "OnTick()", "value":"public override void OnTick(Dictionary<string, List<Tick>> data) {  }", "meta":"event" } ]]>
         public virtual void OnTick(Dictionary<string, List<Tick>> data)
         {
             //Algorithm Implementation
@@ -355,7 +355,7 @@ namespace QuantConnect
         /// Event - v2.0 TRADEBAR EVENT HANDLER: (Pattern) Basic template for user to override when requesting tradebar data.
         /// </summary>
         /// <param name="data"></param>
-        /// <![CDATA[autocomplete:{ "caption": "OnData(TradeBars data)", "value":"public void OnData(TradeBars data) {  }", "meta":"event" } ]]>
+        /// <![CDATA[{ "caption": "OnData(TradeBars data)", "value":"public void OnData(TradeBars data) {  }", "meta":"event" } ]]>
         //public void OnData(TradeBars data)
         //{
         //
@@ -365,7 +365,7 @@ namespace QuantConnect
         /// Event - v2.0 TICK EVENT HANDLER: (Pattern) Basic template for user to override when requesting tick data.
         /// </summary>
         /// <param name="data">List of Tick Data</param>
-        /// <![CDATA[autocomplete:{ "caption": "OnData(Ticks data)", "value":"public void OnData(Ticks data) {  }", "meta":"event" } ]]>
+        /// <![CDATA[{ "caption": "OnData(Ticks data)", "value":"public void OnData(Ticks data) {  }", "meta":"event" } ]]>
         //public void OnData(Ticks data)
         //{
         //
@@ -374,7 +374,7 @@ namespace QuantConnect
         /// <summary>
         /// Event - Call this method at the end of the algorithm day (or multiple times if trading multiple assets).
         /// </summary>
-        /// <![CDATA[autocomplete:{ "caption": "OnEndOfDay()", "value":"public void OnEndOfDay() {  }", "meta":"event" } ]]>
+        /// <![CDATA[{ "caption": "OnEndOfDay()", "value":"public void OnEndOfDay() {  }", "meta":"event" } ]]>
         public virtual void OnEndOfDay()
         {
 
@@ -384,7 +384,7 @@ namespace QuantConnect
         /// Event - Call this method at the end of the algorithm day (or multiple times if trading multiple assets).
         /// </summary>
         /// <param name="symbol">End of day for this symbol string</param>
-        /// <![CDATA[autocomplete:{ "caption": "OnEndOfDay(string symbol)", "value":"public void OnEndOfDay(string symbol) {  }", "meta":"event" } ]]>
+        /// <![CDATA[{ "caption": "OnEndOfDay(string symbol)", "value":"public void OnEndOfDay(string symbol) {  }", "meta":"event" } ]]>
         public virtual void OnEndOfDay(string symbol) 
         {
             
@@ -393,7 +393,7 @@ namespace QuantConnect
         /// <summary>
         /// Event - Call this at the end of the algorithm running.
         /// </summary>
-        /// <![CDATA[autocomplete:{ "caption": "OnEndOfAlgorithm()", "value":"public void OnEndOfAlgorithm() {  }", "meta":"event" } ]]>
+        /// <![CDATA[{ "caption": "OnEndOfAlgorithm()", "value":"public void OnEndOfAlgorithm() {  }", "meta":"event" } ]]>
         public virtual void OnEndOfAlgorithm() 
         { 
             
@@ -403,7 +403,7 @@ namespace QuantConnect
         /// Event - Order - Fill, update, cancel, etc. When an order is update the events is passed in here:
         /// </summary>
         /// <param name="orderEvent">Details of the order</param>
-        /// <![CDATA[autocomplete:{ "caption": "OnOrderEvent()", "value":"public void OnOrderEvent(OrderEvent eventData) {  }", "meta":"event" } ]]>
+        /// <![CDATA[{ "caption": "OnOrderEvent()", "value":"public void OnOrderEvent(OrderEvent eventData) {  }", "meta":"event" } ]]>
         public virtual void OnOrderEvent(OrderEvent orderEvent)
         {
             
@@ -413,7 +413,7 @@ namespace QuantConnect
         /// Add a Chart object to algorithm collection
         /// </summary>
         /// <param name="chart">Chart object to add to collection.</param>
-        /// <![CDATA[autocomplete:{ "caption":"AddChart(Chart chart)", "value":"AddChart(new Chart(\"ChartName\"))", "meta":"method" } ]]>
+        /// <![CDATA[{ "caption":"AddChart(Chart chart)", "value":"AddChart(new Chart(\"ChartName\"))", "meta":"method" } ]]>
         public void AddChart(Chart chart)
         {
             if (!_charts.ContainsKey(chart.Name))
@@ -427,7 +427,7 @@ namespace QuantConnect
         /// </summary>
         /// <param name="series">Name of the plot series</param>
         /// <param name="value">Value to plot</param>
-        /// <![CDATA[autocomplete:{ "caption":"Plot(string, decimal)", "value":"Plot(string series, decimal value)", "meta":"method" } ]]>
+        /// <![CDATA[{ "caption":"Plot(string, decimal)", "value":"Plot(string series, decimal value)", "meta":"method" } ]]>
         public void Plot(string series, decimal value)
         {
             //By default plot to the primary chart:
@@ -438,8 +438,8 @@ namespace QuantConnect
         /// <summary>
         /// Plot a chart using string series name, with int value. Alias of Plot();
         /// </summary>
-        /// <remarks>AutoComplete: Record(string series, int value)</remarks>
-        /// <![CDATA[autocomplete:{ "caption":"Record(string, int)", "value":"Record(string series, int value)", "meta":"method" } ]]>
+        /// <remarks> Record(string series, int value)</remarks>
+        /// <![CDATA[{ "caption":"Record(string, int)", "value":"Record(string series, int value)", "meta":"method" } ]]>
         public void Record(string series, int value)
         {
             this.Plot(series, value);
@@ -448,7 +448,7 @@ namespace QuantConnect
         /// <summary>
         /// Plot a chart using string series name, with double value. Alias of Plot();
         /// </summary>
-        /// <![CDATA[autocomplete:{ "caption":"Record(string, double)", "value":"Record(string series, double value)", "meta":"method" } ]]>
+        /// <![CDATA[{ "caption":"Record(string, double)", "value":"Record(string series, double value)", "meta":"method" } ]]>
         public void Record(string series, double value)
         {
             this.Plot(series, value);
@@ -457,7 +457,7 @@ namespace QuantConnect
         /// <summary>
         /// Plot a chart using string series name, with decimal value. Alias of Plot();
         /// </summary>
-        /// <![CDATA[autocomplete:{ "caption":"Record(string, decimal)", "value":"Record(string series, decimal value)", "meta":"method" } ]]>
+        /// <![CDATA[{ "caption":"Record(string, decimal)", "value":"Record(string series, decimal value)", "meta":"method" } ]]>
         public void Record(string series, decimal value)
         {
             //By default plot to the primary chart:
@@ -467,7 +467,7 @@ namespace QuantConnect
         /// <summary>
         /// Plot a chart using string series name, with double value.
         /// </summary>
-        /// <![CDATA[autocomplete:{ "caption":"Plot(string, double)", "value":"Plots(string series, double value)", "meta":"method" } ]]>
+        /// <![CDATA[{ "caption":"Plot(string, double)", "value":"Plots(string series, double value)", "meta":"method" } ]]>
         public void Plot(string series, double value) {
             this.Plot(series, (decimal)value);
         }
@@ -475,7 +475,7 @@ namespace QuantConnect
         /// <summary>
         /// Plot a chart using string series name, with int value.
         /// </summary>
-        /// <![CDATA[autocomplete:{ "caption":"Plot(string, int)", "value":"Plots(string series, int value)", "meta":"method" } ]]>
+        /// <![CDATA[{ "caption":"Plot(string, int)", "value":"Plots(string series, int value)", "meta":"method" } ]]>
         public void Plot(string series, int value)
         {
             this.Plot(series, (decimal)value);
@@ -484,7 +484,7 @@ namespace QuantConnect
         /// <summary>
         ///Plot a chart using string series name, with float value.
         /// </summary>
-        /// <![CDATA[autocomplete:{ "caption":"Plot(string, float)", "value":"Plots(string series, float value)", "meta":"method" } ]]>
+        /// <![CDATA[{ "caption":"Plot(string, float)", "value":"Plots(string series, float value)", "meta":"method" } ]]>
         public void Plot(string series, float value)
         {
             this.Plot(series, (decimal)value);
@@ -493,7 +493,7 @@ namespace QuantConnect
         /// <summary>
         /// Plot a chart to string chart name, using string series name, with double value.
         /// </summary>
-        /// <![CDATA[autocomplete:{ "caption":"Plot(string, string, double)", "value":"Plot(string chart, string series, double value)", "meta":"method" } ]]>
+        /// <![CDATA[{ "caption":"Plot(string, string, double)", "value":"Plot(string chart, string series, double value)", "meta":"method" } ]]>
         public void Plot(string chart, string series, double value)
         {
             this.Plot(chart, series, (decimal)value);
@@ -502,7 +502,7 @@ namespace QuantConnect
         /// <summary>
         /// Plot a chart to string chart name, using string series name, with int value
         /// </summary>
-        /// <![CDATA[autocomplete:{ "caption":"Plot(string, string, int)", "value":"Plot(string chart, string series, int value)", "meta":"method" } ]]>
+        /// <![CDATA[{ "caption":"Plot(string, string, int)", "value":"Plot(string chart, string series, int value)", "meta":"method" } ]]>
         public void Plot(string chart, string series, int value)
         {
             this.Plot(chart, series, (decimal)value);
@@ -511,7 +511,7 @@ namespace QuantConnect
         /// <summary>
         /// Plot a chart to string chart name, using string series name, with float value
         /// </summary>
-        /// <![CDATA[autocomplete:{ "caption":"Plot(string, string, float)", "value":"Plot(string chart, string series, float value)", "meta":"method" } ]]>
+        /// <![CDATA[{ "caption":"Plot(string, string, float)", "value":"Plot(string chart, string series, float value)", "meta":"method" } ]]>
         public void Plot(string chart, string series, float value)
         {
             this.Plot(chart, series, (decimal)value);
@@ -523,7 +523,7 @@ namespace QuantConnect
         /// <param name="chart">Chart name</param>
         /// <param name="series">Series name</param>
         /// <param name="value">Value of the point</param>
-        /// <![CDATA[autocomplete:{ "caption":"Plot(string, string, decimal)", "value":"Plot(string chart, string series, decimal value)", "meta":"method" } ]]>
+        /// <![CDATA[{ "caption":"Plot(string, string, decimal)", "value":"Plot(string chart, string series, decimal value)", "meta":"method" } ]]>
         public void Plot(string chart, string series, decimal value) 
         {
             //Ignore the reserved chart names:
@@ -567,8 +567,8 @@ namespace QuantConnect
         /// QC.Engine Use Only: Set the current datetime frontier: the most forward looking tick so far. This is used by backend to advance time. Do not modify
         /// </summary>
         /// <param name="frontier">Current datetime.</param>
-        /// <remarks>AutoComplete: SetDateTime(DateTime frontier)</remarks>
-        /// <![CDATA[autocomplete:{ "caption":"SetDateTime(DateTime)", "value":"SetDateTime(DateTime frontier)", "meta":"method" } ]]>
+        /// <remarks> SetDateTime(DateTime frontier)</remarks>
+        /// <![CDATA[{ "caption":"SetDateTime(DateTime)", "value":"SetDateTime(DateTime frontier)", "meta":"method" } ]]>
         public void SetDateTime(DateTime frontier) 
         {
             this._time = frontier;
@@ -579,8 +579,8 @@ namespace QuantConnect
         /// Automatic will analyse the selected data, and if you selected only minute data we'll select series for you.
         /// </summary>
         /// <param name="mode">Enum RunMode with options Series, Parallel or Automatic. Automatic scans your requested symbols and resolutions and makes a decision on the fastest analysis</param>
-        /// <remarks>AutoComplete: SetRunMode(RunMode mode)</remarks>
-        /// <![CDATA[autocomplete:{ "caption":"SetRunMode(RunMode)", "value":"SetRunMode(RunMode mode)", "meta":"method" } ]]>
+        /// <remarks> SetRunMode(RunMode mode)</remarks>
+        /// <![CDATA[{ "caption":"SetRunMode(RunMode)", "value":"SetRunMode(RunMode mode)", "meta":"method" } ]]>
         public void SetRunMode(RunMode mode) 
         {
             if (mode == QuantConnect.RunMode.Parallel)
@@ -596,8 +596,8 @@ namespace QuantConnect
         /// Set Initial Cash for the Strategy. Alias of SetCash(decimal)
         /// </summary>
         /// <param name="startingCash">Double starting cash</param>
-        /// <remarks>AutoComplete: SetCash(double startingCash)</remarks>
-        /// <![CDATA[autocomplete:{ "caption":"SetCash(double)", "value":"SetCash(double startingCash)", "meta":"method" } ]]>
+        /// <remarks> SetCash(double startingCash)</remarks>
+        /// <![CDATA[{ "caption":"SetCash(double)", "value":"SetCash(double startingCash)", "meta":"method" } ]]>
         public void SetCash(double startingCash) {
             this.SetCash((decimal)startingCash);
         }
@@ -606,8 +606,8 @@ namespace QuantConnect
         /// Alias of SetCash(decimal)
         /// </summary>
         /// <param name="startingCash">Int starting cash</param>
-        /// <remarks>AutoComplete: SetCash(int startingCash)</remarks>
-        /// <![CDATA[autocomplete:{ "caption":"SetCash(int)", "value":"SetCash(int startingCash)", "meta":"method" } ]]>
+        /// <remarks> SetCash(int startingCash)</remarks>
+        /// <![CDATA[{ "caption":"SetCash(int)", "value":"SetCash(int startingCash)", "meta":"method" } ]]>
         public void SetCash(int startingCash)
         {
             this.SetCash((decimal)startingCash);
@@ -617,8 +617,8 @@ namespace QuantConnect
         /// Set the requested balance to launch this algorithm
         /// </summary>
         /// <param name="startingCash">Minimum required cash</param>
-        /// <remarks>AutoComplete: SetCash(decimal startingCash)</remarks>
-        /// <![CDATA[autocomplete:{ "caption":"SetCash(decimal)", "value":"SetCash(decimal startingCash)", "meta":"method" } ]]>
+        /// <remarks> SetCash(decimal startingCash)</remarks>
+        /// <![CDATA[{ "caption":"SetCash(decimal)", "value":"SetCash(decimal startingCash)", "meta":"method" } ]]>
         public void SetCash(decimal startingCash) 
         {
             if (!Locked) 
@@ -636,7 +636,7 @@ namespace QuantConnect
         /// </summary>
         /// <param name="name">Name of your runtime statistic</param>
         /// <param name="value">String value of your runtime statistic</param>
-        /// <![CDATA[autocomplete:{ "caption":"SetRuntimeStatistic(string, string)", "value":"SetRuntimeStatistic(string name, string value)", "meta":"method" } ]]>
+        /// <![CDATA[{ "caption":"SetRuntimeStatistic(string, string)", "value":"SetRuntimeStatistic(string name, string value)", "meta":"method" } ]]>
         public void SetRuntimeStatistic(string name, string value)
         {
             //If not set, add it to the dictionary:
@@ -654,7 +654,7 @@ namespace QuantConnect
         /// </summary>
         /// <param name="name">Name of your runtime statistic</param>
         /// <param name="value">Decimal value of your runtime statistic</param>
-        /// <![CDATA[autocomplete:{ "caption":"SetRuntimeStatistic(string, decimal)", "value":"SetRuntimeStatistic(string name, decimal value)", "meta":"method" } ]]>
+        /// <![CDATA[{ "caption":"SetRuntimeStatistic(string, decimal)", "value":"SetRuntimeStatistic(string name, decimal value)", "meta":"method" } ]]>
         public void SetRuntimeStatistic(string name, decimal value)
         {
             SetRuntimeStatistic(name, value.ToString());
@@ -665,8 +665,8 @@ namespace QuantConnect
         /// </summary>
         /// <param name="name">Name of your runtime statistic</param>
         /// <param name="value">Int value of your runtime statistic</param>
-        /// <remarks>AutoComplete: SetRuntimeStatistic(string name, int value)</remarks>
-        /// <![CDATA[autocomplete:{ "caption":"SetRuntimeStatistic(string, int)", "value":"SetRuntimeStatistic(string name, int value)", "meta":"method" } ]]>
+        /// <remarks> SetRuntimeStatistic(string name, int value)</remarks>
+        /// <![CDATA[{ "caption":"SetRuntimeStatistic(string, int)", "value":"SetRuntimeStatistic(string name, int value)", "meta":"method" } ]]>
         public void SetRuntimeStatistic(string name, int value)
         {
             SetRuntimeStatistic(name, value.ToString());
@@ -677,7 +677,7 @@ namespace QuantConnect
         /// </summary>
         /// <param name="name">Name of your runtime statistic</param>
         /// <param name="value">Double value of your runtime statistic</param>
-        /// <![CDATA[autocomplete:{ "caption":"SetRuntimeStatistic(string, double)", "value":"SetRuntimeStatistic(string name, double value)", "meta":"method" } ]]>
+        /// <![CDATA[{ "caption":"SetRuntimeStatistic(string, double)", "value":"SetRuntimeStatistic(string name, double value)", "meta":"method" } ]]>
         public void SetRuntimeStatistic(string name, double value)
         {
             SetRuntimeStatistic(name, value.ToString());
@@ -690,8 +690,8 @@ namespace QuantConnect
         /// <param name="day">Int starting date 1-30</param>
         /// <param name="month">Int month starting date</param>
         /// <param name="year">Int year starting date</param>
-        /// <remarks>AutoComplete: SetStartDate(int year, int month, int day)</remarks>
-        /// <![CDATA[autocomplete:{ "caption":"SetStartDate(int,int,int)", "value":"SetStartDate(int year, int month, int day)", "meta":"method" } ]]>
+        /// <remarks> SetStartDate(int year, int month, int day)</remarks>
+        /// <![CDATA[{ "caption":"SetStartDate(int,int,int)", "value":"SetStartDate(int year, int month, int day)", "meta":"method" } ]]>
         public void SetStartDate(int year, int month, int day) 
         {
             try 
@@ -710,7 +710,7 @@ namespace QuantConnect
         /// <param name="day">Int end date 1-30</param>
         /// <param name="month">Int month end date</param>
         /// <param name="year">Int year end date</param>
-        /// <![CDATA[autocomplete:{ "caption":"SetEndDate(int,int,int)", "value":"SetEndDate(int year, int month, int day)", "meta":"method" } ]]>
+        /// <![CDATA[{ "caption":"SetEndDate(int,int,int)", "value":"SetEndDate(int year, int month, int day)", "meta":"method" } ]]>
         public void SetEndDate(int year, int month, int day) 
         {
             try 
@@ -727,8 +727,8 @@ namespace QuantConnect
         /// QC.Engine Use Only: Set the algorithm id (backtestId or deployId).
         /// </summary>
         /// <param name="algorithmId">String Algorithm Id</param>
-        /// <remarks>AutoComplete: SetAlgorithmId(string algorithmId)</remarks>
-        /// <![CDATA[autocomplete:{ "caption":"SetAlgorithmId(string)", "value":"SetAlgorithmId(string algorithmId)", "meta":"method" } ]]>
+        /// <remarks> SetAlgorithmId(string algorithmId)</remarks>
+        /// <![CDATA[{ "caption":"SetAlgorithmId(string)", "value":"SetAlgorithmId(string algorithmId)", "meta":"method" } ]]>
         public void SetAlgorithmId(string algorithmId)
         {
             _algorithmId = algorithmId;
@@ -739,8 +739,8 @@ namespace QuantConnect
         /// Must be less than end date and within data available
         /// </summary>
         /// <param name="start">Datetime start date</param>
-        /// <remarks>AutoComplete: SetStartDate(DateTime start)</remarks>
-        /// <![CDATA[autocomplete:{ "caption":"SetStartDate(DateTime)", "value":"SetStartDate(DateTime date)", "meta":"method" } ]]>
+        /// <remarks> SetStartDate(DateTime start)</remarks>
+        /// <![CDATA[{ "caption":"SetStartDate(DateTime)", "value":"SetStartDate(DateTime date)", "meta":"method" } ]]>
         public void SetStartDate(DateTime start) 
         { 
             //Validate the start date:
@@ -774,7 +774,7 @@ namespace QuantConnect
         /// Set the end date for a backtest. Must be greater than the start date
         /// </summary>
         /// <param name="end">End datetime</param>
-        /// <![CDATA[autocomplete:{ "caption":"SetEndDate(DateTime)", "value":"SetEndDate(DateTime date)", "meta":"method" } ]]>
+        /// <![CDATA[{ "caption":"SetEndDate(DateTime)", "value":"SetEndDate(DateTime date)", "meta":"method" } ]]>
         public void SetEndDate(DateTime end) 
         { 
             //Validate:
@@ -807,7 +807,7 @@ namespace QuantConnect
         /// <summary>
         /// QC.Engine Use Only: Lock the algorithm initialization to avoid messing with cash and data streams.
         /// </summary>
-        /// <![CDATA[autocomplete:{ "caption":"SetLocked()", "value":"SetLocked()", "meta":"method" } ]]>
+        /// <![CDATA[{ "caption":"SetLocked()", "value":"SetLocked()", "meta":"method" } ]]>
         public void SetLocked() 
         {
             this._locked = true;
@@ -817,8 +817,8 @@ namespace QuantConnect
         /// QC.Engine Use Only: Set live mode state, are we running on a live servers.
         /// </summary>
         /// <param name="live">Bool Live mode flag</param>
-        /// <remarks>AutoComplete: SetLiveMode(bool live)</remarks>
-        /// <![CDATA[autocomplete:{ "caption":"SetLiveMode(bool)", "value":"SetLiveMode(bool liveMode)", "meta":"method" } ]]>
+        /// <remarks> SetLiveMode(bool live)</remarks>
+        /// <![CDATA[{ "caption":"SetLiveMode(bool)", "value":"SetLiveMode(bool liveMode)", "meta":"method" } ]]>
         public void SetLiveMode(bool live) 
         {
             if (!_locked)
@@ -831,8 +831,8 @@ namespace QuantConnect
         /// QC.Engine Use Only: Get the chart updates: fetch the recent points added and return for dynamic plotting.
         /// </summary>
         /// <returns>List of chart updates since the last request</returns>
-        /// <remarks>AutoComplete: GetChartUpdates()</remarks>
-        /// <![CDATA[autocomplete:{ "caption":"GetChartUpdates()", "value":"GetChartUpdates()", "meta":"method" } ]]>
+        /// <remarks> GetChartUpdates()</remarks>
+        /// <![CDATA[{ "caption":"GetChartUpdates()", "value":"GetChartUpdates()", "meta":"method" } ]]>
         public List<Chart> GetChartUpdates() 
         {
             List<Chart> _updates = new List<Chart>();
@@ -850,7 +850,7 @@ namespace QuantConnect
         /// <param name="resolution">Resolution of the Data Required</param>
         /// <param name="fillDataForward">When no data available on a tradebar, return the last data that was generated</param>
         /// <param name="extendedMarketHours">Show the after market data as well</param>
-        /// <![CDATA[autocomplete:{ "caption":"AddSecurity(default)", "value":"AddSecurity(SecurityType securityType, string symbol, Resolution resolution = Resolution.Minute, bool fillDataForward = true, bool extendedMarketHours = false)", "meta":"method" } ]]>
+        /// <![CDATA[{ "caption":"AddSecurity(default)", "value":"AddSecurity(SecurityType securityType, string symbol, Resolution resolution = Resolution.Minute, bool fillDataForward = true, bool extendedMarketHours = false)", "meta":"method" } ]]>
         public void AddSecurity(SecurityType securityType, string symbol, Resolution resolution = Resolution.Minute, bool fillDataForward = true, bool extendedMarketHours = false)
         {
             AddSecurity(securityType, symbol, resolution, fillDataForward, 0, extendedMarketHours);
@@ -865,8 +865,8 @@ namespace QuantConnect
         /// <param name="fillDataForward">When no data available on a tradebar, return the last data that was generated</param>
         /// <param name="leverage">Custom leverage per security</param>
         /// <param name="extendedMarketHours">Extended market hours</param>
-        /// <remarks>AutoComplete: AddSecurity(SecurityType securityType, string symbol, Resolution resolution, bool fillDataForward, decimal leverage, bool extendedMarketHours)</remarks>
-        /// <![CDATA[autocomplete:{ "caption":"AddSecurity(leverage)", "value":"AddSecurity(SecurityType securityType, string symbol, Resolution resolution, bool fillDataForward, decimal leverage, bool extendedMarketHours)", "meta":"method" } ]]>
+        /// <remarks> AddSecurity(SecurityType securityType, string symbol, Resolution resolution, bool fillDataForward, decimal leverage, bool extendedMarketHours)</remarks>
+        /// <![CDATA[{ "caption":"AddSecurity(leverage)", "value":"AddSecurity(SecurityType securityType, string symbol, Resolution resolution, bool fillDataForward, decimal leverage, bool extendedMarketHours)", "meta":"method" } ]]>
         public void AddSecurity(SecurityType securityType, string symbol, Resolution resolution, bool fillDataForward, decimal leverage, bool extendedMarketHours) 
         {
             try
@@ -910,7 +910,7 @@ namespace QuantConnect
         /// </summary>
         /// <param name="symbol">Key/Symbol for data</param>
         /// <param name="resolution">Resolution of the data</param>
-        /// <![CDATA[autocomplete:{ "caption":"AddData<Type>()", "value":"AddData<T>(string symbol, Resolution resolution = Resolution.Second)", "meta":"method" } ]]>
+        /// <![CDATA[{ "caption":"AddData<Type>()", "value":"AddData<T>(string symbol, Resolution resolution = Resolution.Second)", "meta":"method" } ]]>
         public void AddData<T>(string symbol, Resolution resolution = Resolution.Second) 
         {
             if (!_locked)
@@ -932,7 +932,7 @@ namespace QuantConnect
         /// </summary>
         /// <param name="symbol">string Symbol of the asset to trade</param>
         /// <param name="quantity">int Quantity of the asset to trade</param>
-        /// <![CDATA[autocomplete:{ "caption":"Buy(string, int)", "value":"Buy(string symbol, int quantity)", "meta":"method" } ]]>
+        /// <![CDATA[{ "caption":"Buy(string, int)", "value":"Buy(string symbol, int quantity)", "meta":"method" } ]]>
         public int Buy(string symbol, int quantity) {
             return Order(symbol, quantity);
         }
@@ -942,7 +942,7 @@ namespace QuantConnect
         /// </summary>
         /// <param name="symbol">string Symbol of the asset to trade</param>
         /// <param name="quantity">double Quantity of the asset to trade</param>
-        /// <![CDATA[autocomplete:{ "caption":"Buy(string, double)", "value":"Buy(string symbol, double quantity)", "meta":"method" } ]]>
+        /// <![CDATA[{ "caption":"Buy(string, double)", "value":"Buy(string symbol, double quantity)", "meta":"method" } ]]>
         public int Buy(string symbol, double quantity)
         {
             return Order(symbol, quantity);
@@ -953,7 +953,7 @@ namespace QuantConnect
         /// </summary>
         /// <param name="symbol">string Symbol of the asset to trade</param>
         /// <param name="quantity">decimal Quantity of the asset to trade</param>
-        /// <![CDATA[autocomplete:{ "caption":"Buy(string, decimal)", "value":"Buy(string symbol, decimal quantity)", "meta":"method" } ]]>
+        /// <![CDATA[{ "caption":"Buy(string, decimal)", "value":"Buy(string symbol, decimal quantity)", "meta":"method" } ]]>
         public int Buy(string symbol, decimal quantity)
         {
             return Order(symbol, quantity);
@@ -964,7 +964,7 @@ namespace QuantConnect
         /// </summary>
         /// <param name="symbol">string Symbol of the asset to trade</param>
         /// <param name="quantity">float Quantity of the asset to trade</param>
-        /// <![CDATA[autocomplete:{ "caption":"Buy(string, float)", "value":"Buy(string symbol, float quantity)", "meta":"method" } ]]>
+        /// <![CDATA[{ "caption":"Buy(string, float)", "value":"Buy(string symbol, float quantity)", "meta":"method" } ]]>
         public int Buy(string symbol, float quantity)
         {
             return Order(symbol, quantity);
@@ -975,7 +975,7 @@ namespace QuantConnect
         /// </summary>
         /// <param name="symbol">string Symbol of the asset to trade</param>
         /// <param name="quantity">int Quantity of the asset to trade</param>
-        /// <![CDATA[autocomplete:{ "caption":"Sell(string, int)", "value":"Buy(string symbol, int quantity)", "meta":"method" } ]]>
+        /// <![CDATA[{ "caption":"Sell(string, int)", "value":"Buy(string symbol, int quantity)", "meta":"method" } ]]>
         public int Sell(string symbol, int quantity) 
         {
             return Order(symbol, quantity);
@@ -984,7 +984,7 @@ namespace QuantConnect
         /// <summary>
         /// Sell stock (alias of Order)
         /// </summary>
-        /// <![CDATA[autocomplete:{ "caption":"Sell(string, double)", "value":"Buy(string symbol, double quantity)", "meta":"method" } ]]>
+        /// <![CDATA[{ "caption":"Sell(string, double)", "value":"Buy(string symbol, double quantity)", "meta":"method" } ]]>
         public int Sell(string symbol, double quantity)
         {
             return Order(symbol, quantity);
@@ -993,7 +993,7 @@ namespace QuantConnect
         /// <summary>
         /// Sell stock (alias of Order)
         /// </summary>
-        /// <![CDATA[autocomplete:{ "caption":"Sell(string, float)", "value":"Buy(string symbol, float quantity)", "meta":"method" } ]]>
+        /// <![CDATA[{ "caption":"Sell(string, float)", "value":"Buy(string symbol, float quantity)", "meta":"method" } ]]>
         public int Sell(string symbol, float quantity)
         {
             return Order(symbol, quantity);
@@ -1002,7 +1002,7 @@ namespace QuantConnect
         /// <summary>
         /// Sell stock (alias of Order)
         /// </summary>
-        /// <![CDATA[autocomplete:{ "caption":"Sell(string, decimal)", "value":"Buy(string symbol, decimal quantity)", "meta":"method" } ]]>
+        /// <![CDATA[{ "caption":"Sell(string, decimal)", "value":"Buy(string symbol, decimal quantity)", "meta":"method" } ]]>
         public int Sell(string symbol, decimal quantity)
         {
             return Order(symbol, quantity);
@@ -1011,7 +1011,7 @@ namespace QuantConnect
         /// <summary>
         /// Issue an order/trade for asset: Alias wrapper for Order(string, int);
         /// </summary>
-        /// <![CDATA[autocomplete:{ "caption":"Order(string, double, OrderType)", "value":"Order(string symbol, double quantity, OrderType type = OrderType.Market)", "meta":"method" } ]]>
+        /// <![CDATA[{ "caption":"Order(string, double, OrderType)", "value":"Order(string symbol, double quantity, OrderType type = OrderType.Market)", "meta":"method" } ]]>
         public int Order(string symbol, double quantity, OrderType type = OrderType.Market) 
         {
             return Order(symbol, (int)quantity, type);
@@ -1020,8 +1020,8 @@ namespace QuantConnect
         /// <summary>
         /// Issue an order/trade for asset: Alias wrapper for Order(string, int);
         /// </summary>
-        /// <remarks>AutoComplete:</remarks>
-        /// <![CDATA[autocomplete:{ "caption":"Order(string, decimal, OrderType)", "value":"Order(string symbol, decimal quantity, OrderType type = OrderType.Market)", "meta":"method" } ]]>
+        /// <remarks></remarks>
+        /// <![CDATA[{ "caption":"Order(string, decimal, OrderType)", "value":"Order(string symbol, decimal quantity, OrderType type = OrderType.Market)", "meta":"method" } ]]>
         public int Order(string symbol, decimal quantity, OrderType type = OrderType.Market)
         {
             return Order(symbol, (int)quantity, type);
@@ -1035,7 +1035,7 @@ namespace QuantConnect
         /// <param name="quantity">Number of shares to request.</param>
         /// <param name="asynchronous">Send the order asynchrously (false). Otherwise we'll block until it fills</param>
         /// <param name="tag">Place a custom order property or tag (e.g. indicator data).</param>
-        /// <![CDATA[autocomplete:{ "caption":"Order(...)", "value":"Order(string symbol, int quantity, OrderType type = OrderType.Market, bool asynchronous = false, string tag = \"\")", "meta":"method" } ]]>
+        /// <![CDATA[{ "caption":"Order(...)", "value":"Order(string symbol, int quantity, OrderType type = OrderType.Market, bool asynchronous = false, string tag = \"\")", "meta":"method" } ]]>
         public int Order(string symbol, int quantity, OrderType type = OrderType.Market, bool asynchronous = false, string tag = "")
         {
             //Add an order to the transacion manager class:
@@ -1104,7 +1104,7 @@ namespace QuantConnect
         /// </summary>
         /// <param name="symbolToLiquidate">Symbols we wish to liquidate</param>
         /// <returns>Array of order ids for liquidated symbols</returns>
-        /// <![CDATA[autocomplete:{ "caption":"Liquidate(string)", "value":"Liquidate()", "meta":"method" } ]]>
+        /// <![CDATA[{ "caption":"Liquidate(string)", "value":"Liquidate()", "meta":"method" } ]]>
         public List<int> Liquidate(string symbolToLiquidate = "")
         {
             int quantity = 0;
@@ -1141,7 +1141,7 @@ namespace QuantConnect
         /// <param name="symbol">string symbol we wish to hold</param>
         /// <param name="percentage">double percentage of holdings desired</param>
         /// <param name="liquidateExistingHoldings">liquidate existing holdings if neccessary to hold this stock</param>
-        /// <![CDATA[autocomplete:{ "caption":"SetHoldings(string, double, bool)", "value":"SetHoldings(string symbol, double percentage, bool liquidateExistingHoldings = false)", "meta":"method" } ]]>
+        /// <![CDATA[{ "caption":"SetHoldings(string, double, bool)", "value":"SetHoldings(string symbol, double percentage, bool liquidateExistingHoldings = false)", "meta":"method" } ]]>
         public void SetHoldings(string symbol, double percentage, bool liquidateExistingHoldings = false)
         {
             SetHoldings(symbol, (decimal)percentage, liquidateExistingHoldings);
@@ -1153,7 +1153,7 @@ namespace QuantConnect
         /// <param name="symbol">string symbol we wish to hold</param>
         /// <param name="percentage">float percentage of holdings desired</param>
         /// <param name="liquidateExistingHoldings">bool liquidate existing holdings if neccessary to hold this stock</param>
-        /// <![CDATA[autocomplete:{ "caption":"SetHoldings(string, float, bool)", "value":"SetHoldings(string symbol, float percentage, bool liquidateExistingHoldings = false)", "meta":"method" } ]]>
+        /// <![CDATA[{ "caption":"SetHoldings(string, float, bool)", "value":"SetHoldings(string symbol, float percentage, bool liquidateExistingHoldings = false)", "meta":"method" } ]]>
         public void SetHoldings(string symbol, float percentage, bool liquidateExistingHoldings = false)
         {
             SetHoldings(symbol, (decimal)percentage, liquidateExistingHoldings);
@@ -1166,7 +1166,7 @@ namespace QuantConnect
         /// <param name="symbol">string symbol we wish to hold</param>
         /// <param name="percentage">float percentage of holdings desired</param>
         /// <param name="liquidateExistingHoldings">bool liquidate existing holdings if neccessary to hold this stock</param>
-        /// <![CDATA[autocomplete:{ "caption":"SetHoldings(string, int, bool)", "value":"SetHoldings(string symbol, int percentage, bool liquidateExistingHoldings = false)", "meta":"method" } ]]>
+        /// <![CDATA[{ "caption":"SetHoldings(string, int, bool)", "value":"SetHoldings(string symbol, int percentage, bool liquidateExistingHoldings = false)", "meta":"method" } ]]>
         public void SetHoldings(string symbol, int percentage, bool liquidateExistingHoldings = false)
         {
             SetHoldings(symbol, (decimal)percentage, liquidateExistingHoldings);
@@ -1179,7 +1179,7 @@ namespace QuantConnect
         /// <param name="symbol">   string Symbol indexer</param>
         /// <param name="percentage">decimal fraction of portfolio to set stock</param>
         /// <param name="liquidateExistingHoldings">bool flag to clean all existing holdings before setting new faction.</param>
-        /// <![CDATA[autocomplete:{ "caption":"SetHoldings(string, decimal, bool)", "value":"SetHoldings(string symbol, decimal percentage, bool liquidateExistingHoldings = false)", "meta":"method" } ]]>
+        /// <![CDATA[{ "caption":"SetHoldings(string, decimal, bool)", "value":"SetHoldings(string symbol, decimal percentage, bool liquidateExistingHoldings = false)", "meta":"method" } ]]>
         public void SetHoldings(string symbol, decimal percentage, bool liquidateExistingHoldings = false)
         {
             //Error checks:
@@ -1233,7 +1233,7 @@ namespace QuantConnect
         /// Send a debug message to the console:
         /// </summary>
         /// <param name="message">Message to send to debug console</param>
-        /// <![CDATA[autocomplete:{ "caption":"Debug(string)", "value":"Debug(string message)", "meta":"method" } ]]>
+        /// <![CDATA[{ "caption":"Debug(string)", "value":"Debug(string message)", "meta":"method" } ]]>
         public void Debug(string message)
         {
             if (!_liveMode && (message == "" || _previousDebugMessage == message)) return;
@@ -1245,7 +1245,7 @@ namespace QuantConnect
         /// Added another method for logging if user guessed.
         /// </summary>
         /// <param name="message">String message to log.</param>
-        /// <![CDATA[autocomplete:{ "caption":"Log(string)", "value":"Log(string message)", "meta":"method" } ]]>
+        /// <![CDATA[{ "caption":"Log(string)", "value":"Log(string message)", "meta":"method" } ]]>
         public void Log(string message) 
         {
             if (message == "") return;
@@ -1256,7 +1256,7 @@ namespace QuantConnect
         /// Send Error Message to the Console.
         /// </summary>
         /// <param name="message">Message to display in errors grid</param>
-        /// <![CDATA[autocomplete:{ "caption":"Error(string)", "value":"Error(string message)", "meta":"method" } ]]>
+        /// <![CDATA[{ "caption":"Error(string)", "value":"Error(string message)", "meta":"method" } ]]>
         public void Error(string message)
         {
             if (message == "") return;
@@ -1268,7 +1268,7 @@ namespace QuantConnect
         /// Terminate the algorithm on exiting the current event processor.
         /// </summary>
         /// <param name="message">Exit message</param>
-        /// <![CDATA[autocomplete:{ "caption":"Quit(string)", "value":"Quit(string message)", "meta":"method" } ]]>
+        /// <![CDATA[{ "caption":"Quit(string)", "value":"Quit(string message)", "meta":"method" } ]]>
         public void Quit(string message = "") 
         {
             Debug("Quit(): " + message);
@@ -1279,7 +1279,7 @@ namespace QuantConnect
         /// QC.Engine Use Only: Set the Quit Flag
         /// </summary>
         /// <param name="quit">Boolean quit state</param>
-        /// <![CDATA[autocomplete:{ "caption":"SetQuit(bool)", "value":"SetQuit(bool state)", "meta":"method" } ]]>
+        /// <![CDATA[{ "caption":"SetQuit(bool)", "value":"SetQuit(bool state)", "meta":"method" } ]]>
         public void SetQuit(bool quit) 
         {
             _quit = quit;
@@ -1289,7 +1289,7 @@ namespace QuantConnect
         /// QC.Engine Use Only: Get the quit flag state.
         /// </summary>
         /// <returns>Boolean true if set to quit event loop.</returns>
-        /// <![CDATA[autocomplete:{ "caption":"GetQuit()", "value":"GetQuit()", "meta":"method" } ]]>
+        /// <![CDATA[{ "caption":"GetQuit()", "value":"GetQuit()", "meta":"method" } ]]>
         public bool GetQuit() 
         {
             return _quit;
@@ -1301,7 +1301,7 @@ namespace QuantConnect
     /// <summary>
     /// Helper class to override default behaviour of Console.WriteLine(); This will force the write line messages to appear in the browser console.
     /// </summary>
-    /// <![CDATA[autocomplete:{ "caption":"Console.WriteLine(string)", "value":"Debug(string message)", "meta":"method" } ]]>
+    /// <![CDATA[{ "caption":"Console.WriteLine(string)", "value":"Debug(string message)", "meta":"method" } ]]>
     public class Console
     {
         QCAlgorithm algorithmNamespace;
