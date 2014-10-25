@@ -1188,7 +1188,7 @@ namespace QuantConnect
         /// <summary>
         /// QC.Engine Use Only: Get the quit flag state.
         /// </summary>
-        /// <autocomplete>GetQuit</autocomplete>
+        /// <remarks>AutoComplete: GetQuit</remarks>
         /// <returns>Boolean true if set to quit event loop.</returns>
         public bool GetQuit() 
         {

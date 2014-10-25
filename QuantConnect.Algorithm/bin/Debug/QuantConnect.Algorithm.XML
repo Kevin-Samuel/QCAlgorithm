@@ -398,6 +398,7 @@
             <summary>
             QC.Engine Use Only: Get the quit flag state.
             </summary>
+            <remarks>AutoComplete: GetQuit</remarks>
             <returns>Boolean true if set to quit event loop.</returns>
         </member>
         <member name="P:QuantConnect.QCAlgorithm.Securities">
