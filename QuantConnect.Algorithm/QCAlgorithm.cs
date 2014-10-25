@@ -326,7 +326,7 @@ namespace QuantConnect
         /// Event - DEPRECATED - v1.0 TRADEBAR EVENT HANDLER. Handle new data packets.
         /// </summary>
         /// <param name="data">Dictionary of MarketData Objects</param>
-        /// <remarks>AutoComplete: OnTradeBar</remarks>
+        /// <remarks>AutoComplete: OnTradeBar(Dictionary<string, TradeBar> data)</remarks>
         public virtual void OnTradeBar(Dictionary<string, TradeBar> data)
         {
             //Algorithm Implementation
@@ -337,7 +337,7 @@ namespace QuantConnect
         /// Event - DEPRECATED - v1.0 TICK EVENT HANDLER. Handle a new incoming Tick Packet:
         /// </summary>
         /// <param name="data">Ticks arriving at the same moment come in a list. Because the "tick" data is actually list ordered within a second, you can get lots of ticks at once.</param>
-        /// <remarks>AutoComplete: OnTick</remarks>
+        /// <remarks>AutoComplete: OnTick(Dictionary<string, List<Tick>> data)</remarks>
         public virtual void OnTick(Dictionary<string, List<Tick>> data)
         {
             //Algorithm Implementation
@@ -377,7 +377,7 @@ namespace QuantConnect
         /// Event - Call this method at the end of the algorithm day (or multiple times if trading multiple assets).
         /// </summary>
         /// <param name="symbol">End of day for this symbol string</param>
-        /// <remarks>AutoComplete: OnEndOfDay</remarks>
+        /// <remarks>AutoComplete: OnEndOfDay(string symbol)</remarks>
         public virtual void OnEndOfDay(string symbol) 
         {
             
@@ -386,7 +386,7 @@ namespace QuantConnect
         /// <summary>
         /// Event - Call this at the end of the algorithm running.
         /// </summary>
-        /// <remarks>AutoComplete: OnEndOfAlgorithm</remarks>
+        /// <remarks>AutoComplete: OnEndOfAlgorithm()</remarks>
         public virtual void OnEndOfAlgorithm() 
         { 
             
@@ -396,7 +396,7 @@ namespace QuantConnect
         /// Event - Order - Fill, update, cancel, etc. When an order is update the events is passed in here:
         /// </summary>
         /// <param name="orderEvent">Details of the order</param>
-        /// <remarks>AutoComplete: OnOrderEvent</remarks>
+        /// <remarks>AutoComplete: OnOrderEvent(OrderEvent eventData)</remarks>
         public virtual void OnOrderEvent(OrderEvent orderEvent)
         {
             
@@ -559,7 +559,7 @@ namespace QuantConnect
         /// QC.Engine Use Only: Set the current datetime frontier: the most forward looking tick so far. This is used by backend to advance time. Do not modify
         /// </summary>
         /// <param name="frontier">Current datetime.</param>
-        /// <remarks>AutoComplete: SetDateTime(DateTime start)</remarks>
+        /// <remarks>AutoComplete: SetDateTime(DateTime frontier)</remarks>
         public void SetDateTime(DateTime frontier) 
         {
             this._time = frontier;
@@ -1083,7 +1083,7 @@ namespace QuantConnect
         /// </summary>
         /// <param name="symbolToLiquidate">Symbols we wish to liquidate</param>
         /// <returns>Array of order ids for liquidated symbols</returns>
-        /// <remarks>Liquidate(string symbolToLiquidate = "")</remarks>
+        /// <remarks>AutoComplete: Liquidate(string symbolToLiquidate = "")</remarks>
         public List<int> Liquidate(string symbolToLiquidate = "")
         {
             int quantity = 0;
@@ -1120,7 +1120,7 @@ namespace QuantConnect
         /// <param name="symbol">string symbol we wish to hold</param>
         /// <param name="percentage">double percentage of holdings desired</param>
         /// <param name="liquidateExistingHoldings">liquidate existing holdings if neccessary to hold this stock</param>
-        /// <remarks>SetHoldings(string symbol, double percentage, bool liquidateExistingHoldings = false)</remarks>
+        /// <remarks>AutoComplete: SetHoldings(string symbol, double percentage, bool liquidateExistingHoldings = false)</remarks>
         public void SetHoldings(string symbol, double percentage, bool liquidateExistingHoldings = false)
         {
             SetHoldings(symbol, (decimal)percentage, liquidateExistingHoldings);
@@ -1132,7 +1132,7 @@ namespace QuantConnect
         /// <param name="symbol">string symbol we wish to hold</param>
         /// <param name="percentage">float percentage of holdings desired</param>
         /// <param name="liquidateExistingHoldings">bool liquidate existing holdings if neccessary to hold this stock</param>
-        /// <remarks>SetHoldings(string symbol, float percentage, bool liquidateExistingHoldings = false)</remarks>
+        /// <remarks>AutoComplete: SetHoldings(string symbol, float percentage, bool liquidateExistingHoldings = false)</remarks>
         public void SetHoldings(string symbol, float percentage, bool liquidateExistingHoldings = false)
         {
             SetHoldings(symbol, (decimal)percentage, liquidateExistingHoldings);
@@ -1145,7 +1145,7 @@ namespace QuantConnect
         /// <param name="symbol">string symbol we wish to hold</param>
         /// <param name="percentage">float percentage of holdings desired</param>
         /// <param name="liquidateExistingHoldings">bool liquidate existing holdings if neccessary to hold this stock</param>
-        /// <remarks>SetHoldings(string symbol, int percentage, bool liquidateExistingHoldings = false)</remarks>
+        /// <remarks>AutoComplete: SetHoldings(string symbol, int percentage, bool liquidateExistingHoldings = false)</remarks>
         public void SetHoldings(string symbol, int percentage, bool liquidateExistingHoldings = false)
         {
             SetHoldings(symbol, (decimal)percentage, liquidateExistingHoldings);
@@ -1158,7 +1158,7 @@ namespace QuantConnect
         /// <param name="symbol">   string Symbol indexer</param>
         /// <param name="percentage">decimal fraction of portfolio to set stock</param>
         /// <param name="liquidateExistingHoldings">bool flag to clean all existing holdings before setting new faction.</param>
-        /// <remarks>SetHoldings(string symbol, decimal percentage, bool liquidateExistingHoldings = false)</remarks>
+        /// <remarks>AutoComplete: SetHoldings(string symbol, decimal percentage, bool liquidateExistingHoldings = false)</remarks>
         public void SetHoldings(string symbol, decimal percentage, bool liquidateExistingHoldings = false)
         {
             //Error checks:
@@ -1212,7 +1212,7 @@ namespace QuantConnect
         /// Send a debug message to the console:
         /// </summary>
         /// <param name="message">Message to send to debug console</param>
-        /// <remarks>Debug(string message)</remarks>
+        /// <remarks>AutoComplete: Debug(string message)</remarks>
         public void Debug(string message)
         {
             if (!_liveMode && (message == "" || _previousDebugMessage == message)) return;
@@ -1235,7 +1235,7 @@ namespace QuantConnect
         /// Send Error Message to the Console.
         /// </summary>
         /// <param name="message">Message to display in errors grid</param>
-        /// <remarks>Error(string message)</remarks>
+        /// <remarks>AutoComplete: Error(string message)</remarks>
         public void Error(string message)
         {
             if (message == "") return;
@@ -1247,7 +1247,7 @@ namespace QuantConnect
         /// Terminate the algorithm on exiting the current event processor.
         /// </summary>
         /// <param name="message">Exit message</param>
-        /// <remarks>Quit(string message)</remarks>
+        /// <remarks>AutoComplete: Quit(string message)</remarks>
         public void Quit(string message = "") 
         {
             Debug("Quit(): " + message);
@@ -1258,7 +1258,7 @@ namespace QuantConnect
         /// QC.Engine Use Only: Set the Quit Flag
         /// </summary>
         /// <param name="quit">Boolean quit state</param>
-        /// <remarks>SetQuit(bool quitState)</remarks>
+        /// <remarks>AutoComplete: SetQuit(bool quitState)</remarks>
         public void SetQuit(bool quit) 
         {
             _quit = quit;
@@ -1267,7 +1267,7 @@ namespace QuantConnect
         /// <summary>
         /// QC.Engine Use Only: Get the quit flag state.
         /// </summary>
-        /// <remarks>AutoComplete: GetQuit()</remarks>
+        /// <remarks>AutoComplete: AutoComplete: GetQuit()</remarks>
         /// <returns>Boolean true if set to quit event loop.</returns>
         public bool GetQuit() 
         {
@@ -1280,6 +1280,7 @@ namespace QuantConnect
     /// <summary>
     /// Helper class to override default behaviour of Console.WriteLine(); This will force the write line messages to appear in the browser console.
     /// </summary>
+    /// <remarks>AutoComplete: Console.WriteLine(string message)</remarks>
     public class Console
     {
         QCAlgorithm algorithmNamespace;
