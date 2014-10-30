@@ -1,3 +1,5 @@
+C:\Server\www\QCo\QuantConnect.Algorithm\bin\Debug\QuantConnect.Algorithm.dll.config
+C:\Server\www\QCo\QuantConnect.Algorithm\bin\Debug\QuantConnect.Algorithm.XML
 C:\Server\www\QCo\QuantConnect.Algorithm\bin\Debug\QuantConnect.Algorithm.dll
 C:\Server\www\QCo\QuantConnect.Algorithm\bin\Debug\QuantConnect.Algorithm.pdb
 C:\Server\www\QCo\QuantConnect.Algorithm\bin\Debug\Accord.dll
@@ -26,4 +28,3 @@ C:\Server\www\QCo\QuantConnect.Algorithm\bin\Debug\Newtonsoft.Json.xml
 C:\Server\www\QCo\QuantConnect.Algorithm\obj\Debug\QuantConnect.Algorithm.csprojResolveAssemblyReference.cache
 C:\Server\www\QCo\QuantConnect.Algorithm\obj\Debug\QuantConnect.Algorithm.dll
 C:\Server\www\QCo\QuantConnect.Algorithm\obj\Debug\QuantConnect.Algorithm.pdb
-C:\Server\www\QCo\QuantConnect.Algorithm\bin\Debug\QuantConnect.Algorithm.XML

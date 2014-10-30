@@ -4,6 +4,37 @@
         <name>QuantConnect.Common</name>
     </assembly>
     <members>
+        <member name="T:QuantConnect.IBasicIndicator">
+            <summary>
+            Extensions Function Collections - Group all static extensions functions here.
+            </summary>
+        </member>
+        <member name="M:QuantConnect.IBasicIndicator.Update(System.Decimal)">
+            <summary>
+            Update the indicator value with a decimal value
+            </summary>
+            <param name="value">decimal value of the update</param>
+            <returns>Bool true when its ready</returns>
+        </member>
+        <member name="M:QuantConnect.IBasicIndicator.Update(QuantConnect.Models.TradeBar)">
+            <summary>
+            Update the indicator with a TradeBar
+            </summary>
+            <param name="bar"></param>
+            <returns></returns>
+        </member>
+        <member name="M:QuantConnect.IBasicIndicator.Update(QuantConnect.Models.Tick)">
+            <summary>
+            Update the indicator with a tick object
+            </summary>
+            <param name="tick"></param>
+            <returns></returns>
+        </member>
+        <member name="P:QuantConnect.IBasicIndicator.Value">
+            <summary>
+            Output result value
+            </summary>
+        </member>
         <member name="T:QuantConnect.OrderEvent">
             <summary>
             Order Event - Messaging class signifying a change in an order state. 

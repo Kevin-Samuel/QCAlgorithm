@@ -4,6 +4,62 @@
         <name>Accord</name>
     </assembly>
     <members>
+        <member name="T:Accord.Extensions">
+            <summary>
+              Static class for utility extension methods.
+            </summary>
+            
+        </member>
+        <member name="M:Accord.Extensions.Add(System.Data.DataColumnCollection,System.String[])">
+            <summary>
+              Creates and adds multiple <see cref="T:System.Data.DataColumn"/>
+              objects with the given names at once.
+            </summary>
+            
+            <param name="collection">The <see cref="T:System.Data.DataColumnCollection"/>
+            to add in.</param>
+            <param name="columnNames">The names of the <see cref="T:System.Data.DataColumn"/> to
+            be created and added.</param>
+            
+            <example>
+              <code>
+              DataTable table = new DataTable();
+              
+              // Add multiple columns at once:
+              table.Columns.Add("columnName1", "columnName2");
+              </code>
+            </example>
+            
+        </member>
+        <member name="M:Accord.Extensions.GetDescription``1(``0)">
+            <summary>
+              Gets a the value of a <see cref="T:System.ComponentModel.DescriptionAttribute"/>
+              associated with a particular enumeration value.
+            </summary>
+            
+            <typeparam name="T">The enumeration type.</typeparam>
+            <param name="source">The enumeration value.</param>
+            
+            <returns>The string value stored in the value's description attribute.</returns>
+            
+        </member>
+        <member name="M:Accord.Extensions.Read``1(System.IO.BinaryReader,``0@)">
+            <summary>
+              Reads a <c>struct</c> from a stream.
+            </summary>
+            
+        </member>
+        <member name="M:Accord.Extensions.GetPosition(System.IO.StreamReader)">
+            <summary>
+              Gets the underlying buffer position for a StreamReader.
+            </summary>
+            
+            <param name="reader">A StreamReader whose position will be retrieved.</param>
+            
+            <returns>The current offset from the beginning of the 
+              file that the StreamReader is currently located into.</returns>
+            
+        </member>
         <member name="T:Accord.NonPositiveDefiniteMatrixException">
             <summary>
               Non-Positive Definite Matrix Exception.
@@ -106,33 +162,6 @@
             <exception cref="T:System.Runtime.Serialization.SerializationException">
             The class name is null or <see cref="P:System.Exception.HResult"/> is zero (0).
             </exception>
-            
-        </member>
-        <member name="T:Accord.DataSetExtensions">
-            <summary>
-              Static class for DataSet-related extension methods.
-            </summary>
-            
-        </member>
-        <member name="M:Accord.DataSetExtensions.Add(System.Data.DataColumnCollection,System.String[])">
-            <summary>
-              Creates and adds multiple <see cref="T:System.Data.DataColumn"/>
-              objects with the given names at once.
-            </summary>
-            
-            <param name="collection">The <see cref="T:System.Data.DataColumnCollection"/>
-            to add in.</param>
-            <param name="columnNames">The names of the <see cref="T:System.Data.DataColumn"/> to
-            be created and added.</param>
-            
-            <example>
-              <code>
-              DataTable table = new DataTable();
-              
-              // Add multiple columns at once:
-              table.Columns.Add("columnName1", "columnName2");
-              </code>
-            </example>
             
         </member>
         <member name="T:Accord.NonSymmetricMatrixException">
