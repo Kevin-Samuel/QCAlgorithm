@@ -7,13 +7,12 @@
 * USING NAMESPACES
 **********************************************************/
 using System;
-using System.IO;
-using System.Text;
 using System.Collections.Generic;
-using System.Security.Cryptography;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Collections.Concurrent;
+using System.Linq;
+using System.Text;
+using System.Reflection;
+using System.ComponentModel;
+using Newtonsoft.Json;
 
 //QuantConnect Project Libraries:
 using QuantConnect.Logging;
@@ -25,7 +24,8 @@ namespace QuantConnect.Indicators {
     * CLASS DEFINITIONS
     *********************************************************/
     /// <summary>
-    /// Extensions Function Collections - Group all static extensions functions here.
+    /// Basic Indicator Interface - 
+    /// A Basic Indicator can be defined with a single digit output and a single update input. E.g. Moving average
     /// </summary>
     public interface IBasicIndicator 
     {
@@ -44,7 +44,6 @@ namespace QuantConnect.Indicators {
         /******************************************************** 
         * INTERFACE METHODS
         *********************************************************/
-
         /// <summary>
         /// Update the indicator value with a decimal value
         /// </summary>
