@@ -46,6 +46,7 @@ namespace QuantConnect
 
         //Error tracking to avoid message flooding:
         private string _previousDebugMessage = "";
+        private string _previousErrorMessage = "";
         private bool _sentNoDataError = false;
 
         /******************************************************** 
@@ -1069,12 +1070,14 @@ namespace QuantConnect
             //Check the exchange is open before sending a market order.
             if (type == OrderType.Market && !Securities[symbol].Exchange.ExchangeOpen)
             {
+                Error("Market order and exchange not open");
                 return -3;
             }
 
             //We've already processed too many orders: max 100 per day or the memory usage explodes
             if (Orders.Count > (_endDate - _startDate).TotalDays * 100)
             {
+                Error("You have exceeded 100 orders per day");
                 return -5;
             }
 
@@ -1128,7 +1131,6 @@ namespace QuantConnect
                     }
                     //Liquidate at market price.
                     orderIdList.Add(Order(symbol, quantity, OrderType.Market));
-                    //orderIdList.Add(Transactions.AddOrder(new Order(symbol, quantity, OrderType.Market, Time, Securities[symbol].Price)));
                 }
             }
             return orderIdList;
@@ -1153,8 +1155,9 @@ namespace QuantConnect
         /// <param name="symbol">string symbol we wish to hold</param>
         /// <param name="percentage">float percentage of holdings desired</param>
         /// <param name="liquidateExistingHoldings">bool liquidate existing holdings if neccessary to hold this stock</param>
-        /// <![CDATA[{ "caption":"SetHoldings(string, float, bool)", "value":"SetHoldings(string symbol, float percentage, bool liquidateExistingHoldings = false)", "meta":"method" } ]]>
-        public void SetHoldings(string symbol, float percentage, bool liquidateExistingHoldings = false)
+        /// <param name="tag">Tag the order with a short string.</param>
+        /// <![CDATA[{ "caption":"SetHoldings(string, float, bool)", "value":"SetHoldings(string symbol, float percentage, bool liquidateExistingHoldings = false, string tag = \"\")", "meta":"method" } ]]>
+        public void SetHoldings(string symbol, float percentage, bool liquidateExistingHoldings = false, string tag = "")
         {
             SetHoldings(symbol, (decimal)percentage, liquidateExistingHoldings);
         }
@@ -1166,8 +1169,9 @@ namespace QuantConnect
         /// <param name="symbol">string symbol we wish to hold</param>
         /// <param name="percentage">float percentage of holdings desired</param>
         /// <param name="liquidateExistingHoldings">bool liquidate existing holdings if neccessary to hold this stock</param>
-        /// <![CDATA[{ "caption":"SetHoldings(string, int, bool)", "value":"SetHoldings(string symbol, int percentage, bool liquidateExistingHoldings = false)", "meta":"method" } ]]>
-        public void SetHoldings(string symbol, int percentage, bool liquidateExistingHoldings = false)
+        /// <param name="tag">Tag the order with a short string.</param>
+        /// <![CDATA[{ "caption":"SetHoldings(string, int, bool)", "value":"SetHoldings(string symbol, int percentage, bool liquidateExistingHoldings = false, string tag = \"\")", "meta":"method" } ]]>
+        public void SetHoldings(string symbol, int percentage, bool liquidateExistingHoldings = false, string tag = "")
         {
             SetHoldings(symbol, (decimal)percentage, liquidateExistingHoldings);
         }
@@ -1179,8 +1183,9 @@ namespace QuantConnect
         /// <param name="symbol">   string Symbol indexer</param>
         /// <param name="percentage">decimal fraction of portfolio to set stock</param>
         /// <param name="liquidateExistingHoldings">bool flag to clean all existing holdings before setting new faction.</param>
-        /// <![CDATA[{ "caption":"SetHoldings(string, decimal, bool)", "value":"SetHoldings(string symbol, decimal percentage, bool liquidateExistingHoldings = false)", "meta":"method" } ]]>
-        public void SetHoldings(string symbol, decimal percentage, bool liquidateExistingHoldings = false)
+        /// <param name="tag">Tag the order with a short string.</param>
+        /// <![CDATA[{ "caption":"SetHoldings(string, decimal, bool)", "value":"SetHoldings(string symbol, decimal percentage, bool liquidateExistingHoldings = false, string tag = \"\")", "meta":"method" } ]]>
+        public void SetHoldings(string symbol, decimal percentage, bool liquidateExistingHoldings = false, string tag = "")
         {
             //Error checks:
             if (!Portfolio.ContainsKey(symbol)) 
@@ -1224,7 +1229,7 @@ namespace QuantConnect
             //Determine if we need to place an order:
             if (Math.Abs(deltaQuantity) > 0)
             {
-                Order(symbol, (int)deltaQuantity);
+                Order(symbol, (int)deltaQuantity, OrderType.Market, false, tag);
             }
             return;
         }
@@ -1259,9 +1264,9 @@ namespace QuantConnect
         /// <![CDATA[{ "caption":"Error(string)", "value":"Error(string message)", "meta":"method" } ]]>
         public void Error(string message)
         {
-            if (message == "") return;
+            if (message == "" || _previousErrorMessage == message) return;
             _errorMessages.Add(message);
-            Debug("BacktestId:(" + _algorithmId + ") Error: " + message);
+            _previousErrorMessage = message;
         }
 
         /// <summary>

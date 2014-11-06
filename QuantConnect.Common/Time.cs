@@ -211,12 +211,15 @@ namespace QuantConnect {
         /// <returns>Number of Dates</returns>
         public static int TradeableDates(SecurityManager securities, DateTime start, DateTime finish) {
             int count = 0;
+            Log.Trace("Time.TradeableDates(): Security Count: " + securities.Count);
             try {
+                
                 foreach (DateTime day in Time.EachDay(start, finish)) {
                     if (Time.TradableDate(securities, day)) {
                         count++;
                     }
                 }
+
             } catch (Exception err) {
                 Log.Error("Time.TradeableDates(): " + err.Message);
             }

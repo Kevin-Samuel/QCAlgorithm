@@ -99,7 +99,8 @@
     <None Include="0_Algorithm_Tests_NitfyINR.cs" />
     <None Include="0_Algorithm_Tests_SetHolding.cs" />
     <None Include="5_Algorithm_StatArb.cs" />
-    <Compile Include="7_Algorithm_CustomTickFilter.cs" />
+    <Compile Include="8_Algorithm_Mixed_Asset_Test.cs" />
+    <None Include="7_Algorithm_CustomTickFilter.cs" />
     <Compile Include="QCAlgorithm.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

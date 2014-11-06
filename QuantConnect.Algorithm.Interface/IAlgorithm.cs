@@ -320,6 +320,13 @@ namespace QuantConnect  {
         void AddSecurity(SecurityType securityType, string symbol, Resolution resolution, bool fillDataForward, decimal leverage, bool extendedMarketHours);
 
         /// <summary>
+        /// AddData<typeparam name="T"> a new user defined data source, requiring only the minimum config options:
+        /// </summary>
+        /// <param name="symbol">Key/Symbol for data</param>
+        /// <param name="resolution">Resolution of the data</param>
+        void AddData<T>(string symbol, Resolution resolution = Resolution.Second);
+
+        /// <summary>
         /// Set the starting capital for the strategy
         /// </summary>
         /// <param name="startingCash">decimal starting capital, default $100,000</param>

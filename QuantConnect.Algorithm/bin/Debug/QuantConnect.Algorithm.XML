@@ -406,25 +406,27 @@
             <param name="liquidateExistingHoldings">liquidate existing holdings if neccessary to hold this stock</param>
             <![CDATA[{ "caption":"SetHoldings(string, double, bool)", "value":"SetHoldings(string symbol, double percentage, bool liquidateExistingHoldings = false)", "meta":"method" } ]]>
         </member>
-        <member name="M:QuantConnect.QCAlgorithm.SetHoldings(System.String,System.Single,System.Boolean)">
+        <member name="M:QuantConnect.QCAlgorithm.SetHoldings(System.String,System.Single,System.Boolean,System.String)">
             <summary>
             Alias for SetHoldings to avoid the M-decimal errors.
             </summary>
             <param name="symbol">string symbol we wish to hold</param>
             <param name="percentage">float percentage of holdings desired</param>
             <param name="liquidateExistingHoldings">bool liquidate existing holdings if neccessary to hold this stock</param>
-            <![CDATA[{ "caption":"SetHoldings(string, float, bool)", "value":"SetHoldings(string symbol, float percentage, bool liquidateExistingHoldings = false)", "meta":"method" } ]]>
+            <param name="tag">Tag the order with a short string.</param>
+            <![CDATA[{ "caption":"SetHoldings(string, float, bool)", "value":"SetHoldings(string symbol, float percentage, bool liquidateExistingHoldings = false, string tag = \"\")", "meta":"method" } ]]>
         </member>
-        <member name="M:QuantConnect.QCAlgorithm.SetHoldings(System.String,System.Int32,System.Boolean)">
+        <member name="M:QuantConnect.QCAlgorithm.SetHoldings(System.String,System.Int32,System.Boolean,System.String)">
             <summary>
             Alias for SetHoldings to avoid the M-decimal errors.
             </summary>
             <param name="symbol">string symbol we wish to hold</param>
             <param name="percentage">float percentage of holdings desired</param>
             <param name="liquidateExistingHoldings">bool liquidate existing holdings if neccessary to hold this stock</param>
-            <![CDATA[{ "caption":"SetHoldings(string, int, bool)", "value":"SetHoldings(string symbol, int percentage, bool liquidateExistingHoldings = false)", "meta":"method" } ]]>
+            <param name="tag">Tag the order with a short string.</param>
+            <![CDATA[{ "caption":"SetHoldings(string, int, bool)", "value":"SetHoldings(string symbol, int percentage, bool liquidateExistingHoldings = false, string tag = \"\")", "meta":"method" } ]]>
         </member>
-        <member name="M:QuantConnect.QCAlgorithm.SetHoldings(System.String,System.Decimal,System.Boolean)">
+        <member name="M:QuantConnect.QCAlgorithm.SetHoldings(System.String,System.Decimal,System.Boolean,System.String)">
             <summary>
             Automatically place an order which will set the holdings to between 100% or -100% of *Buying Power*.
             E.g. SetHoldings("AAPL", 0.1); SetHoldings("IBM", -0.2); -> Sets portfolio as long 10% APPL and short 20% IBM
@@ -432,7 +434,8 @@
             <param name="symbol">   string Symbol indexer</param>
             <param name="percentage">decimal fraction of portfolio to set stock</param>
             <param name="liquidateExistingHoldings">bool flag to clean all existing holdings before setting new faction.</param>
-            <![CDATA[{ "caption":"SetHoldings(string, decimal, bool)", "value":"SetHoldings(string symbol, decimal percentage, bool liquidateExistingHoldings = false)", "meta":"method" } ]]>
+            <param name="tag">Tag the order with a short string.</param>
+            <![CDATA[{ "caption":"SetHoldings(string, decimal, bool)", "value":"SetHoldings(string symbol, decimal percentage, bool liquidateExistingHoldings = false, string tag = \"\")", "meta":"method" } ]]>
         </member>
         <member name="M:QuantConnect.QCAlgorithm.Debug(System.String)">
             <summary>
@@ -569,24 +572,10 @@
             <![CDATA[{ "caption": "ErrorMessages", "value":"ErrorMessage", "meta":"property[list]" } ]]>
         </member>
         <!-- Badly formed XML comment ignored for member "P:QuantConnect.QCAlgorithm.RuntimeStatistics" -->
-        <member name="M:QuantConnect.ExchangeDataFilter.Filter(QuantConnect.Securities.Security,QuantConnect.Models.BaseData)">
+        <member name="T:QuantConnect.VIX">
             <summary>
-            Filter out a tick from this vehicle, with this new data:
+            Custom imported data -- VIX indicator:
             </summary>
-            <param name="data">New data packet:</param>
-            <param name="vehicle">Vehicle of this filter.</param>
-        </member>
-        <member name="T:QuantConnect.ExchangeDataFilter.MarketCodesFilter">
-            <summary>
-            Global Market Short Codes and their full versions: (used in tick objects)
-            https://github.com/QuantConnect/QCAlgorithm/blob/master/QuantConnect.Common/Global.cs
-            </summary>
-        </member>
-        <member name="F:QuantConnect.ExchangeDataFilter.MarketCodesFilter.US">
-            US Market Codes
-        </member>
-        <member name="F:QuantConnect.ExchangeDataFilter.MarketCodesFilter.Canada">
-            Canada Market Short Codes:
         </member>
         <member name="T:QuantConnect.Console">
             <summary>
