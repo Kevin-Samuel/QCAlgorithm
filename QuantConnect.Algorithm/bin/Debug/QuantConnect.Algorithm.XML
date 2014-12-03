@@ -572,11 +572,6 @@
             <![CDATA[{ "caption": "ErrorMessages", "value":"ErrorMessage", "meta":"property[list]" } ]]>
         </member>
         <!-- Badly formed XML comment ignored for member "P:QuantConnect.QCAlgorithm.RuntimeStatistics" -->
-        <member name="T:QuantConnect.VIX">
-            <summary>
-            Custom imported data -- VIX indicator:
-            </summary>
-        </member>
         <member name="T:QuantConnect.Console">
             <summary>
             Helper class to override default behaviour of Console.WriteLine(); This will force the write line messages to appear in the browser console.

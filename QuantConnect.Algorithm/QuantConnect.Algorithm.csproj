@@ -90,7 +90,7 @@
     <Reference Include="System.Numerics" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="6_Algorithm_LiveTestAlgorithm.cs" />
+    <None Include="6_Algorithm_Test_LiveAlgorithm.cs" />
     <None Include="1_Algorithm_BasicTemplate.cs" />
     <None Include="2_Algorithm_ExponentialMovingAverage.cs" />
     <None Include="3_Algorithm_CustomDataSource.cs" />
@@ -99,8 +99,9 @@
     <None Include="0_Algorithm_Tests_NitfyINR.cs" />
     <None Include="0_Algorithm_Tests_SetHolding.cs" />
     <None Include="5_Algorithm_StatArb.cs" />
-    <Compile Include="8_Algorithm_Mixed_Asset_Test.cs" />
+    <None Include="8_Algorithm_Test_Mixed_Asset.cs" />
     <None Include="7_Algorithm_CustomTickFilter.cs" />
+    <Compile Include="9_Algorithm_Test_OnEndOfDay.cs" />
     <Compile Include="QCAlgorithm.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
