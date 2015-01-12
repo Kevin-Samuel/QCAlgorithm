@@ -1,4 +1,8 @@
-# QuantConnect.com - QCAlgorithm Interface Class
+# This git project has been deprecated. Please see https://github.com/QuantConnect/Lean for the latest updates.
+
+
+=================================================
+## QuantConnect.com - QCAlgorithm Interface Class
 
 ## 1.0 Introduction
 
